@@ -1,0 +1,29 @@
+name: Gemini PR Review
+
+on:
+  pull_request:
+    types: [opened]   # PR 열릴 때만 실행 (무료 플랜 보호)
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Gemini Code Review
+        uses: google-gemini/code-review-action@v1
+        with:
+          api_key: ${{ secrets.GEMINI_API_KEY }}
+          model: gemini-1.5-pro
+          diff_only: true
+          review_comment_type: summary
+          prompt: |
+            You are a senior iOS engineer.
+            Review the Swift code focusing on:
+            - MVVM architecture violations
+            - Memory leaks (retain cycles, closures)
+            - UIKit/SwiftUI best practices
+            - Async/await misuse
+            - Performance and thread safety
+            Provide actionable refactoring suggestions.

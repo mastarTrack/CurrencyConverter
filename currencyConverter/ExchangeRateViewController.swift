@@ -56,7 +56,15 @@ extension ExchangeRateViewController: UITableViewDelegate {
 }
 extension ExchangeRateViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewData.count
+        if let text = exchangeView.searchBar.text, !text.isEmpty {
+            let emptyLabel = UILabel()
+            emptyLabel.text = "검색 결과 없음"
+            emptyLabel.textAlignment = .center
+            tableView.backgroundView = emptyLabel
+        } else {
+            tableView.backgroundView = nil
+        }
+        return viewData.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

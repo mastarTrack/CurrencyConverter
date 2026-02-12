@@ -12,7 +12,9 @@ import Alamofire
 
 class ViewController: UIViewController {
     
-    private var dataSource: [(code: String, rate: Double)] = []
+//    private var dataSource: [(code: String, rate: Double)] = []
+    private var allData: [(code: String, rate: Double)] = []
+    private var viewData: [(code: String, rate: Double)] = []
     
     private let mainView = MainView()
     
@@ -31,6 +33,8 @@ class ViewController: UIViewController {
 
 extension ViewController {
     private func setDelegate() {
+        mainView.searchBar.delegate = self
+        
         mainView.tableView.delegate = self
         mainView.tableView.dataSource = self
         mainView.tableView.register(TableViewCell.self, forCellReuseIdentifier: TableViewCell.id)
@@ -42,12 +46,12 @@ extension ViewController: UITableViewDelegate {
 }
 extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        dataSource.count
+        viewData.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: TableViewCell.id) as? TableViewCell else { return UITableViewCell() }
-        let item = dataSource[indexPath.row]
+        let item = viewData[indexPath.row]
         cell.config(code: item.code, rate: item.rate)
         return cell
     }
@@ -70,7 +74,8 @@ extension ViewController {
             switch result {
             case .success(let result):
                 let sortedRates = result.rates.sorted{ $0.key < $1.key }
-                self.dataSource = sortedRates.map { (code: $0.key, rate: $0.value) }
+                allData = sortedRates.map { (code: $0.key, rate: $0.value) }
+                viewData = allData
                 DispatchQueue.main.async {
                     self.mainView.tableView.reloadData()
                 }
@@ -78,6 +83,20 @@ extension ViewController {
                 print(error)
             }
         }
+    }
+}
+
+extension ViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchText.isEmpty {
+            viewData = allData
+        } else {
+            viewData = allData.filter { item in
+                let countryName = Mapper.getName(code: item.code)
+                return item.code.uppercased().contains(searchText.uppercased()) || countryName.contains(searchText)
+            }
+        }
+        mainView.tableView.reloadData()
     }
 }
 

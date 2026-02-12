@@ -10,6 +10,7 @@ import SnapKit
 
 class MainView: UIView {
     
+    let searchBar = UISearchBar()
     let tableView = UITableView()
     
     override init(frame: CGRect) {
@@ -27,13 +28,20 @@ extension MainView {
     private func setAttributes() {
         self.backgroundColor = .systemBackground
         
+        searchBar.placeholder = "통화 검색"
+        
     }
     private func setLayout() {
         
-        [tableView].forEach { addSubview($0) }
+        [searchBar, tableView].forEach { addSubview($0) }
+        
+        searchBar.snp.makeConstraints {
+            $0.top.equalTo(safeAreaLayoutGuide)
+            $0.leading.trailing.equalToSuperview()
+        }
         
         tableView.snp.makeConstraints {
-            $0.top.equalToSuperview()
+            $0.top.equalTo(searchBar.snp.bottom)
             $0.bottom.equalToSuperview()
             $0.leading.trailing.equalToSuperview()
         }

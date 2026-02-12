@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class MainView: UIView {
+class ExchangeView: UIView {
     
     let searchBar = UISearchBar()
     let tableView = UITableView()
@@ -24,7 +24,7 @@ class MainView: UIView {
     }
 }
 
-extension MainView {
+extension ExchangeView {
     private func setAttributes() {
         self.backgroundColor = .systemBackground
         

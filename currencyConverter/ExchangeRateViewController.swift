@@ -13,16 +13,16 @@
 import UIKit
 import Alamofire
 
-class ViewController: UIViewController {
+class ExchangeRateViewController: UIViewController {
     
 //    private var dataSource: [(code: String, rate: Double)] = []
     private var allData: [(code: String, rate: Double)] = []
     private var viewData: [(code: String, rate: Double)] = []
     
-    private let mainView = MainView()
+    private let exchangeView = ExchangeView()
     
     override func loadView() {
-        self.view = mainView
+        self.view = exchangeView
     }
 
     override func viewDidLoad() {
@@ -34,27 +34,27 @@ class ViewController: UIViewController {
 }
 
 
-extension ViewController {
+extension ExchangeRateViewController {
     private func setDelegate() {
-        mainView.searchBar.delegate = self
+        exchangeView.searchBar.delegate = self
         
-        mainView.tableView.delegate = self
-        mainView.tableView.dataSource = self
-        mainView.tableView.register(TableViewCell.self, forCellReuseIdentifier: TableViewCell.id)
+        exchangeView.tableView.delegate = self
+        exchangeView.tableView.dataSource = self
+        exchangeView.tableView.register(TableViewCell.self, forCellReuseIdentifier: TableViewCell.id)
     }
 }
 
-extension ViewController: UITableViewDelegate {
+extension ExchangeRateViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        let detailVC = DetailViewController()
-        detailVC.currency = viewData[indexPath.row].code
-        detailVC.rate = viewData[indexPath.row].rate
+        let calculatorVC = CalculatorViewController()
+        calculatorVC.code = viewData[indexPath.row].code
+        calculatorVC.rate = viewData[indexPath.row].rate
         
-        self.navigationController?.pushViewController(detailVC, animated: true)
+        self.navigationController?.pushViewController(calculatorVC, animated: true)
     }
 }
-extension ViewController: UITableViewDataSource {
+extension ExchangeRateViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         viewData.count
     }
@@ -67,7 +67,7 @@ extension ViewController: UITableViewDataSource {
     }
 }
 
-extension ViewController {
+extension ExchangeRateViewController {
     private func fetchData<T: Decodable>(url: URL, completion: @escaping(Result<T,AFError>) -> Void) {
         AF.request(url).responseDecodable(of: T.self) { response in
             completion(response.result)
@@ -87,7 +87,7 @@ extension ViewController {
                 allData = sortedRates.map { (code: $0.key, rate: $0.value) }
                 viewData = allData
                 DispatchQueue.main.async {
-                    self.mainView.tableView.reloadData()
+                    self.exchangeView.tableView.reloadData()
                 }
             case .failure(let error):
                 print(error)
@@ -96,7 +96,7 @@ extension ViewController {
     }
 }
 
-extension ViewController: UISearchBarDelegate {
+extension ExchangeRateViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchText.isEmpty {
             viewData = allData
@@ -106,7 +106,7 @@ extension ViewController: UISearchBarDelegate {
                 return item.code.uppercased().contains(searchText.uppercased()) || countryName.contains(searchText)
             }
         }
-        mainView.tableView.reloadData()
+        exchangeView.tableView.reloadData()
     }
 }
 

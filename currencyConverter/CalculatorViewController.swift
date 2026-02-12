@@ -7,25 +7,25 @@
 
 import UIKit
 
-class DetailViewController: UIViewController {
+class CalculatorViewController: UIViewController {
     
-    var currency: String = ""
+    var code: String = ""
     var rate: Double = 0.0
     
-    private let detailView = DetailView()
+    private let calculatorView = CalculatorView()
     
     override func loadView() {
-        self.view = detailView
+        self.view = calculatorView
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        detailView.config(code: currency)
-        detailView.delegate = self
+        calculatorView.config(code: code)
+        calculatorView.delegate = self
     }
 }
 
-extension DetailViewController {
+extension CalculatorViewController {
     private func showAlert(message: String) {
         let alert = UIAlertController(title: "알림", message: message, preferredStyle: .alert)
         let action = UIAlertAction(title: "확인", style: .default)
@@ -34,9 +34,9 @@ extension DetailViewController {
     }
 }
 
-extension DetailViewController: DetailViewDelegate {
+extension CalculatorViewController: CalculatorViewDelegate {
     func didTapConvertButton() {
-        let inputText = detailView.amountTextField.text ?? ""
+        let inputText = calculatorView.amountTextField.text ?? ""
         if inputText.isEmpty {
             showAlert(message: "금액을 입력해주세요.")
             return
@@ -46,7 +46,7 @@ extension DetailViewController: DetailViewDelegate {
             return
         }
         let convertedValue = amount * rate
-        let exchangeResult = String(format: "%.2f", convertedValue, currency)
-        detailView.resultLabel.text = "$\(amount) : \(exchangeResult) \(currency)"
+        let exchangeResult = String(format: "%.2f", convertedValue, code)
+        calculatorView.resultLabel.text = "$\(amount) : \(exchangeResult) \(code)"
     }
 }

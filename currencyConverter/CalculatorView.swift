@@ -8,13 +8,13 @@
 import UIKit
 import SnapKit
 
-protocol DetailViewDelegate: AnyObject {
+protocol CalculatorViewDelegate: AnyObject {
     func didTapConvertButton()
 }
 
-class DetailView: UIView {
+class CalculatorView: UIView {
     
-    weak var delegate: DetailViewDelegate?
+    weak var delegate: CalculatorViewDelegate?
     
     private let currencyLabel = UILabel()
     private let countryLabel = UILabel()
@@ -36,7 +36,7 @@ class DetailView: UIView {
     }
 }
 
-extension DetailView {
+extension CalculatorView {
     private func setAttributes() {
         self.backgroundColor = .systemBackground
         
@@ -95,14 +95,14 @@ extension DetailView {
     }
 }
 
-extension DetailView {
+extension CalculatorView {
     func config(code: String) {
         self.currencyLabel.text = code
         self.countryLabel.text = Mapper.getName(code: code)
     }
 }
 
-extension DetailView {
+extension CalculatorView {
     private func setAction() {
         convertButton.addTarget(self, action: #selector(convertButtonTapped), for: .touchUpInside)
     }

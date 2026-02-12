@@ -43,10 +43,14 @@ extension ViewController {
 
 extension ViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.navigationController?.pushViewController(DetailViewController(), animated: true)
+        
+        let detailVC = DetailViewController()
+        detailVC.currency = viewData[indexPath.row].code
+        detailVC.rate = viewData[indexPath.row].rate
+        
+        self.navigationController?.pushViewController(detailVC, animated: true)
     }
 }
-
 extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         viewData.count

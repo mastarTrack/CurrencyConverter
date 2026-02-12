@@ -6,6 +6,9 @@
 //
 
 //TODO: Level 1. Alert 표시
+//TODO: ViewModel 파일 만들기, //VC, VM, M
+//VC: View update, Delegate (Model을 알면 안됨)
+//VM: Model 데이터 가공, 로직 처리
 
 import UIKit
 import Alamofire

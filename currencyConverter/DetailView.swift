@@ -8,20 +8,27 @@
 import UIKit
 import SnapKit
 
+protocol DetailViewDelegate: AnyObject {
+    func didTapConvertButton()
+}
+
 class DetailView: UIView {
+    
+    weak var delegate: DetailViewDelegate?
     
     private let currencyLabel = UILabel()
     private let countryLabel = UILabel()
     private let labelStackView = UIStackView()
     
-    private let amountTextField = UITextField()
+    let amountTextField = UITextField()
     private let convertButton = UIButton()
-    private let resultLabel = UILabel()
+    let resultLabel = UILabel()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         setAttributes()
         setLayout()
+        setAction()
     }
     
     required init?(coder: NSCoder) {
@@ -87,9 +94,21 @@ extension DetailView {
         }
     }
 }
+
 extension DetailView {
     func config(code: String) {
         self.currencyLabel.text = code
         self.countryLabel.text = Mapper.getName(code: code)
+    }
+}
+
+extension DetailView {
+    private func setAction() {
+        convertButton.addTarget(self, action: #selector(convertButtonTapped), for: .touchUpInside)
+    }
+    
+    @objc
+    private func convertButtonTapped() {
+        delegate?.didTapConvertButton()
     }
 }

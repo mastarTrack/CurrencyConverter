@@ -67,7 +67,7 @@ extension TableViewCell {
 extension TableViewCell {
     func config(code: String, rate: Double) {
         currencyLabel.text = code
-        countryLabel.text = ""
+        countryLabel.text = Mapper.getName(code: code)
         rateLabel.text = String(format: "%.4f", rate)
     }
 }

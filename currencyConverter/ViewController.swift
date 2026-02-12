@@ -46,6 +46,7 @@ extension ViewController: UITableViewDelegate {
         self.navigationController?.pushViewController(DetailViewController(), animated: true)
     }
 }
+
 extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         viewData.count

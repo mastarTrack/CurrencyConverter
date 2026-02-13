@@ -9,10 +9,17 @@ import UIKit
 
 class CalculatorViewController: UIViewController {
     
-    var code: String = ""
-    var rate: Double = 0.0
-    
     private let calculatorView = CalculatorView()
+    private let viewModel: CalculatorViewModel
+    
+    init(viewModel: CalculatorViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func loadView() {
         self.view = calculatorView
@@ -20,8 +27,21 @@ class CalculatorViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        calculatorView.config(code: code)
+        
+        updateUI()
+        calculatorView.config(code: viewModel.item.code)
         calculatorView.delegate = self
+    }
+}
+
+extension CalculatorViewController {
+    private func updateUI() {
+        viewModel.updateData = { [weak self] result in
+            self?.calculatorView.resultLabel.text = result
+        }
+        viewModel.showError = { [weak self] error in
+            self?.showAlert(message: error)
+        }
     }
 }
 
@@ -36,17 +56,6 @@ extension CalculatorViewController {
 
 extension CalculatorViewController: CalculatorViewDelegate {
     func didTapConvertButton() {
-        let inputText = calculatorView.amountTextField.text ?? ""
-        if inputText.isEmpty {
-            showAlert(message: "금액을 입력해주세요.")
-            return
-        }
-        guard let amount = Double(inputText) else {
-            showAlert(message: "금액을 숫자로 입력해주세요")
-            return
-        }
-        let convertedValue = amount * rate
-        let exchangeResult = String(format: "%.2f", convertedValue, code)
-        calculatorView.resultLabel.text = "$\(amount) : \(exchangeResult) \(code)"
+        viewModel.inputText(inputText: calculatorView.amountTextField.text)
     }
 }

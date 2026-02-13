@@ -27,9 +27,9 @@ class ExchangeRateViewController: UIViewController {
 
 extension ExchangeRateViewController {
     private func updateUI() {
-        viewModel.updateData = {
+        viewModel.updateData = { [weak self] in
             DispatchQueue.main.async {
-                self.exchangeView.tableView.reloadData()
+                self?.exchangeView.tableView.reloadData()
             }
         }
     }
@@ -49,10 +49,10 @@ extension ExchangeRateViewController {
 extension ExchangeRateViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        let calculatorVC = CalculatorViewController()
         let item = viewModel.getItem(index: indexPath.row)
-        calculatorVC.code = item.code
-        calculatorVC.rate = item.rate
+        
+        let calculatorVM = CalculatorViewModel(item: item)
+        let calculatorVC = CalculatorViewController(viewModel: calculatorVM)
         
         self.navigationController?.pushViewController(calculatorVC, animated: true)
     }

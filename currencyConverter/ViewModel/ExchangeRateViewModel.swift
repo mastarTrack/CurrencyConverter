@@ -60,8 +60,9 @@ class ExchangeRateViewModel {
             viewData = allData
         } else {
             viewData = allData.filter { item in
-                let countryName = Mapper.getName(code: item.code)
-                return item.code.uppercased().contains(searchText.uppercased()) || countryName.contains(searchText)
+                let isCodeEqual = item.code.uppercased().contains(searchText.uppercased())
+                let isCountryEqaul = item.getCountry(code: item.code).contains(searchText)
+                return isCodeEqual || isCountryEqaul
             }
         }
     }

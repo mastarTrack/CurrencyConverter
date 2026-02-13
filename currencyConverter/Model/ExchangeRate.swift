@@ -11,7 +11,7 @@ struct ExchangeRate {
     let code: String
     let rate: Double
     
-    func getCountry() -> String {
+    func getCountry(code: String) -> String {
         return Mapper.getName(code: code)
     }
 }

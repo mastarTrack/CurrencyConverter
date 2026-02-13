@@ -28,6 +28,10 @@ class CalculatorViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.title = "환율 계산기"
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.largeTitleDisplayMode = .always
+        
         updateUI()
         calculatorView.config(code: viewModel.item.code)
         calculatorView.delegate = self

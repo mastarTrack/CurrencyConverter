@@ -19,6 +19,10 @@ class ExchangeRateViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.title = "환율 정보"
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.largeTitleDisplayMode = .always
+        
         setDelegate()
         updateUI()
         viewModel.getCurrencyData()

@@ -15,9 +15,8 @@ import Alamofire
 
 class ExchangeRateViewController: UIViewController {
     
-//    private var dataSource: [(code: String, rate: Double)] = []
-    private var allData: [(code: String, rate: Double)] = []
-    private var viewData: [(code: String, rate: Double)] = []
+    private var allData: [ExchangeRate] = []
+    private var viewData: [ExchangeRate] = []
     
     private let exchangeView = ExchangeView()
     
@@ -92,7 +91,7 @@ extension ExchangeRateViewController {
             switch result {
             case .success(let result):
                 let sortedRates = result.rates.sorted{ $0.key < $1.key }
-                allData = sortedRates.map { (code: $0.key, rate: $0.value) }
+                allData = sortedRates.map { ExchangeRate(code: $0.key, rate: $0.value) }
                 viewData = allData
                 DispatchQueue.main.async {
                     self.exchangeView.tableView.reloadData()

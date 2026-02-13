@@ -7,6 +7,6 @@
 
 import Foundation
 
-class CurrencyResponse: Codable {
+struct CurrencyResponse: Codable {
     let rates: [String: Double]
 }

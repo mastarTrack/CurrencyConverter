@@ -8,7 +8,47 @@ import UIKit
 import SnapKit
 
 final class MainView: UIView {
-
+    private lazy var listView = UICollectionView(frame: .zero, collectionViewLayout: makeCompsitionalLayout())
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        setAttributes()
+        setLayout()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 }
 
+//MARK: initial set
+extension MainView {
+    private func setAttributes() {
+        backgroundColor = .white
+        listView.showsVerticalScrollIndicator = false
+    }
+    
+    private func setLayout() {
+        addSubview(listView)
+        
+        listView.snp.makeConstraints {
+            $0.directionalEdges.equalTo(self.safeAreaLayoutGuide)
+        }
+    }
+}
 
+//MARK: listView
+extension MainView {
+    private func makeCompsitionalLayout() -> UICollectionViewCompositionalLayout {
+        return UICollectionViewCompositionalLayout { sectionIndex, environment in
+            let configuration = UICollectionLayoutListConfiguration(appearance: .plain)
+            let section = NSCollectionLayoutSection.list(using: configuration, layoutEnvironment: environment)
+            return section
+        }
+    }
+    
+    func passListView() -> UICollectionView {
+        return listView
+    }
+}

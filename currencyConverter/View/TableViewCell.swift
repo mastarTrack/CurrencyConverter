@@ -28,6 +28,7 @@ class TableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setAttributes()
         setLayout()
+        setAction()
     }
     
     required init?(coder: NSCoder) {
@@ -81,10 +82,13 @@ extension TableViewCell {
 }
 
 extension TableViewCell {
-    func config(code: String, rate: Double) {
+    func config(code: String, rate: Double, isSelected: Bool) {
         currencyLabel.text = code
         countryLabel.text = Mapper.getName(code: code)
         rateLabel.text = String(format: "%.4f", rate)
+        
+        let image = isSelected ? "star.fill" : "star"
+        starButton.setImage(UIImage(systemName: image), for: .normal)
     }
 }
 

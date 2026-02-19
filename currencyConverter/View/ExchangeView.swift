@@ -26,9 +26,14 @@ class ExchangeView: UIView {
 
 extension ExchangeView {
     private func setAttributes() {
-        self.backgroundColor = .systemBackground
+        self.backgroundColor = .backgroundColor
+        
+        tableView.backgroundColor = .backgroundColor
         
         searchBar.placeholder = "통화 검색"
+        searchBar.searchBarStyle = .minimal
+        searchBar.backgroundColor = .backgroundColor
+        searchBar.searchTextField.backgroundColor = .cellBackgroundColor
         
     }
     private func setLayout() {

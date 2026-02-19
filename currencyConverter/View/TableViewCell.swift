@@ -38,19 +38,24 @@ class TableViewCell: UITableViewCell {
 
 extension TableViewCell {
     private func setAttributes() {
+        
+        self.backgroundColor = .backgroundColor
+        
         currencyLabel.font = .systemFont(ofSize: 16, weight: .medium)
+        currencyLabel.textColor = .textColor
         
         countryLabel.font = .systemFont(ofSize: 14)
-        countryLabel.textColor = .gray
+        countryLabel.textColor = .secondaryTextColor
         
         labelStackView.axis = .vertical
         labelStackView.spacing = 4
         
         rateLabel.font = .systemFont(ofSize: 16)
+        rateLabel.textColor = .textColor
         rateLabel.textAlignment = .right
         
         starButton.setImage(UIImage(systemName: "star"), for: .normal)
-        starButton.tintColor = .systemYellow
+        starButton.tintColor = .favoriteColor
         
     }
     private func setLayout() {

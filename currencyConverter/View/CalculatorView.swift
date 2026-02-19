@@ -38,12 +38,13 @@ class CalculatorView: UIView {
 
 extension CalculatorView {
     private func setAttributes() {
-        self.backgroundColor = .systemBackground
+        self.backgroundColor = .backgroundColor
         
         currencyLabel.font = .systemFont(ofSize: 24, weight: .bold)
+        currencyLabel.textColor = .textColor
         
         countryLabel.font = .systemFont(ofSize: 16)
-        countryLabel.textColor = .gray
+        countryLabel.textColor = .secondaryTextColor
         
         labelStackView.axis = .vertical
         labelStackView.spacing = 4
@@ -53,11 +54,13 @@ extension CalculatorView {
         amountTextField.keyboardType = .decimalPad
         amountTextField.textAlignment = .center
         amountTextField.placeholder = "금액을 입력하세요"
+        amountTextField.textColor = .textColor
+        amountTextField.backgroundColor = .backgroundColor
         
         convertButton.layer.cornerRadius = 8
-        convertButton.backgroundColor = .systemBlue
+        convertButton.backgroundColor = .buttonColor
         convertButton.setTitle("환율 계산", for: .normal)
-        convertButton.setTitleColor(.white, for: .normal)
+        convertButton.setTitleColor(.textColor, for: .normal)
         convertButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         
         resultLabel.text = "계산 결과가 여기에 표시됩니다"

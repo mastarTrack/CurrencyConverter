@@ -28,13 +28,13 @@ class ViewController: UIViewController {
 //MARK: set listView
 extension ViewController {
     private func convertValueToString(_ value: Double) -> String {
-        return String(format: "%4f", value)
+        return String(format: "%.4f", value)
     }
     
     private func makeCollectionViewDiffableDataSource(_ collectionView: UICollectionView) -> UICollectionViewDiffableDataSource<Section, Rate> {
         let listCellRegistration = UICollectionView.CellRegistration<ListViewCell, Rate> { cell, indexPath, rate in
             let value = self.convertValueToString(rate.value)
-            cell.configure(name: rate.name, value: value)
+            cell.configure(code: rate.currencyCode, country: rate.country, rate: value)
         }
         
         let dataSource = UICollectionViewDiffableDataSource<Section, Rate>(collectionView: collectionView) { collectionView, indexPath, rate in
@@ -64,7 +64,7 @@ extension ViewController {
             }
             
             let rates = result.rates.reduce(into: []) {
-                $0.append(Rate(name: $1.key, value: $1.value))
+                $0.append(Rate(currencyCode: $1.key, value: $1.value))
             }
             
             completion(rates)

@@ -8,6 +8,7 @@ import UIKit
 import SnapKit
 
 final class MainView: UIView {
+    private let searchBar = UISearchBar()
     private lazy var listView = UICollectionView(frame: .zero, collectionViewLayout: makeCompsitionalLayout())
     
     override init(frame: CGRect) {
@@ -26,14 +27,24 @@ final class MainView: UIView {
 extension MainView {
     private func setAttributes() {
         backgroundColor = .white
+        searchBar.placeholder = "통화 검색"
+        searchBar.searchTextField.backgroundColor = .systemGray5
+        searchBar.backgroundColor = .red
         listView.showsVerticalScrollIndicator = false
     }
     
     private func setLayout() {
+        addSubview(searchBar)
         addSubview(listView)
         
+        searchBar.snp.makeConstraints {
+            $0.top.equalTo(self.safeAreaLayoutGuide)
+            $0.horizontalEdges.equalToSuperview()
+        }
+        
         listView.snp.makeConstraints {
-            $0.directionalEdges.equalTo(self.safeAreaLayoutGuide)
+            $0.top.equalTo(searchBar.snp.bottom)
+            $0.horizontalEdges.bottom.equalTo(self.safeAreaLayoutGuide)
         }
     }
 }

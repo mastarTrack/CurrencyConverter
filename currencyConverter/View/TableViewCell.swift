@@ -8,7 +8,13 @@
 import UIKit
 import SnapKit
 
+protocol TableViewCellDelegate: AnyObject {
+    func didTapStarButton(cell: TableViewCell)
+}
+
 class TableViewCell: UITableViewCell {
+    
+    weak var delegate: TableViewCellDelegate?
     
     static let id = "TableViewCell"
     
@@ -79,5 +85,16 @@ extension TableViewCell {
         currencyLabel.text = code
         countryLabel.text = Mapper.getName(code: code)
         rateLabel.text = String(format: "%.4f", rate)
+    }
+}
+
+extension TableViewCell {
+    private func setAction() {
+        starButton.addTarget(self, action: #selector(starButtonTapped), for: .touchUpInside)
+    }
+    
+    @objc
+    private func starButtonTapped() {
+        delegate?.didTapStarButton(cell: self)
     }
 }

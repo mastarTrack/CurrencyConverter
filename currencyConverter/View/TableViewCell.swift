@@ -50,7 +50,7 @@ extension TableViewCell {
         rateLabel.textAlignment = .right
         
         starButton.setImage(UIImage(systemName: "star"), for: .normal)
-        starButton.tintColor = .yellow
+        starButton.tintColor = .systemYellow
         
     }
     private func setLayout() {

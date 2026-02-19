@@ -5,10 +5,15 @@
 //  Created by 손영빈 on 2/13/26.
 //
 
+//TODO: FavoriteManager 연결, starButton 클릭시 호출 메서드 생성, 좋아요 기준 정렬 메서드 생성
+
 import Foundation
 import Alamofire
 
 class ExchangeRateViewModel {
+    
+    var favoriteManager: FavoriteManager?
+    var favoriteList: [Favorite] = []
     
     var updateData: (() -> Void)?
     
@@ -49,6 +54,7 @@ class ExchangeRateViewModel {
                 let sortedRates = result.rates.sorted{ $0.key < $1.key }
                 allData = sortedRates.map { ExchangeRate(code: $0.key, rate: $0.value) }
                 viewData = allData
+                sortByFavorite()
             case .failure(let error):
                 print(error)
             }
@@ -65,6 +71,29 @@ class ExchangeRateViewModel {
                 return isCodeEqual || isCountryEqaul
             }
         }
+        sortByFavorite()
     }
     
+    // 좋아요 기준으로 정렬하는 메서드
+    func sortByFavorite() {
+        self.favoriteList = favoriteManager?.fetchFavorites() ?? []
+        let codes = favoriteList.map { $0.code }
+        self.viewData.sort { a, b in
+            let isAFavorite = codes.contains(a.code)
+            let isBFavorite = codes.contains(b.code)
+            if isAFavorite != isBFavorite {
+                return isAFavorite
+            }
+            return a.code < b.code
+        }
+    }
+    
+    func toggleFavorite(code: String) {
+        favoriteManager?.toggleFavorite(code: code)
+        sortByFavorite()
+    }
+    
+    func isFavorite(code: String) -> Bool {
+        return favoriteList.contains { $0.code == code}
+    }
 }

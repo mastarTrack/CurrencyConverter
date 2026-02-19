@@ -16,6 +16,7 @@ class TableViewCell: UITableViewCell {
     let countryLabel = UILabel()
     let labelStackView = UIStackView()
     let rateLabel = UILabel()
+    let starButton = UIButton()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -40,9 +41,13 @@ extension TableViewCell {
         
         rateLabel.font = .systemFont(ofSize: 16)
         rateLabel.textAlignment = .right
+        
+        starButton.setImage(UIImage(systemName: "star"), for: .normal)
+        starButton.tintColor = .yellow
+        
     }
     private func setLayout() {
-        [labelStackView, rateLabel].forEach { contentView.addSubview($0) }
+        [labelStackView, rateLabel, starButton].forEach { contentView.addSubview($0) }
         
         [currencyLabel, countryLabel].forEach { labelStackView.addArrangedSubview($0) }
         
@@ -56,10 +61,15 @@ extension TableViewCell {
             $0.centerY.equalToSuperview()
         }
         rateLabel.snp.makeConstraints {
-            $0.trailing.equalToSuperview().inset(16)
+            $0.trailing.equalTo(starButton.snp.leading).offset(-16)
             $0.centerY.equalToSuperview()
             $0.leading.greaterThanOrEqualTo(labelStackView.snp.trailing).offset(16)
             $0.width.equalTo(120)
+        }
+        starButton.snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(16)
+            $0.centerY.equalToSuperview()
+            $0.size.equalTo(rateLabel.snp.height)
         }
     }
 }

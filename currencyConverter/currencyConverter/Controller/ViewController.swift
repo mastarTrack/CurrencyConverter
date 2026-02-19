@@ -21,7 +21,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        updateListView()
+        setSnapshot()
     }
 }
 
@@ -29,12 +29,6 @@ class ViewController: UIViewController {
 extension ViewController {
     private func convertValueToString(_ value: Double) -> String {
         return String(format: "%4f", value)
-    }
-    
-    private func updateListView() {
-        getData { data in
-            self.setSnapshot(data)
-        }
     }
     
     private func makeCollectionViewDiffableDataSource(_ collectionView: UICollectionView) -> UICollectionViewDiffableDataSource<Section, Rate> {
@@ -50,17 +44,22 @@ extension ViewController {
         return dataSource
     }
     
-    private func setSnapshot(_ data: [Rate]) {
-        var snapShot = NSDiffableDataSourceSnapshot<Section, Rate>()
-        snapShot.appendSections([.main])
-        snapShot.appendItems(data, toSection: .main)
-        dataSource.apply(snapShot)
+    private func setSnapshot() {
+        getData {
+            var snapShot = NSDiffableDataSourceSnapshot<Section, Rate>()
+            snapShot.appendSections([.main])
+            snapShot.appendItems($0, toSection: .main)
+            self.dataSource.apply(snapShot)
+        }
     }
     
     private func getData(completion: @escaping ([Rate]) -> Void) {
         dataService.fetchCurrencyData(currency: "USD") { result in
             guard let result else {
-                print("데이터를 불러올 수 없습니다")
+                let alert = UIAlertController(title: "오류", message: "데이터를 불러올 수 없습니다.", preferredStyle: .alert)
+                let confirm = UIAlertAction(title: "확인", style: .default)
+                alert.addAction(confirm)
+                self.present(alert, animated: true)
                 return
             }
             

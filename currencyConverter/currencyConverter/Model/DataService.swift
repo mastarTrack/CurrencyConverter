@@ -21,7 +21,7 @@ class DataService {
         urlComp?.path.append(currency)
         
         guard let url = urlComp?.url else { return }
-        
+
         fetchData(url: url) { (response: Result<CurrencyResponse, AFError>) in
             switch response {
             case .success(let result):

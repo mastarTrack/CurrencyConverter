@@ -2,32 +2,29 @@ name: Gemini PR Review
 
 on:
   pull_request:
-    types: [opened]   # PR 열릴 때만 실행 (무료 플랜 보호)
+    types: [opened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: write
 
 jobs:
   review:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Gemini Code Review
-        uses: google-gemini/gemini-review-action@v1
+        # @v1 버전 정보를 명시했습니다.
+        uses: mshick/google-gemini-code-review-action@v1
         with:
-          api_key: ${{ secrets.GEMINI_API_KEY }}
-          model: gemini-1.5-pro
-          diff_only: true
-          review_comment_type: summary
-          prompt: |
-            당신은 시니어 iOS 개발자입니다.
-            다음 Swift 코드를 리뷰하세요.
-
-            중점적으로 볼 것:
-            - MVVM 아키텍처 위반 여부
-            - 메모리 릭 (retain cycle, 클로저 캡처)
-            - UIKit / SwiftUI 권장 설계 방식과 구현 관행을 잘 따르고 있는지
-            - async/await 오용
-            - 성능 및 스레드 안정성
-
-            구체적인 개선 방법을 제안하고 제안의 이유를 간단하게 설명하세요.
-            전체 리뷰는 한국어로 작성하세요.
+          api-key: ${{ secrets.GEMINI_API_KEY }}
+          model: "gemini-1.5-pro"
+          rules: |
+            당신은 시니어 iOS 개발자입니다. 다음 Swift 코드를 한국어로 리뷰하세요.
+            1. MVVM 아키텍처 위반 여부
+            2. 메모리 릭 (retain cycle, 클로저 캡처)
+            3. UIKit/SwiftUI 권장 설계 방식
+            4. async/await 오용 및 스레드 안정성
+            구체적인 개선 방법과 이유를 설명하세요.

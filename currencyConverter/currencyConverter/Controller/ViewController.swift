@@ -86,9 +86,7 @@ extension ViewController {
     private func setData() {
         dataService.fetchCurrencyData(currency: "USD") { result in
             guard let result else {
-                let alert = UIAlertController(title: "오류", message: "데이터를 불러올 수 없습니다.", preferredStyle: .alert)
-                let confirm = UIAlertAction(title: "확인", style: .default)
-                alert.addAction(confirm)
+                let alert = UIAlertController(status: .emptyData)
                 self.present(alert, animated: true)
                 return
             }
@@ -104,6 +102,7 @@ extension ViewController {
 }
 
 extension ViewController: UICollectionViewDelegate {
+    // 컬렉션뷰 셀 선택 시 CalculationVC push
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let data = self.data else { return }
         let rate = data[indexPath.row]
@@ -112,6 +111,4 @@ extension ViewController: UICollectionViewDelegate {
         
         collectionView.deselectItem(at: indexPath, animated: true)
     }
-    
-
 }

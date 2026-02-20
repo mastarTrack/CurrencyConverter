@@ -26,13 +26,38 @@ class CalculationView: UIView {
     }
 }
 
+//MARK: configure with data
 extension CalculationView {
     func configure(with data: Rate) {
         currencyLabel.text = data.currencyCode
         countryLabel.text = data.country
     }
+    
+    func updateResultLabel(with text: String) {
+        resultLabel.text = text
+    }
 }
 
+//MARK: set Actions
+extension CalculationView {
+    func setButtonAction(_ action: UIAction) {
+        convertButton.addAction(action, for: .touchUpInside)
+    }
+    
+    func setTextFieldAction(_ action: UIAction) {
+        amountTextField.addAction(action, for: .editingChanged)
+    }
+    
+    func resignTextField() {
+        amountTextField.resignFirstResponder()
+    }
+    
+    func passAmountText() -> String? {
+        return amountTextField.text
+    }
+}
+
+//MARK: initial set
 extension CalculationView {
     private func setAttributes() {
         backgroundColor = .white

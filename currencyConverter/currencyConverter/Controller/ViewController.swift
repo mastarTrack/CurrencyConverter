@@ -21,8 +21,18 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setNavigationController()
         mainView.setSearchBarDelegate(self)
+        mainView.setListViewDelegate(self)
         setData()
+    }
+}
+
+//MARK: navigation controller
+extension ViewController {
+    private func setNavigationController() {
+        self.navigationItem.title = "환율 정보"
+        self.navigationController?.navigationBar.prefersLargeTitles = true
     }
 }
 
@@ -50,6 +60,7 @@ extension ViewController {
         return String(format: "%.4f", value)
     }
     
+    // listView DiffableDataSource 설정
     private func makeCollectionViewDiffableDataSource(_ collectionView: UICollectionView) -> UICollectionViewDiffableDataSource<Section, Rate> {
         let listCellRegistration = UICollectionView.CellRegistration<ListViewCell, Rate> { cell, indexPath, rate in
             let value = self.convertValueToString(rate.value)
@@ -63,6 +74,7 @@ extension ViewController {
         return dataSource
     }
     
+    // 스냅샷 설정
     private func setSnapshot(with data: [Rate]) {
         var snapShot = NSDiffableDataSourceSnapshot<Section, Rate>()
         snapShot.appendSections([.main])
@@ -70,6 +82,7 @@ extension ViewController {
         self.dataSource.apply(snapShot)
     }
     
+    // 초기 데이터 설정
     private func setData() {
         dataService.fetchCurrencyData(currency: "USD") { result in
             guard let result else {
@@ -88,5 +101,17 @@ extension ViewController {
             self.setSnapshot(with: rates)
         }
     }
+}
+
+extension ViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let data = self.data else { return }
+        let rate = data[indexPath.row]
+        
+        self.navigationController?.pushViewController(CalculationViewController(data: rate), animated: true)
+        
+        collectionView.deselectItem(at: indexPath, animated: true)
+    }
+    
 
 }

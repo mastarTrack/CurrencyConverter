@@ -75,6 +75,10 @@ extension MainView {
     func setSearchBarDelegate(_ delegate: UISearchBarDelegate) {
         searchBar.delegate = delegate
     }
+    
+    func setListViewDelegate(_ delegate: UICollectionViewDelegate) {
+        listView.delegate = delegate
+    }
 }
 
 //MARK: listView

@@ -12,21 +12,49 @@ jobs:
   review:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # 전체 변경 사항을 읽기 위해 필요
+          fetch-depth: 2
 
-      - name: Gemini Code Review
-        uses: anc95/automated-code-review-action@v0.1.1 # 실존하는 버전
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          # 반드시 아래 변수명(MODEL, GOOGLE_API_KEY)을 지켜야 합니다.
-          provider: google
-          model: gemini-1.5-pro
-          google_api_key: ${{ secrets.GEMINI_API_KEY }}
-          language: Korean
-          prompt: |
-            당신은 시니어 iOS 개발자입니다. 다음 사항을 중점적으로 리뷰하세요:
-            - MVVM 아키텍처 위반 및 메모리 릭 (retain cycle)
-            - UIKit/SwiftUI 권장 설계 및 async/await 사용법
-            - 성능 및 스레드 안정성
+          python-version: '3.10'
+
+      - name: Install Google AI SDK
+        run: pip install -q -U google-generativeai
+
+      - name: Gemini Review
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          python - <<EOF
+          import os
+          import google.generativeai as genai
+          import subprocess
+
+          # 1. Gemini 설정
+          genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+          model = genai.GenerativeModel('gemini-1.5-pro')
+
+          # 2. 코드 변경점(diff) 추출
+          diff = subprocess.check_output(["git", "diff", "HEAD^", "HEAD"]).decode("utf-8")
+
+          # 3. 프롬프트 구성
+          prompt = f"""당신은 시니어 iOS 개발자입니다. 다음 Swift 코드 변경점을 리뷰해 주세요.
+          중점 사항: MVVM 준수, 메모리 릭(retain cycle), SwiftUI/UIKit 관행, async/await 스레드 안전성.
+          개선 방법과 이유를 한국어로 상세히 작성해 주세요.
+
+          Code Diff:
+          {diff}"""
+
+          # 4. 리뷰 생성 및 댓글 달기
+          response = model.generate_content(prompt)
+          with open("comment.txt", "w") as f:
+              f.write(response.text)
+          
+          # GitHub CLI를 사용하여 PR에 댓글 게시
+          subprocess.run(["gh", "pr", "comment", os.getenv("PR_NUMBER"), "--body-file", "comment.txt"])
+          EOF

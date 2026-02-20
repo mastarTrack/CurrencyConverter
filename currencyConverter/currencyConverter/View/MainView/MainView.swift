@@ -10,7 +10,7 @@ import SnapKit
 final class MainView: UIView {
     private let searchBar = UISearchBar()
     private lazy var listView = UICollectionView(frame: .zero, collectionViewLayout: makeCompsitionalLayout())
-    private let noResultView = UIView()
+    private let emptyResultView = UIView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -36,8 +36,8 @@ extension MainView {
         
         listView.showsVerticalScrollIndicator = false
         
-        noResultView.backgroundColor = .white
-        noResultView.isHidden = true
+        emptyResultView.backgroundColor = .white
+        emptyResultView.isHidden = true
     }
     
     private func setLayout() {
@@ -55,16 +55,16 @@ extension MainView {
         }
         
         
-        let noResultLabel = makeNoResultLabel()
-        addSubview(noResultView)
-        noResultView.addSubview(noResultLabel)
+        let emptyResultLabel = makeEmptyResultLabel()
+        addSubview(emptyResultView)
+        emptyResultView.addSubview(emptyResultLabel)
         
-        noResultView.snp.makeConstraints {
+        emptyResultView.snp.makeConstraints {
             $0.top.equalTo(searchBar.snp.bottom)
             $0.horizontalEdges.bottom.equalTo(self.safeAreaLayoutGuide)
         }
         
-        noResultLabel.snp.makeConstraints {
+        emptyResultLabel.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
     }
@@ -98,7 +98,7 @@ extension MainView {
 
 //MARK: noSearchResultView
 extension MainView {
-    private func makeNoResultLabel() -> UILabel {
+    private func makeEmptyResultLabel() -> UILabel {
         let label = UILabel()
         label.text = "검색 결과 없음"
         label.font = .systemFont(ofSize: 16, weight: .medium)
@@ -108,10 +108,10 @@ extension MainView {
     
     func showNoResultView(_ show: Bool) {
         if show {
-            noResultView.isHidden = false
+            emptyResultView.isHidden = false
             listView.isHidden = true
         } else {
-            noResultView.isHidden = true
+            emptyResultView.isHidden = true
             listView.isHidden = false
         }
     }

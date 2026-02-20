@@ -8,9 +8,9 @@ import UIKit
 import SnapKit
 
 final class ListViewCell: UICollectionViewListCell {
-    let currencyLabel = UILabel()
-    let countryLabel = UILabel()
-    let rateLabel = UILabel()
+    private let currencyLabel = UILabel()
+    private let countryLabel = UILabel()
+    private let rateLabel = UILabel()
     
     override init(frame: CGRect) {
         super.init(frame: frame)

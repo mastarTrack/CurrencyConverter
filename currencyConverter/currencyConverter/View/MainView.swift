@@ -27,9 +27,12 @@ final class MainView: UIView {
 extension MainView {
     private func setAttributes() {
         backgroundColor = .white
+        
         searchBar.placeholder = "통화 검색"
         searchBar.searchTextField.backgroundColor = .systemGray5
-        searchBar.backgroundColor = .red
+        searchBar.backgroundColor = .white
+        searchBar.searchBarStyle = .minimal
+        
         listView.showsVerticalScrollIndicator = false
     }
     

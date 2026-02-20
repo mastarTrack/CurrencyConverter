@@ -49,7 +49,7 @@ extension ListViewCell {
         contentView.addSubview(rateLabel)
         
         contentView.snp.makeConstraints{
-            $0.directionalEdges.equalToSuperview()
+            $0.top.horizontalEdges.equalToSuperview()
             $0.height.equalTo(60)
         }
         

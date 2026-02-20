@@ -10,6 +10,7 @@ import SnapKit
 final class MainView: UIView {
     private let searchBar = UISearchBar()
     private lazy var listView = UICollectionView(frame: .zero, collectionViewLayout: makeCompsitionalLayout())
+    private let noResultView = UIView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -34,6 +35,9 @@ extension MainView {
         searchBar.searchBarStyle = .minimal
         
         listView.showsVerticalScrollIndicator = false
+        
+        noResultView.backgroundColor = .white
+        noResultView.isHidden = true
     }
     
     private func setLayout() {
@@ -49,6 +53,27 @@ extension MainView {
             $0.top.equalTo(searchBar.snp.bottom)
             $0.horizontalEdges.bottom.equalTo(self.safeAreaLayoutGuide)
         }
+        
+        
+        let noResultLabel = makeNoResultLabel()
+        addSubview(noResultView)
+        noResultView.addSubview(noResultLabel)
+        
+        noResultView.snp.makeConstraints {
+            $0.top.equalTo(searchBar.snp.bottom)
+            $0.horizontalEdges.bottom.equalTo(self.safeAreaLayoutGuide)
+        }
+        
+        noResultLabel.snp.makeConstraints {
+            $0.center.equalToSuperview()
+        }
+    }
+}
+
+//MARK: searchBar
+extension MainView {
+    func setSearchBarDelegate(_ delegate: UISearchBarDelegate) {
+        searchBar.delegate = delegate
     }
 }
 
@@ -64,5 +89,26 @@ extension MainView {
     
     func passListView() -> UICollectionView {
         return listView
+    }
+}
+
+//MARK: noSearchResultView
+extension MainView {
+    private func makeNoResultLabel() -> UILabel {
+        let label = UILabel()
+        label.text = "검색 결과 없음"
+        label.font = .systemFont(ofSize: 16, weight: .medium)
+        label.textColor = .systemGray3
+        return label
+    }
+    
+    func showNoResultView(_ show: Bool) {
+        if show {
+            noResultView.isHidden = false
+            listView.isHidden = true
+        } else {
+            noResultView.isHidden = true
+            listView.isHidden = false
+        }
     }
 }

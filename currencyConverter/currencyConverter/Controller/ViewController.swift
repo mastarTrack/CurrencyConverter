@@ -13,6 +13,7 @@ class ViewController: UIViewController {
     private lazy var dataSource = makeCollectionViewDiffableDataSource(mainView.passListView())
     
     private let dataService = DataService()
+    private var data: [Rate]?
     
     override func loadView() {
         self.view = mainView
@@ -20,8 +21,26 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        mainView.setSearchBarDelegate(self)
+        setData()
+    }
+}
 
-        setSnapshot()
+//MARK: searchBar Delegate
+extension ViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        guard let data else { return }
+        
+        if searchText.isEmpty { // 검색어가 비었을 경우
+            mainView.showNoResultView(false)
+            setSnapshot(with: data)
+        } else {
+            let searchedData = data.filter { $0.currencyCode.contains(searchText.uppercased()) || $0.country.contains(searchText) }
+
+            // 검색 결과가 없을 경우 noResultView 노출
+            searchedData.isEmpty ? mainView.showNoResultView(true) : mainView.showNoResultView(false)
+            setSnapshot(with: searchedData)
+        }
     }
 }
 
@@ -44,16 +63,14 @@ extension ViewController {
         return dataSource
     }
     
-    private func setSnapshot() {
-        getData {
-            var snapShot = NSDiffableDataSourceSnapshot<Section, Rate>()
-            snapShot.appendSections([.main])
-            snapShot.appendItems($0, toSection: .main)
-            self.dataSource.apply(snapShot)
-        }
+    private func setSnapshot(with data: [Rate]) {
+        var snapShot = NSDiffableDataSourceSnapshot<Section, Rate>()
+        snapShot.appendSections([.main])
+        snapShot.appendItems(data, toSection: .main)
+        self.dataSource.apply(snapShot)
     }
     
-    private func getData(completion: @escaping ([Rate]) -> Void) {
+    private func setData() {
         dataService.fetchCurrencyData(currency: "USD") { result in
             guard let result else {
                 let alert = UIAlertController(title: "오류", message: "데이터를 불러올 수 없습니다.", preferredStyle: .alert)
@@ -67,7 +84,9 @@ extension ViewController {
                 $0.append(Rate(currencyCode: $1.key, value: $1.value))
             }
             
-            completion(rates)
+            self.data = rates
+            self.setSnapshot(with: rates)
         }
     }
+
 }

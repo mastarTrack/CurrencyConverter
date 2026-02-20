@@ -62,7 +62,8 @@ extension CalculationViewController {
                 return
             }
             
-            self.calculationView.updateResultLabel(with: "\(amount)")
+            let result = self.resultString(from: amount)
+            self.calculationView.updateResultLabel(with: result)
         }
         
         calculationView.setButtonAction(resignTextField)
@@ -76,5 +77,18 @@ extension CalculationViewController {
         }
         
         calculationView.setTextFieldAction(save)
+    }
+}
+
+//MARK: logic
+extension CalculationViewController {
+    private func calculate(with amount: Double) -> Double {
+        return amount * data.value
+    }
+    
+    private func resultString(from amount: Double) -> String {
+        let result = calculate(with: amount)
+        
+        return "$\(String(format: "%.2f", amount)) → \(String(format: "%.2f", result)) \(data.currencyCode)"
     }
 }

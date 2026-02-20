@@ -16,7 +16,7 @@ final class ViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         
-        currencyViewUpdate()
+        bindViewModel()
         configure()
         
         currencyViewModel.fetchCurrencyData()
@@ -32,25 +32,28 @@ final class ViewController: UIViewController {
         }
     }
     
-    private func currencyViewUpdate() {
+    private func bindViewModel() {
         currencyViewModel.upDate = { [weak self] items in
             guard let self else { return }
             self.currencyView.update(newItems: items)
         }
+        
+        currencyViewModel.onError = { [weak self] message in
+            self?.showErrorAlert(message: message)
+        }
     }
     
-    private func showErrorAlert() {
+    private func showErrorAlert(message: String) {
         let alert = UIAlertController(
             title: "오류",
-            message: "데이터를 불러올 수 없습니다",
+            message: message,
             preferredStyle: .alert
         )
 
         let okAction = UIAlertAction(title: "확인", style: .default)
         alert.addAction(okAction)
-
+        
         present(alert, animated: true)
     }
-    
 }
 

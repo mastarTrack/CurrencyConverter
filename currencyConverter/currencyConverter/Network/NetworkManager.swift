@@ -9,7 +9,7 @@ import Foundation
 class NetworkManager: Networking {
     func makeRequest(with selectedCountry: String) async throws -> ExchangeRateResponse {
         var components = URLComponents()
-        components.scheme = "ht1tps"
+        components.scheme = "https"
         components.host = "open.er-api.com"
         components.path = "/v6/latest/\(selectedCountry)"
         

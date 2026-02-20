@@ -16,57 +16,45 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12' # 최신 권장 버전으로 업그레이드
-
-      - name: Install dependencies
-        run: pip install -q -U google-genai # 최신 패키지 설치
-
-      - name: Gemini Review
+      - name: Gemini Code Review
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          python - <<EOF
-          import os
-          import subprocess
-          import sys
-          from google import genai
+          # 1. 변경 사항(diff) 추출
+          DIFF=$(git diff ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }})
+          
+          if [ -z "$DIFF" ]; then
+            echo "변경 사항이 없습니다."
+            exit 0
+          fi
 
-          try:
-              # 1. 새로운 클라이언트 설정
-              api_key = os.getenv("GEMINI_API_KEY")
-              client = genai.Client(api_key=api_key)
-              
-              # 2. Diff 추출
-              base_sha = "${{ github.event.pull_request.base.sha }}"
-              head_sha = "${{ github.event.pull_request.head.sha }}"
-              diff = subprocess.check_output(["git", "diff", base_sha, head_sha]).decode("utf-8")
+          # 2. 프롬프트 구성 (JSON 형식 준수)
+          # 무료 등급은 데이터 전송량이 제한적이므로 프롬프트를 핵심만 전달합니다.
+          PROMPT="당신은 시니어 iOS 개발자입니다. 다음 Swift 코드의 변경점을 한국어로 리뷰하고, MVVM/메모리릭/SwiftUI 관행 위주로 개선안을 제안하세요. 코드: $DIFF"
 
-              if not diff:
-                  print("변경 사항이 없습니다.")
-                  sys.exit(0)
+          # 3. API 호출 (curl 사용 - 라이브러리 의존성 제거)
+          # 모델명 뒤에 ?key= 형식을 사용하는 것이 무료 등급에서 가장 안정적입니다.
+          RESPONSE=$(curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"contents\": [{
+                \"parts\": [{
+                  \"text\": \"$(echo "$PROMPT" | sed 's/"/\\"/g' | tr -d '\n')\"
+                }]
+              }]
+            }")
 
-              # 3. 새로운 SDK 방식으로 리뷰 생성
-              prompt = f"시니어 iOS 개발자로서 다음 Swift 코드 변경점을 한국어로 리뷰하세요. MVVM, 메모리릭, async/await 위주로 확인하고 개선 방안을 제안하세요:\n\n{diff}"
-              
-              response = client.models.generate_content(
-                  model="gemini-1.5-flash", # 또는 "gemini-1.5-pro"
-                  contents=prompt
-              )
-              
-              # 4. 결과 저장 및 댓글 달기
-              review_text = response.text
-              with open("comment.txt", "w") as f:
-                  f.write(review_text)
-              
-              subprocess.run(["gh", "pr", "comment", os.getenv("PR_NUMBER"), "--body-file", "comment.txt"], check=True)
-              print("리뷰 성공!")
+          # 4. 결과 추출 및 댓글 달기
+          # API 응답에서 텍스트만 파싱 (jq 사용)
+          REVIEW_TEXT=$(echo "$RESPONSE" | jq -r '.candidates[0].content.parts[0].text // "리뷰 생성 실패: API 응답을 확인하세요."')
 
-          except Exception as e:
-              print(f"최종 에러 발생: {e}")
-              sys.exit(1)
-          EOF
+          if [ "$REVIEW_TEXT" == "null" ] || [ -z "$REVIEW_TEXT" ]; then
+            echo "API 응답 오류: $RESPONSE"
+            exit 1
+          fi
+
+          # 5. PR에 댓글 남기기
+          echo "$REVIEW_TEXT" > comment.txt
+          gh pr comment $PR_NUMBER --body-file comment.txt

@@ -20,8 +20,10 @@ class ExchangeRateViewController: UIViewController {
         super.viewDidLoad()
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        let manager = FavoriteManager(container: appDelegate.persistentContainer)
-        viewModel.favoriteManager = manager
+        let favoriteManager = FavoriteManager(container: appDelegate.persistentContainer)
+        let historyManager = HistoryManager(container: appDelegate.persistentContainer)
+        viewModel.favoriteManager = favoriteManager
+        viewModel.historyManager = historyManager
         
         self.title = "환율 정보"
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -64,6 +66,10 @@ extension ExchangeRateViewController: UITableViewDelegate {
         
         self.navigationController?.pushViewController(calculatorVC, animated: true)
     }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        60
+    }
 }
 extension ExchangeRateViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -83,7 +89,7 @@ extension ExchangeRateViewController: UITableViewDataSource {
         let item = viewModel.getItem(index: indexPath.row)
         let isFavorite = viewModel.isFavorite(code: item.code)
         cell.delegate = self
-        cell.config(code: item.code, rate: item.rate, isSelected: isFavorite) //테스트용 isSelected -> true 선언
+        cell.config(item: item, isSelected: isFavorite)
         return cell
     }
 }

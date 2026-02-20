@@ -12,6 +12,8 @@ import Alamofire
 
 class ExchangeRateViewModel {
     
+    var historyManager: HistoryManager?
+    
     var favoriteManager: FavoriteManager?
     var favoriteList: [Favorite] = []
     
@@ -52,9 +54,23 @@ class ExchangeRateViewModel {
             switch result {
             case .success(let result):
                 let sortedRates = result.rates.sorted{ $0.key < $1.key }
-                allData = sortedRates.map { ExchangeRate(code: $0.key, rate: $0.value) }
+                let currentUnix = result.unix
+                allData = sortedRates.map { code, rate in
+                    let lastData = self.historyManager?.fetchData(code: code)
+                    var exchangeRate = ExchangeRate(code: code, rate: rate)
+                    if let last = lastData, last.unix != Int64(currentUnix) {
+                        let diff = rate - last.rate
+                        if diff > 0.01 {
+                            exchangeRate.status = .up
+                        } else if diff < -0.01 {
+                            exchangeRate.status = .down
+                        }
+                    }
+                    return exchangeRate
+                }
                 viewData = allData
                 sortByFavorite()
+                self.historyManager?.saveData(rates: result.rates, unix: Int64(currentUnix))
             case .failure(let error):
                 print(error)
             }

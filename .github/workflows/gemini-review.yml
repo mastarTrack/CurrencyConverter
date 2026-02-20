@@ -14,47 +14,62 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      - name: Install Google AI SDK
+      - name: Install dependencies
         run: pip install -q -U google-generativeai
 
       - name: Gemini Review
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           python - <<EOF
           import os
           import google.generativeai as genai
           import subprocess
+          import sys
 
-          # 1. Gemini 설정
-          genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-          model = genai.GenerativeModel('gemini-1.5-pro')
+          try:
+              # 1. API 키 확인
+              api_key = os.getenv("GEMINI_API_KEY")
+              if not api_key:
+                  print("Error: GEMINI_API_KEY is missing in Secrets.")
+                  sys.exit(1)
 
-          # 2. 코드 변경점(diff) 추출
-          diff = subprocess.check_output(["git", "diff", "HEAD^", "HEAD"]).decode("utf-8")
+              genai.configure(api_key=api_key)
+              
+              # 2. 모델 설정 (가장 에러 없는 flash 모델로 우선 시도)
+              model = genai.GenerativeModel('gemini-1.5-flash')
 
-          # 3. 프롬프트 구성
-          prompt = f"""당신은 시니어 iOS 개발자입니다. 다음 Swift 코드 변경점을 리뷰해 주세요.
-          중점 사항: MVVM 준수, 메모리 릭(retain cycle), SwiftUI/UIKit 관행, async/await 스레드 안전성.
-          개선 방법과 이유를 한국어로 상세히 작성해 주세요.
+              # 3. Diff 추출 (가장 안전한 방식)
+              # PR의 base와 head 사이의 차이점을 가져옴
+              base_sha = "${{ github.event.pull_request.base.sha }}"
+              head_sha = "${{ github.event.pull_request.head.sha }}"
+              diff = subprocess.check_output(["git", "diff", base_sha, head_sha]).decode("utf-8")
 
-          Code Diff:
-          {diff}"""
+              if not diff:
+                  print("No code changes to review.")
+                  sys.exit(0)
 
-          # 4. 리뷰 생성 및 댓글 달기
-          response = model.generate_content(prompt)
-          with open("comment.txt", "w") as f:
-              f.write(response.text)
-          
-          # GitHub CLI를 사용하여 PR에 댓글 게시
-          subprocess.run(["gh", "pr", "comment", os.getenv("PR_NUMBER"), "--body-file", "comment.txt"])
+              # 4. 리뷰 생성
+              prompt = f"iOS 시니어 개발자로서 다음 코드를 한국어로 리뷰해줘:\n\n{diff}"
+              response = model.generate_content(prompt)
+              
+              # 5. 댓글 작성
+              with open("comment.txt", "w") as f:
+                  f.write(response.text)
+              
+              subprocess.run(["gh", "pr", "comment", os.getenv("PR_NUMBER"), "--body-file", "comment.txt"], check=True)
+              print("Success!")
+
+          except Exception as e:
+              print(f"Final Error: {e}")
+              sys.exit(1)
           EOF

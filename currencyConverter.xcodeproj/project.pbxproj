@@ -13,6 +13,8 @@
 		8A52F1582F4719BF0066189F /* Favorite+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A52F1552F4719BF0066189F /* Favorite+CoreDataClass.swift */; };
 		8A52F2732F480F550066189F /* History+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A52F2712F480F550066189F /* History+CoreDataClass.swift */; };
 		8A52F2742F480F550066189F /* History+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A52F2722F480F550066189F /* History+CoreDataProperties.swift */; };
+		8A52F2DB2F4873BA0066189F /* Information+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A52F2DA2F4873BA0066189F /* Information+CoreDataProperties.swift */; };
+		8A52F2DC2F4873BA0066189F /* Information+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A52F2D92F4873BA0066189F /* Information+CoreDataClass.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,6 +23,8 @@
 		8A52F1562F4719BF0066189F /* Favorite+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Favorite+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		8A52F2712F480F550066189F /* History+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "History+CoreDataClass.swift"; sourceTree = "<group>"; };
 		8A52F2722F480F550066189F /* History+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "History+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		8A52F2D92F4873BA0066189F /* Information+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Information+CoreDataClass.swift"; sourceTree = "<group>"; };
+		8A52F2DA2F4873BA0066189F /* Information+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Information+CoreDataProperties.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -60,6 +64,8 @@
 		8A52E9C32F3D960F0066189F = {
 			isa = PBXGroup;
 			children = (
+				8A52F2D92F4873BA0066189F /* Information+CoreDataClass.swift */,
+				8A52F2DA2F4873BA0066189F /* Information+CoreDataProperties.swift */,
 				8A52F2712F480F550066189F /* History+CoreDataClass.swift */,
 				8A52F2722F480F550066189F /* History+CoreDataProperties.swift */,
 				8A52F1552F4719BF0066189F /* Favorite+CoreDataClass.swift */,
@@ -160,6 +166,8 @@
 				8A52F1572F4719BF0066189F /* Favorite+CoreDataProperties.swift in Sources */,
 				8A52F1582F4719BF0066189F /* Favorite+CoreDataClass.swift in Sources */,
 				8A52F2732F480F550066189F /* History+CoreDataClass.swift in Sources */,
+				8A52F2DB2F4873BA0066189F /* Information+CoreDataProperties.swift in Sources */,
+				8A52F2DC2F4873BA0066189F /* Information+CoreDataClass.swift in Sources */,
 				8A52F2742F480F550066189F /* History+CoreDataProperties.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

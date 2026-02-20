@@ -13,7 +13,8 @@ class ViewController: UIViewController {
     private lazy var dataSource = makeCollectionViewDiffableDataSource(mainView.passListView())
     
     private let dataService = DataService()
-    private var data: [Rate]?
+    private var originData: [Rate]? // 원본 데이터
+    private var showingData: [Rate]? // 컬렉션뷰에 표시중인 데이터
     
     override func loadView() {
         self.view = mainView
@@ -39,18 +40,21 @@ extension ViewController {
 //MARK: searchBar Delegate
 extension ViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        guard let data else { return }
+        guard let originData else { return }
         
         if searchText.isEmpty { // 검색어가 비었을 경우
             mainView.showNoResultView(false)
-            setSnapshot(with: data)
-        } else {
-            let searchedData = data.filter { $0.currencyCode.contains(searchText.uppercased()) || $0.country.contains(searchText) }
-
+            showingData = originData
+        } else { // 검색어가 있을 경우
+            let searchedData = originData.filter { $0.currencyCode.contains(searchText.uppercased()) || $0.country.contains(searchText) }
+            showingData = searchedData
+            
             // 검색 결과가 없을 경우 noResultView 노출
             searchedData.isEmpty ? mainView.showNoResultView(true) : mainView.showNoResultView(false)
-            setSnapshot(with: searchedData)
         }
+        
+        guard let showingData else { return }
+        setSnapshot(with: showingData)
     }
 }
 
@@ -95,7 +99,8 @@ extension ViewController {
                 $0.append(Rate(currencyCode: $1.key, value: $1.value))
             }
             
-            self.data = rates
+            self.originData = rates
+            self.showingData = self.originData
             self.setSnapshot(with: rates)
         }
     }
@@ -104,11 +109,10 @@ extension ViewController {
 extension ViewController: UICollectionViewDelegate {
     // 컬렉션뷰 셀 선택 시 CalculationVC push
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let data = self.data else { return }
+        guard let data = self.showingData else { return }
         let rate = data[indexPath.row]
         
         self.navigationController?.pushViewController(CalculationViewController(data: rate), animated: true)
-        
         collectionView.deselectItem(at: indexPath, animated: true)
     }
 }

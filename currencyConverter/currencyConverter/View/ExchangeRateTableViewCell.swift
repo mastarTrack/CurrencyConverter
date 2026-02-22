@@ -108,10 +108,13 @@ class ExchangeRateTableViewCell: UITableViewCell {
 
     
     // MARK: -- text 데이터 대입 메서드
-    func configure(code: String, rate: String, country: String) {
+    func configure(code: String, rate: String, country: String, isFavorite: Bool) {
         codeLabel.text = code
         currencyLabel.text = rate
         countryLabel.text = country
+        
+        let imageName = isFavorite ? "star.fill" : "star"
+        favoriteButton.setImage(UIImage(systemName: imageName), for: .normal)
     }
 }
 

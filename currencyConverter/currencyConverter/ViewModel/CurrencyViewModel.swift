@@ -12,6 +12,7 @@ class CurrencyViewModel {
     var rates = [String: Double]()
     var upDate: (([Item]) -> Void)?
     var onError: ((String) -> Void)?
+    var allItems = [Item]()
     
     func fetchCurrencyData() {
         Task {
@@ -24,18 +25,31 @@ class CurrencyViewModel {
                     return
                 }
                 
-                let items = result.rates.map {(currency, rate) in
+                allItems = result.rates.map {(currency, rate) in
                     Item(
                         currency: currency,
+                        country: result.currencyCountryMap[currency] ?? "unknow",
                         rate: String(format: "%.4f", rate))
                 }
                 
-                self.upDate?(items)
+                self.upDate?(allItems)
                 
             } catch {
                 onError?("데이터를 불러올 수 없습니다")
             }
         }
+    }
+    
+    func filterCurrency(with keyword: String) {
+        if keyword.isEmpty {
+            upDate?(allItems)
+            return
+        }
         
+        let filteredItems = allItems.filter {
+            $0.currency.lowercased().contains(keyword.lowercased())
+        }
+        
+        upDate?(filteredItems)
     }
 }

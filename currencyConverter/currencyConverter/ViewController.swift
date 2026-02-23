@@ -17,19 +17,27 @@ final class ViewController: UIViewController {
         view.backgroundColor = .white
         
         bindViewModel()
-        configure()
+        configureCurrencyView()
+        configureSearchBar()
         
         currencyViewModel.fetchCurrencyData()
     }
     
-    private func configure() {
+    private func configureCurrencyView() {
         view.addSubview(currencyView)
         
         currencyView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(10)
-            $0.leading.trailing.bottom.equalToSuperview()
-            
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
         }
+    }
+    
+    private func configureSearchBar() {
+        let searchBar = UISearchBar()
+        searchBar.placeholder = "통화 검색"
+        searchBar.delegate = self
+        
+        navigationItem.titleView = searchBar
     }
     
     private func bindViewModel() {
@@ -57,3 +65,9 @@ final class ViewController: UIViewController {
     }
 }
 
+extension ViewController: UISearchBarDelegate {
+
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        currencyViewModel.filterCurrency(with: searchText)
+    }
+}

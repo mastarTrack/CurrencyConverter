@@ -37,21 +37,13 @@ final class RateCalculatorViewController: UIViewController {
     private func bindActions() {
         rateCalculatorView.tapConvertButton { [weak self] in
             guard let self else { return }
-            
-            let input = self.rateCalculatorView.amountText
-            
-            guard !input.isEmpty else {
-                self.showAlert(message: "금액을 입력하세요.")
-                return
+            do {
+                let input = self.rateCalculatorView.amountText
+                let result = try self.viewModel.calculate(input: input)
+                self.rateCalculatorView.setResultLabel(result)
+            } catch {
+                showAlert(message: error.localizedDescription)
             }
-            
-            guard Double(input) != nil else {
-                self.showAlert(message: "숫자만 입력해주세요.")
-                return
-            }
-
-            let result = self.viewModel.calculate(amountText: input)
-            self.rateCalculatorView.setResultLabel(result)
         }
     }
     

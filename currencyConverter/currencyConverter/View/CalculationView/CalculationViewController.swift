@@ -22,23 +22,17 @@ class CalculationViewController: UIViewController {
     
     override func loadView() {
         self.view = calculationView
+        
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationItem.title = "환율 계산기"
         
-        configure()
+        self.calculationView.configure(with: viewModel.rate)
         setActions()
     }
     
-}
-//MARK: Configure
-extension CalculationViewController {
-    private func configure() {
-        let data = viewModel.fetchData()
-        calculationView.configure(with: data)
-    }
 }
 
 //MARK: set Actions
@@ -50,7 +44,7 @@ extension CalculationViewController {
     
     private func setButtonAction() {
         let resignTextField = UIAction { [weak self] _ in
-            self?.calculationView.resignTextField()
+            self?.calculationView.amountTextField.resignFirstResponder()
         }
         
         let calculation = UIAction { [weak self] _ in
@@ -59,8 +53,8 @@ extension CalculationViewController {
             self.viewModel.calculate()
         }
         
-        calculationView.setButtonAction(resignTextField)
-        calculationView.setButtonAction(calculation)
+        calculationView.convertButton.addAction(resignTextField, for: .touchUpInside)
+        calculationView.convertButton.addAction(calculation, for: .touchUpInside)
         
         // viewModel 동작 설정
         viewModel.alert = { [weak self] alertType in
@@ -76,10 +70,10 @@ extension CalculationViewController {
     
     private func setTextFieldAction() {
         let save = UIAction { [weak self] _ in
-            let text = self?.calculationView.passAmountText()
+            let text = self?.calculationView.amountTextField.text
             self?.viewModel.saveAmount(text ?? "")
         }
         
-        calculationView.setTextFieldAction(save)
+        calculationView.amountTextField.addAction(save, for: .editingChanged)
     }
 }

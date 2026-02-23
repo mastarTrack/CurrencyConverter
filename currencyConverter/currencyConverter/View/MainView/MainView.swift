@@ -8,8 +8,8 @@ import UIKit
 import SnapKit
 
 final class MainView: UIView {
-    private let searchBar = UISearchBar()
-    private lazy var listView = UICollectionView(frame: .zero, collectionViewLayout: makeCompsitionalLayout())
+    private(set) var searchBar = UISearchBar()
+    private(set) lazy var listView = UICollectionView(frame: .zero, collectionViewLayout: makeCompsitionalLayout())
     private let emptyResultView = UIView()
     
     override init(frame: CGRect) {
@@ -70,17 +70,6 @@ extension MainView {
     }
 }
 
-//MARK: searchBar
-extension MainView {
-    func setSearchBarDelegate(_ delegate: UISearchBarDelegate) {
-        searchBar.delegate = delegate
-    }
-    
-    func setListViewDelegate(_ delegate: UICollectionViewDelegate) {
-        listView.delegate = delegate
-    }
-}
-
 //MARK: listView
 extension MainView {
     private func makeCompsitionalLayout() -> UICollectionViewCompositionalLayout {
@@ -89,10 +78,6 @@ extension MainView {
             let section = NSCollectionLayoutSection.list(using: configuration, layoutEnvironment: environment)
             return section
         }
-    }
-    
-    func passListView() -> UICollectionView {
-        return listView
     }
 }
 

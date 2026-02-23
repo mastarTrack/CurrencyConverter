@@ -11,8 +11,8 @@ import SnapKit
 class CalculationView: UIView {
     private let currencyLabel = UILabel()
     private let countryLabel = UILabel()
-    private let amountTextField = UITextField()
-    private let convertButton = UIButton()
+    private(set) var amountTextField = UITextField()
+    private(set) var convertButton = UIButton()
     private let resultLabel = UILabel()
     
     override init(frame: CGRect) {
@@ -35,25 +35,6 @@ extension CalculationView {
     
     func updateResultLabel(with text: String) {
         resultLabel.text = text
-    }
-}
-
-//MARK: set Actions
-extension CalculationView {
-    func setButtonAction(_ action: UIAction) {
-        convertButton.addAction(action, for: .touchUpInside)
-    }
-    
-    func setTextFieldAction(_ action: UIAction) {
-        amountTextField.addAction(action, for: .editingChanged)
-    }
-    
-    func resignTextField() {
-        amountTextField.resignFirstResponder()
-    }
-    
-    func passAmountText() -> String? {
-        return amountTextField.text
     }
 }
 

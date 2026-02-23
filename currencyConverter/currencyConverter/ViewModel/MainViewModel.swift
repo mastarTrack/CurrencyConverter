@@ -26,6 +26,11 @@ final class MainViewModel: ViewModelProtocol {
         }
     }
     
+    // 이니셜라이저
+    init() {
+        fetchData()
+    }
+    
     // 초기 데이터 설정
     func fetchData() {
         dataService.fetchCurrencyData(currency: "USD") { result in

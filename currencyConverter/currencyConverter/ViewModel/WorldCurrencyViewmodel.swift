@@ -28,17 +28,6 @@ extension WorldCurrencyViewmodel {
     }
 }
 
-//MARK: - METHOD: Formatting
-extension WorldCurrencyViewmodel {
-     func formatCurrency(rate: Double, isoCode: String) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencyCode = isoCode
-        formatter.locale = Locale.current
-        
-        return formatter.string(from:  NSNumber(value: rate)) ?? "--"
-    }
-}
 
 //MARK: - METHOD: Datafatch
 extension WorldCurrencyViewmodel {

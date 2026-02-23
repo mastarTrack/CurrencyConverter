@@ -16,7 +16,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
         
-        window.rootViewController = WorldCurrencyViewController()
+        let vc = WorldCurrencyViewController()
+        let nc = UINavigationController(rootViewController: vc)
+        
+        let appearance = UINavigationBarAppearance()
+        
+        appearance.configureWithTransparentBackground()
+        appearance.backgroundColor = .white
+        UINavigationBar.appearance().standardAppearance = appearance
+        //UINavigationBar.appearance().
+        
+        window.rootViewController = nc
         window.makeKeyAndVisible()
         
         self.window = window

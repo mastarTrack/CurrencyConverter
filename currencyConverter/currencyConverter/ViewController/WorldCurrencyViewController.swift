@@ -12,7 +12,7 @@ import SnapKit
 class WorldCurrencyViewController: UIViewController {
     
     //MARK: - ViewModel
-    var vm = WorldCurrencyViewmodel()
+    let vm = WorldCurrencyViewmodel()
     
     //MARK: - Components
     var collectionView: UICollectionView! = nil
@@ -22,6 +22,9 @@ class WorldCurrencyViewController: UIViewController {
     //MARK: - INIT
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.title = "환율 정보"
+        view.backgroundColor = .white
+        navigationItem.backButtonDisplayMode = .default
         vm.fatchWorldCurrency()
         setClosure()
         configureUI()
@@ -51,6 +54,12 @@ extension WorldCurrencyViewController: UISearchBarDelegate {
 //MARK: - METHOD: Configure CollectionView Datasource, Delegate
 extension WorldCurrencyViewController: UICollectionViewDelegate, UICollectionViewDataSource {
      
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let rate = vm.datas[indexPath.item]
+        let ccVC = CurrencyCalculator(currencyData: rate)
+        navigationController?.pushViewController(ccVC, animated: true)
+    }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return vm.datas.count
     }
@@ -58,7 +67,7 @@ extension WorldCurrencyViewController: UICollectionViewDelegate, UICollectionVie
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CurrencyCell.identifier, for: indexPath) as! CurrencyCell
         let rate = vm.datas[indexPath.item]
-        cell.updateUI(isoCode: rate.isoCode, countryName: rate.countryName, rate: vm.formatCurrency(rate: rate.rate, isoCode: rate.isoCode))
+        cell.updateUI(isoCode: rate.isoCode, countryName: rate.countryName, rate: CommonUtils.formatCurrency(rate: rate.rate, isoCode: rate.isoCode))
         return cell
     }
 }
@@ -92,6 +101,7 @@ extension WorldCurrencyViewController {
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewCompositionalLayout(section: currencySection()))
         collectionView.register(CurrencyCell.self, forCellWithReuseIdentifier: CurrencyCell.identifier)
         collectionView.dataSource = self
+        collectionView.delegate = self
         
         view.addSubview(searchBar)
         view.addSubview(collectionView)

@@ -13,12 +13,14 @@ class MainViewModel: ViewModelProtocol {
     var state: AlertType?
     
     private let dataService = DataService()
-    private var originData: [Rate]? {
+    
+    private var originData: [Rate]? // 원본 데이터
+    private var showingData: [Rate]? {
         didSet {
-            update?(originData ?? [])
+            update?(showingData ?? [])
         }
-    } // 원본 데이터
-    private var showingData: [Rate]? // 컬렉션뷰에 표시중인 데이터
+    } // 컬렉션뷰에 표시중인 데이터
+    
     private var dataStatus: AlertType?
     
     // 초기 데이터 설정
@@ -35,6 +37,17 @@ class MainViewModel: ViewModelProtocol {
             
             self.originData = rates
             self.showingData = self.originData
+        }
+    }
+    
+    func searchData(_ text: String) {
+        if text.isEmpty { // 검색어가 비었을 경우
+            showingData = originData
+        } else { // 검색어가 있을 경우
+            showingData = originData?.filter {
+                $0.currencyCode.contains(text.uppercased()) ||
+                $0.country.contains(text)
+            }
         }
     }
 }

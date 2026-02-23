@@ -42,21 +42,17 @@ extension ViewController {
 //MARK: searchBar Delegate
 extension ViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        guard let originData else { return }
-        
-        if searchText.isEmpty { // 검색어가 비었을 경우
-            mainView.showNoResultView(false)
-            showingData = originData
-        } else { // 검색어가 있을 경우
-            let searchedData = originData.filter { $0.currencyCode.contains(searchText.uppercased()) || $0.country.contains(searchText) }
-            showingData = searchedData
+        mainVM.update = { [weak self] data in
+            guard let self else { return }
             
             // 검색 결과가 없을 경우 noResultView 노출
-            searchedData.isEmpty ? mainView.showNoResultView(true) : mainView.showNoResultView(false)
+            data.isEmpty ? mainView.showNoResultView(true) :
+            mainView.showNoResultView(false)
+            
+            self.setSnapshot(with: data)
         }
         
-        guard let showingData else { return }
-        setSnapshot(with: showingData)
+        mainVM.searchData(searchText)
     }
 }
 

@@ -14,6 +14,7 @@ class ExchangeRateViewModel: ViewModelProtocol {
     enum Action {
         case viewDidLoad // 화면 켜졌을때 데이터 가져오기
         case filter(text: String) // 검색창의 텍스트 필터링
+        case toggleFavorite(code: String)
     }
     
     // VM -> VC
@@ -41,6 +42,9 @@ class ExchangeRateViewModel: ViewModelProtocol {
             
         case .filter(let text):
             self?.filterRates(searchText: text)
+            
+        case .toggleFavorite(let code):
+            self?.handleToggleFavorite(code: code)
         }
     }
     
@@ -50,11 +54,15 @@ class ExchangeRateViewModel: ViewModelProtocol {
     struct SimpleRate {
         let currencyCode: String
         let rate: Double
+        var isFavorite: Bool
     }
     
     // 원본 rates
     var rates: [SimpleRate] = []
 
+    // 즐겨찾기 된 코드 목록
+    var favoriteCodes: [String] = []
+    
     
     // MARK: -- 데이터 가져오는 메서드
     private func fetchRates() {
@@ -65,7 +73,7 @@ class ExchangeRateViewModel: ViewModelProtocol {
             case .success(let response):
                 // Dictionary를 Array로 변환함
                 let sortedRates = response.rates.map { key, value in
-                    return SimpleRate(currencyCode: key, rate: value)
+                    return SimpleRate(currencyCode: key, rate: value, isFavorite: self.favoriteCodes.contains(key))
                 }.sorted { $0.currencyCode < $1.currencyCode }
                 
                 self.rates = sortedRates
@@ -81,10 +89,11 @@ class ExchangeRateViewModel: ViewModelProtocol {
         }
     }
     
+    
     // MARK: -- 데이터 필터링 메서드
     private func filterRates(searchText: String) {
         if searchText.isEmpty { // 검색창이 비었을때
-            self.state = .success(rates: rates) // 원본 전송
+            sortAndSendRates(baseRates: rates)
         } else {
             let filteredRates = rates.filter { item in
                 
@@ -99,7 +108,40 @@ class ExchangeRateViewModel: ViewModelProtocol {
                 return isCodeMatch || isCountryMatch
             }
             
-            self.state = .success(rates: filteredRates)
+            sortAndSendRates(baseRates: filteredRates)
         }
+    }
+    
+    
+    private func sortAndSendRates(baseRates: [SimpleRate]) {
+        // 즐겨찾기 그룹
+        let favoriteGroup = baseRates.filter { favoriteCodes.contains($0.currencyCode) }
+            .map { SimpleRate(currencyCode: $0.currencyCode, rate: $0.rate, isFavorite: true) }
+            .sorted { $0.currencyCode < $1.currencyCode }
+        
+        // !즐겨찾기 그룹
+        let normalGroup = baseRates.filter { !favoriteCodes.contains($0.currencyCode) }
+            .map { SimpleRate(currencyCode: $0.currencyCode, rate: $0.rate, isFavorite: false)}
+            .sorted { $0.currencyCode < $1.currencyCode }
+        
+        let combinedGroup = favoriteGroup + normalGroup
+        self.state = .success(rates: combinedGroup)
+    }
+    
+    
+    // MARK: -- 즐겨찾기 설정 메서드
+    private func handleToggleFavorite(code: String) {
+        // 이미 즐겨찾기 되어있는 경우
+        if favoriteCodes.contains(code) {
+            favoriteCodes.removeAll { $0 == code }
+            // 코어데이터에서도 삭제하는 로직
+        // 즐겨찾기 안되어있으면 추가하기
+        } else {
+            favoriteCodes.append(code)
+            // 코어데이터에도 추가하는 로직
+        }
+        
+        // 즐겨찾기 설정이 변경되었으므로 업데이트
+        sortAndSendRates(baseRates: self.rates)
     }
 }

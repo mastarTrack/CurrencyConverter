@@ -52,7 +52,7 @@ class RateCalculatorView: UIView {
         $0.numberOfLines = 0
     }
     
-    var amountText: String { amountTextField.text ?? "" }
+    var amountText: String { amountTextField.text ?? "" } // 사용자 입력 전달
     
     override init(frame: CGRect) {
         super.init(frame: frame)

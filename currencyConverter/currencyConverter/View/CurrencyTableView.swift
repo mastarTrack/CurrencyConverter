@@ -14,12 +14,6 @@ import Then
 // 트러블 슈팅 간단하게라도 적어두기
 // MVVM 역할 분담 나누기(이유 작성)
 
-struct Item: Hashable {
-    let currency: String
-    let country: String
-    let rate: String
-}
-
 final class CurrencyTableView: UIView {
     private var items: [Item] = []
     var onSelectItem: ((Item) -> Void)?
@@ -101,82 +95,3 @@ extension CurrencyTableView: UICollectionViewDataSource {
         return cell
     }
 }
-
-final class ListCell: UICollectionViewCell {
-    static let identifier = "ListCell"
-    private let separatorView = UIView()
-    
-    private let currencyLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 16, weight: .medium)
-    }
-    
-    private let countryLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 14)
-        $0.textColor = .gray
-    }
-    
-    private lazy var labelStackView = UIStackView(arrangedSubviews: [
-        currencyLabel,
-        countryLabel
-    ]).then {
-        $0.axis = .vertical
-        $0.spacing = 4
-    }
-    
-    private let rateLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 16)
-        $0.textAlignment = .right
-    }
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        
-        contentView.backgroundColor = .clear
-        contentView.addSubview(labelStackView)
-        contentView.addSubview(rateLabel)
-        
-        configure()
-        setupSeparator()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    private func setupSeparator() {
-        separatorView.translatesAutoresizingMaskIntoConstraints = false
-        separatorView.backgroundColor = .separator
-        contentView.addSubview(separatorView)
-        
-        let onePixel = 1.0 / UIScreen.main.scale
-        let inset: CGFloat = 16
-        
-        NSLayoutConstraint.activate([
-            separatorView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: inset),
-            separatorView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -inset),
-            separatorView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            separatorView.heightAnchor.constraint(equalToConstant: onePixel)
-        ])
-    }
-    
-    private func configure() {
-        labelStackView.snp.makeConstraints {
-            $0.leading.equalToSuperview().inset(16)
-            $0.centerY.equalToSuperview()
-        }
-
-        rateLabel.snp.makeConstraints {
-            $0.trailing.equalToSuperview().inset(16)
-            $0.centerY.equalToSuperview()
-            $0.leading.greaterThanOrEqualTo(labelStackView.snp.trailing).offset(16)
-            $0.width.equalTo(120)
-        }
-    }
-    
-    func setData(item: Item) {
-        currencyLabel.text = item.currency
-        rateLabel.text = item.rate
-        countryLabel.text = item.country
-    }
-}
-

@@ -6,21 +6,6 @@
 //
 import Foundation
 
-enum CalculatorError: LocalizedError {
-    case invalidInput
-    case NoInput
-
-    var errorDescription: String? {
-        switch self {
-        case .invalidInput:
-            return "숫자만 입력해주세요."
-        case .NoInput:
-            return "금액을 입력하세요."
-        }
-    }
-}
-
-
 class RateCalculatorViewModel {
     private let selectedItem: Item
     
@@ -40,5 +25,19 @@ class RateCalculatorViewModel {
         let rate = Double(item.rate) ?? 0
         let result = amount * rate
         return String(format: "%.2f", result)
+    }
+}
+
+enum CalculatorError: LocalizedError {
+    case invalidInput
+    case NoInput
+
+    var errorDescription: String? {
+        switch self {
+        case .invalidInput:
+            return "숫자만 입력해주세요."
+        case .NoInput:
+            return "금액을 입력하세요."
+        }
     }
 }

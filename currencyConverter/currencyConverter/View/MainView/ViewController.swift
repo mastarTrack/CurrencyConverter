@@ -80,6 +80,12 @@ extension ViewController {
         mainVM.update = { [weak self] (data: [Rate]) in
             self?.setSnapshot(with: data)
         }
+        
+        mainVM.alert = { [weak self] alertType in
+            let alert = UIAlertController(status: alertType)
+            self?.present(alert, animated: true)
+        }
+        
         mainVM.fetchData()
     }
 }
@@ -90,7 +96,10 @@ extension ViewController: UICollectionViewDelegate {
         let data = mainVM.fetchRateData(of: indexPath)
         guard let data else { return }
         
-        self.navigationController?.pushViewController(CalculationViewController(data: data), animated: true)
+        let calculationVM = CalculationViewModel()
+        calculationVM.setInitialData(data)
+        
+        self.navigationController?.pushViewController(CalculationViewController(viewModel: calculationVM), animated: true)
         collectionView.deselectItem(at: indexPath, animated: true)
     }
 }

@@ -8,12 +8,12 @@
 import UIKit
 
 class CalculationViewController: UIViewController {
-    private let data: Rate
     private let calculationView = CalculationView()
     private var stringAmount: String?
+    private let viewModel: CalculationViewModel
     
-    init(data: Rate) {
-        self.data = data
+    init(viewModel: CalculationViewModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -29,10 +29,17 @@ class CalculationViewController: UIViewController {
         super.viewDidLoad()
         self.navigationItem.title = "환율 계산기"
         
-        calculationView.configure(with: data)
+        configure()
         setActions()
     }
     
+}
+//MARK: Configure
+extension CalculationViewController {
+    private func configure() {
+        let data = viewModel.fetchData()
+        calculationView.configure(with: data)
+    }
 }
 
 //MARK: set Actions
@@ -62,8 +69,8 @@ extension CalculationViewController {
                 return
             }
             
-            let result = self.resultString(from: amount)
-            self.calculationView.updateResultLabel(with: result)
+//            let result = self.resultString(from: amount)
+//            self.calculationView.updateResultLabel(with: result)
         }
         
         calculationView.setButtonAction(resignTextField)
@@ -81,14 +88,14 @@ extension CalculationViewController {
 }
 
 //MARK: logic
-extension CalculationViewController {
-    private func calculate(with amount: Double) -> Double {
-        return amount * data.value
-    }
-    
-    private func resultString(from amount: Double) -> String {
-        let result = calculate(with: amount)
-        
-        return "$\(String(format: "%.2f", amount)) → \(String(format: "%.2f", result)) \(data.currencyCode)"
-    }
-}
+//extension CalculationViewController {
+//    private func calculate(with amount: Double) -> Double {
+//        return amount * data.value
+//    }
+//    
+//    private func resultString(from amount: Double) -> String {
+//        let result = calculate(with: amount)
+//        
+//        return "$\(String(format: "%.2f", amount)) → \(String(format: "%.2f", result)) \(data.currencyCode)"
+//    }
+//}

@@ -6,9 +6,9 @@
 //
 
 protocol ViewModelProtocol {
-    associatedtype Action
-    associatedtype State
+    associatedtype Update
+    associatedtype ObservedData
     
-    var update: ((Action) -> Void)? { get }
-    var state: State { get }
+    var update: ((Update) -> Void)? { get }
+    var observedData: ObservedData { get }
 }

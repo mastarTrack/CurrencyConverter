@@ -7,20 +7,24 @@
 
 import UIKit
 
-class MainViewModel: ViewModelProtocol {
+final class MainViewModel: ViewModelProtocol {
     var update: (([Rate]) -> Void)?
-    var state: AlertType?
+    var alert: ((AlertType) -> Void)?
     
     private let dataService = DataService()
     
     private var originData: [Rate]? // 원본 데이터
-    private var showingData: [Rate]? {
+    private(set) var observedData: [Rate]? { // 컬렉션뷰에 표시중인 데이터
         didSet {
-            update?(showingData ?? [])
+            update?(observedData ?? [])
         }
-    } // 컬렉션뷰에 표시중인 데이터
+    }
     
-    private var dataStatus: AlertType?
+    private var dataStatus: AlertType? { // alert 타입
+        didSet {
+            alert?(dataStatus ?? .emptyData)
+        }
+    }
     
     // 초기 데이터 설정
     func fetchData() {
@@ -35,16 +39,16 @@ class MainViewModel: ViewModelProtocol {
             }
             
             self.originData = rates
-            self.showingData = self.originData
+            self.observedData = self.originData
         }
     }
     
     // 데이터 검색
     func searchData(_ text: String) {
         if text.isEmpty { // 검색어가 비었을 경우
-            showingData = originData
+            observedData = originData
         } else { // 검색어가 있을 경우
-            showingData = originData?.filter {
+            observedData = originData?.filter {
                 $0.currencyCode.contains(text.uppercased()) ||
                 $0.country.contains(text)
             }
@@ -53,7 +57,7 @@ class MainViewModel: ViewModelProtocol {
     
     // 컬렉션뷰 셀 설정에 필요한 데이터 전달
     func fetchRateStringData(of index: IndexPath) -> (String, String, String) {
-        let rate = showingData?[index.row]
+        let rate = observedData?[index.row]
         guard let rate else { return ("", "", "") }
         
         let value = String(format: "%.4f", rate.value)
@@ -61,6 +65,6 @@ class MainViewModel: ViewModelProtocol {
     }
     
     func fetchRateData(of index: IndexPath) -> Rate? {
-        return showingData?[index.row]
+        return observedData?[index.row]
     }
 }

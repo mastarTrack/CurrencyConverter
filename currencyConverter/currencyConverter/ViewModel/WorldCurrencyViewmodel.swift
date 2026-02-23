@@ -14,10 +14,18 @@ class WorldCurrencyViewmodel {
     private var manager = WorldCurrencyManager()
     private var apiService = APIService()
     private(set) var datas: [CurrencyData] = []
+    var selectData: CurrencyData?
     
     //MARK: - Closures
-    var updateCurrencyClosure: (()->Void)?
+    var updateCurrencyClosure: ((String?)->Void)?
 
+}
+
+extension WorldCurrencyViewmodel {
+    func calculateSelectDataCurrency(amount: Double) -> Double? {
+        guard let selectData = selectData else { return nil }
+        return amount*selectData.rate
+    }
 }
 
 extension WorldCurrencyViewmodel {
@@ -27,7 +35,6 @@ extension WorldCurrencyViewmodel {
         }
     }
 }
-
 
 //MARK: - METHOD: Datafatch
 extension WorldCurrencyViewmodel {
@@ -42,11 +49,14 @@ extension WorldCurrencyViewmodel {
                 manager.updateData(model: result)
                 datas = manager.worldCurrencyDatas
                 DispatchQueue.main.async {
-                    self.updateCurrencyClosure?()
+                    self.updateCurrencyClosure?(nil)
                 }
             case .failure(let error):
-                print(error.localizedDescription)
+                DispatchQueue.main.async {
+                    self.updateCurrencyClosure?(error.localizedDescription)
+                }
             }
         }
     }
 }
+

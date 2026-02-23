@@ -9,7 +9,7 @@ import UIKit
 import Then
 import SnapKit
 
-class WorldCurrencyViewController: UIViewController {
+class WorldCurrencyViewController: CurrencyConverterViewController {
     
     //MARK: - ViewModel
     let vm = WorldCurrencyViewmodel()
@@ -35,8 +35,11 @@ class WorldCurrencyViewController: UIViewController {
 //MARK: - Set ViewModel Closures
 extension WorldCurrencyViewController {
     func setClosure() {
-        vm.updateCurrencyClosure = { [weak self] in
+        vm.updateCurrencyClosure = { [weak self] error in
             guard let self else { return }
+            if let error = error {
+                showWarning(message: error)
+            }
             self.collectionView.reloadData()
         }
     }
@@ -55,8 +58,8 @@ extension WorldCurrencyViewController: UISearchBarDelegate {
 extension WorldCurrencyViewController: UICollectionViewDelegate, UICollectionViewDataSource {
      
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let rate = vm.datas[indexPath.item]
-        let ccVC = CurrencyCalculator(currencyData: rate)
+        vm.selectData = vm.datas[indexPath.item]
+        let ccVC = CurrencyCalculator(viewModel: vm)
         navigationController?.pushViewController(ccVC, animated: true)
     }
     

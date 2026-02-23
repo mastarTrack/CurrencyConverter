@@ -9,17 +9,17 @@ import UIKit
 import SnapKit
 import Then
 
-class CurrencyCalculator: UIViewController {
-    
+class CurrencyCalculator: CurrencyConverterViewController {
+        
     //MARK: - ViewModel
-    let currencyData: CurrencyData
+    let vm : WorldCurrencyViewmodel
     
     //MARK: - Components
     let amountTextField = UITextField().then {
         $0.borderStyle = .roundedRect
         $0.keyboardType = .decimalPad
         $0.textAlignment = .center
-        $0.placeholder = "금액을 입력하세요"
+        $0.placeholder = "USD(달러) 금액을 입력하세요"
     }
     
     let convertButton = UIButton().then {
@@ -37,8 +37,8 @@ class CurrencyCalculator: UIViewController {
     }
     
     //MARK: - Init
-    init(currencyData: CurrencyData) {
-        self.currencyData = currencyData
+    init(viewModel: WorldCurrencyViewmodel) {
+        self.vm = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -55,6 +55,32 @@ class CurrencyCalculator: UIViewController {
     }
 }
 
+extension CurrencyCalculator: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        amountTextField.resignFirstResponder()
+        CalculatorCurrency()
+        return true
+    }
+}
+
+
+extension CurrencyCalculator {
+    func CalculatorCurrency() {
+        guard let text = amountTextField.text, !text.isEmpty else {
+            showWarning(message: "값을 입력해주세요.")
+            return
+        }
+        guard let amount = Double(text) else {
+            showWarning(message: "숫자만 입력해주세요.")
+            return
+        }
+        
+        resultLabel.text = CommonUtils.formatCurrency(
+            rate: vm.calculateSelectDataCurrency(amount: amount) ?? 0,
+            isoCode: vm.selectData?.isoCode ?? "")
+    }
+}
+
 
 //MARK: - METHOD: Configure UI
 extension CurrencyCalculator {
@@ -68,20 +94,27 @@ extension CurrencyCalculator {
         
         let isoLabel = UILabel().then {
             $0.font = .systemFont(ofSize: 24, weight: .bold)
-            $0.text = currencyData.isoCode
+            $0.text = vm.selectData?.isoCode
         }
         
         let countryLabel = UILabel().then {
             $0.font = .systemFont(ofSize: 16)
             $0.textColor = .gray
-            $0.text = currencyData.countryName
+            $0.text = vm.selectData?.countryName
         }
         
         let basicCurrencyLabel = UILabel().then {
             $0.font = .systemFont(ofSize: 16)
             $0.textColor = .gray
-            $0.text = "USD $1 = \(CommonUtils.formatCurrency(rate: currencyData.rate, isoCode: currencyData.isoCode))"
+            $0.text = "USD $1 = \(CommonUtils.formatCurrency(rate: vm.selectData?.rate ?? 0, isoCode: vm.selectData?.isoCode ?? ""))"
         }
+        
+        amountTextField.delegate = self
+        
+        convertButton.addAction(UIAction { [weak self] _ in
+            guard let self else { return }
+            self.CalculatorCurrency()
+        }, for: .touchUpInside)
         
         infoStackView.addArrangedSubview(isoLabel)
         infoStackView.addArrangedSubview(countryLabel)
@@ -123,6 +156,6 @@ extension CurrencyCalculator {
 
 @available(iOS 17.0, *)
 #Preview {
-    let currencyData = CurrencyData(isoCode: "KOR", rate: 1500, countryName: "대한민국")
-    CurrencyCalculator(currencyData: currencyData)
+    let vm = WorldCurrencyViewmodel()
+    CurrencyCalculator(viewModel: vm)
 }

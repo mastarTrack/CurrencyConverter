@@ -10,7 +10,7 @@ class CalculationViewModel: ViewModelProtocol {
     var update: ((String) -> Void)?
     var alert: ((AlertType?) -> Void)?
     
-    private var rate: Rate! // 현재 환율 데이터
+    private let rate: Rate // 현재 환율 데이터
     private var amount: Double? // textField 입력 금액
     private var amountIsEmpty: Bool = false // textField 공백 여부
     private var alertType: AlertType?
@@ -26,10 +26,14 @@ class CalculationViewModel: ViewModelProtocol {
         }
     }
     
-    // 초기 데이터 설정
-    func setInitialData(_ data: Rate) {
-        rate = data
+    init(data: Rate) {
+        self.rate = data
     }
+    
+    // 초기 데이터 설정
+//    func setInitialData(_ data: Rate) {
+//        rate = data
+//    }
     
     // 데이터 전달
     func fetchData() -> Rate {

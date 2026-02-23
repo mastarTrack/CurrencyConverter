@@ -56,8 +56,9 @@ extension ViewController: UISearchBarDelegate {
 extension ViewController {
     // listView DiffableDataSource 설정
     private func makeCollectionViewDiffableDataSource(_ collectionView: UICollectionView) -> UICollectionViewDiffableDataSource<Section, Rate> {
-        let listCellRegistration = UICollectionView.CellRegistration<ListViewCell, Rate> { cell, indexPath, rate in
-            let (code, country, value) = self.mainVM.fetchRateStringData(of: indexPath)
+        let listCellRegistration = UICollectionView.CellRegistration<ListViewCell, Rate> { [weak self] cell, indexPath, rate in
+            guard let self else { return }
+            let (code, country, value) = self.mainVM.fetchRateStringData(of: rate)
             cell.configure(code: code, country: country, rate: value)
         }
         
@@ -96,8 +97,8 @@ extension ViewController: UICollectionViewDelegate {
         let data = mainVM.fetchRateData(of: indexPath)
         guard let data else { return }
         
-        let calculationVM = CalculationViewModel()
-        calculationVM.setInitialData(data)
+        let calculationVM = CalculationViewModel(data: data)
+//        calculationVM.setInitialData(data)
         
         self.navigationController?.pushViewController(CalculationViewController(viewModel: calculationVM), animated: true)
         collectionView.deselectItem(at: indexPath, animated: true)

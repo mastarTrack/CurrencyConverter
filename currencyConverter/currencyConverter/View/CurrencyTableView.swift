@@ -21,8 +21,9 @@ struct Item: Hashable {
 }
 
 final class CurrencyTableView: UIView {
-    
     private var items: [Item] = []
+    var onSelectItem: ((Item) -> Void)?
+    
     private let emptyLabel = UILabel().then {
         $0.text = "검색 결과 없음"
         $0.textColor = .gray
@@ -83,14 +84,13 @@ final class CurrencyTableView: UIView {
 
         return UICollectionViewCompositionalLayout(section: section)
     }
-    
-    func configureBackgroundView() {
-        
-    }
 }
 
 extension CurrencyTableView: UICollectionViewDelegate {
-    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let selectedItem = items[indexPath.item]
+        onSelectItem?(selectedItem)
+    }
 }
 
 extension CurrencyTableView: UICollectionViewDataSource {
@@ -134,7 +134,6 @@ final class ListCell: UICollectionViewCell {
         $0.font = .systemFont(ofSize: 16)
         $0.textAlignment = .right
     }
-
     
     override init(frame: CGRect) {
         super.init(frame: frame)

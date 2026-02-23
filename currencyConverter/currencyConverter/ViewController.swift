@@ -49,6 +49,17 @@ final class ViewController: UIViewController {
         currencyViewModel.onError = { [weak self] message in
             self?.showErrorAlert(message: message)
         }
+        
+        currencyView.onSelectItem = { [weak self] item in
+            guard let self else { return }
+            self.showRateCalculator(for: item)
+        }
+    }
+    
+    private func showRateCalculator(for item: Item) {
+        let viewModel = RateCalculatorViewModel(selectedItem: item)
+        let viewController = RateCalculatorViewController(viewModel: viewModel)
+        navigationController?.pushViewController(viewController, animated: true)
     }
     
     private func showErrorAlert(message: String) {

@@ -8,7 +8,7 @@ import Foundation
 
 class CurrencyViewModel {
     let networkManager = NetworkManager()
-    var selectedCountry = "KRW"
+    var selectedCountry = "USD"
     var rates = [String: Double]()
     var upDate: (([Item]) -> Void)?
     var onError: ((String) -> Void)?

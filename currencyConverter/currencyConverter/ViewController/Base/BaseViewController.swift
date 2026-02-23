@@ -7,7 +7,7 @@
 
 import UIKit
 
-class CurrencyConverterViewController: UIViewController {
+class BaseViewController: UIViewController {
     
     func showWarning(message: String) {
         let alert = UIAlertController(

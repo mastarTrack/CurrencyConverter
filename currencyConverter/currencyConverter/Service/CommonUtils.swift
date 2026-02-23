@@ -8,12 +8,15 @@
 import Foundation
 
 class CommonUtils {
-     static func formatCurrency(rate: Double, isoCode: String) -> String {
-       let formatter = NumberFormatter()
-       formatter.numberStyle = .currency
-       formatter.currencyCode = isoCode
-       formatter.locale = Locale.current
-       
-       return formatter.string(from:  NSNumber(value: rate)) ?? "--"
-   }
+    static func formatCurrency(rate: Double, isoCode: String, digit: Int) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.currencyCode = isoCode
+        formatter.locale = Locale.current
+        
+        formatter.minimumFractionDigits = digit
+        formatter.maximumFractionDigits = digit
+        
+        return formatter.string(from:  NSNumber(value: rate)) ?? "--"
+    }
 }

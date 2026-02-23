@@ -9,7 +9,7 @@ import UIKit
 import Then
 import SnapKit
 
-class WorldCurrencyViewController: CurrencyConverterViewController {
+class WorldCurrencyViewController: BaseViewController {
     
     //MARK: - ViewModel
     let vm = WorldCurrencyViewmodel()
@@ -70,7 +70,7 @@ extension WorldCurrencyViewController: UICollectionViewDelegate, UICollectionVie
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CurrencyCell.identifier, for: indexPath) as! CurrencyCell
         let rate = vm.datas[indexPath.item]
-        cell.updateUI(isoCode: rate.isoCode, countryName: rate.countryName, rate: CommonUtils.formatCurrency(rate: rate.rate, isoCode: rate.isoCode))
+        cell.updateUI(isoCode: rate.isoCode, countryName: rate.countryName, rate: CommonUtils.formatCurrency(rate: rate.rate, isoCode: rate.isoCode, digit: 4))
         return cell
     }
 }

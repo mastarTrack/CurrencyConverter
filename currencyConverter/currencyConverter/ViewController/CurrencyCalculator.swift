@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 import Then
 
-class CurrencyCalculator: CurrencyConverterViewController {
+class CurrencyCalculator: BaseViewController {
         
     //MARK: - ViewModel
     let vm : WorldCurrencyViewmodel
@@ -77,7 +77,7 @@ extension CurrencyCalculator {
         
         resultLabel.text = CommonUtils.formatCurrency(
             rate: vm.calculateSelectDataCurrency(amount: amount) ?? 0,
-            isoCode: vm.selectData?.isoCode ?? "")
+            isoCode: vm.selectData?.isoCode ?? "", digit: 2)
     }
 }
 
@@ -106,7 +106,7 @@ extension CurrencyCalculator {
         let basicCurrencyLabel = UILabel().then {
             $0.font = .systemFont(ofSize: 16)
             $0.textColor = .gray
-            $0.text = "USD $1 = \(CommonUtils.formatCurrency(rate: vm.selectData?.rate ?? 0, isoCode: vm.selectData?.isoCode ?? ""))"
+            $0.text = "USD $1 = \(CommonUtils.formatCurrency(rate: vm.selectData?.rate ?? 0, isoCode: vm.selectData?.isoCode ?? "", digit: 4))"
         }
         
         amountTextField.delegate = self

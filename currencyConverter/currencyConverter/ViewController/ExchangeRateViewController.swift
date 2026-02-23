@@ -116,9 +116,14 @@ extension ExchangeRateViewController: UITableViewDataSource, UITableViewDelegate
         // 포맷팅된 환율 넣기
         let formattedRate = String(format: "%.4f", currencyData.rate)
         
-        // 테이블 뷰 셀에 데이터 집어넣기
-        cell.configure(code: currencyName, rate: formattedRate, country: countryName)
+        let favorite = currencyData.isFavorite
         
+        // 테이블 뷰 셀에 데이터 집어넣기
+        cell.configure(code: currencyName, rate: formattedRate, country: countryName, isFavorite: favorite)
+        
+        cell.tappedfavoriteButton = { [weak self] in
+            self?.viewModel.action?(.toggleFavorite(code: currencyName))
+        }
         return cell
     }
     

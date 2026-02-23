@@ -62,13 +62,6 @@ final class CurrencyTableView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func makeLayout1() -> UICollectionViewLayout {
-        var config = UICollectionLayoutListConfiguration(appearance: .plain)
-        config.showsSeparators = true
-        
-        return UICollectionViewCompositionalLayout.list(using: config)
-    }
-    
     private func makeLayout() -> UICollectionViewLayout {
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),

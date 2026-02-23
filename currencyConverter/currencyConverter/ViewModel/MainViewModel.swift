@@ -8,7 +8,6 @@
 import UIKit
 
 class MainViewModel: ViewModelProtocol {
-    var action: ((@escaping () -> ([Rate], AlertType?)) -> Void)?
     var update: (([Rate]) -> Void)?
     var state: AlertType?
     
@@ -40,6 +39,7 @@ class MainViewModel: ViewModelProtocol {
         }
     }
     
+    // 데이터 검색
     func searchData(_ text: String) {
         if text.isEmpty { // 검색어가 비었을 경우
             showingData = originData
@@ -49,5 +49,18 @@ class MainViewModel: ViewModelProtocol {
                 $0.country.contains(text)
             }
         }
+    }
+    
+    // 컬렉션뷰 셀 설정에 필요한 데이터 전달
+    func fetchRateStringData(of index: IndexPath) -> (String, String, String) {
+        let rate = showingData?[index.row]
+        guard let rate else { return ("", "", "") }
+        
+        let value = String(format: "%.4f", rate.value)
+        return (rate.currencyCode, rate.country, value)
+    }
+    
+    func fetchRateData(of index: IndexPath) -> Rate? {
+        return showingData?[index.row]
     }
 }

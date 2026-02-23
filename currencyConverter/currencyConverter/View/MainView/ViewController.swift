@@ -12,10 +12,6 @@ class ViewController: UIViewController {
     private let mainView = MainView()
     private lazy var dataSource = makeCollectionViewDiffableDataSource(mainView.passListView())
     
-    private let dataService = DataService()
-    private var originData: [Rate]? // 원본 데이터
-    private var showingData: [Rate]? // 컬렉션뷰에 표시중인 데이터
-    
     private let mainVM = MainViewModel()
     
     override func loadView() {
@@ -58,15 +54,11 @@ extension ViewController: UISearchBarDelegate {
 
 //MARK: set listView
 extension ViewController {
-    private func convertValueToString(_ value: Double) -> String {
-        return String(format: "%.4f", value)
-    }
-    
     // listView DiffableDataSource 설정
     private func makeCollectionViewDiffableDataSource(_ collectionView: UICollectionView) -> UICollectionViewDiffableDataSource<Section, Rate> {
         let listCellRegistration = UICollectionView.CellRegistration<ListViewCell, Rate> { cell, indexPath, rate in
-            let value = self.convertValueToString(rate.value)
-            cell.configure(code: rate.currencyCode, country: rate.country, rate: value)
+            let (code, country, value) = self.mainVM.fetchRateStringData(of: indexPath)
+            cell.configure(code: code, country: country, rate: value)
         }
         
         let dataSource = UICollectionViewDiffableDataSource<Section, Rate>(collectionView: collectionView) { collectionView, indexPath, rate in
@@ -95,10 +87,10 @@ extension ViewController {
 extension ViewController: UICollectionViewDelegate {
     // 컬렉션뷰 셀 선택 시 CalculationVC push
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let data = self.showingData else { return }
-        let rate = data[indexPath.row]
+        let data = mainVM.fetchRateData(of: indexPath)
+        guard let data else { return }
         
-        self.navigationController?.pushViewController(CalculationViewController(data: rate), animated: true)
+        self.navigationController?.pushViewController(CalculationViewController(data: data), animated: true)
         collectionView.deselectItem(at: indexPath, animated: true)
     }
 }

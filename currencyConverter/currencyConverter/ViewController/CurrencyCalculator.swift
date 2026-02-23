@@ -15,6 +15,7 @@ class CurrencyCalculator: BaseViewController {
     let vm : WorldCurrencyViewmodel
     
     //MARK: - Components
+    /// 달러 입력 텍스트 필드
     let amountTextField = UITextField().then {
         $0.borderStyle = .roundedRect
         $0.keyboardType = .decimalPad
@@ -22,6 +23,7 @@ class CurrencyCalculator: BaseViewController {
         $0.placeholder = "USD(달러) 금액을 입력하세요"
     }
     
+    /// 전환 버튼
     let convertButton = UIButton().then {
         $0.backgroundColor = .systemBlue
         $0.titleLabel?.textColor = .white
@@ -30,6 +32,7 @@ class CurrencyCalculator: BaseViewController {
         $0.setTitle("환율 계산", for: .normal)
     }
     
+    /// 결과값 도출 레이블
     let resultLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 20, weight: .medium)
         $0.textAlignment = .center
@@ -55,7 +58,9 @@ class CurrencyCalculator: BaseViewController {
     }
 }
 
+//MARK: - METHOD: TextField Delegate
 extension CurrencyCalculator: UITextFieldDelegate {
+    /// 텍스트 필드 엔터키 처리 메소드
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         amountTextField.resignFirstResponder()
         CalculatorCurrency()
@@ -63,8 +68,9 @@ extension CurrencyCalculator: UITextFieldDelegate {
     }
 }
 
-
+//MARK: - METHOD: Currency Calculate
 extension CurrencyCalculator {
+    /// 환율계산 및 표기 메소드
     func CalculatorCurrency() {
         guard let text = amountTextField.text, !text.isEmpty else {
             showWarning(message: "값을 입력해주세요.")
@@ -84,6 +90,7 @@ extension CurrencyCalculator {
 
 //MARK: - METHOD: Configure UI
 extension CurrencyCalculator {
+    /// 초기 UI 설정 메소드
     func ConfigureUI() {
         let infoStackView = UIStackView().then {
             $0.axis = .vertical

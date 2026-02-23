@@ -36,4 +36,5 @@ struct CurrencyData {
     var isoCode: String
     var rate: Double
     var countryName: String
+    var favorites: Bool = false
 }

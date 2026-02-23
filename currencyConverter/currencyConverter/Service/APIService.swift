@@ -9,6 +9,7 @@ import Alamofire
 import Foundation
 
 class APIService {
+    /// API 호출 메소드
     func fatchWorldCurrency<T: Decodable>(url: URL, completion: @escaping (Result<T, AFError>)-> Void) {
         AF.request(url).responseDecodable(of: T.self) { response in
             completion(response.result)

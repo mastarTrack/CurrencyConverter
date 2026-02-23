@@ -9,27 +9,43 @@ import UIKit
 import SnapKit
 import Then
 
+/// 국가 환율 정보 및 즐겨찾기 표기 Cell
 class CurrencyCell: UICollectionViewCell {
     
     static let identifier = "CurrencyCell"
     
     //MARK: - Components
+    /// IsoCode 표기 레이블
     private let isoCodeLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 16, weight: .medium)
         $0.text = "---"
     }
-    
+    /// 국가이름 표기 레이블
     private let countryNameLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 14)
         $0.textColor = .gray
         $0.text = "------"
     }
-    
+    /// 국가 환율 표기 레이블
     private let currencyLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 16)
         $0.textAlignment = .right
         $0.text = "000"
     }
+    /// 즐겨찾기 버튼
+    private let favoritesButton = UIButton().then {
+        let config = UIImage.SymbolConfiguration(pointSize: 30)
+
+        $0.setImage(UIImage(systemName: "star", withConfiguration: config), for: .normal)
+        $0.setImage(UIImage(systemName: "star.fill", withConfiguration: config), for: .selected)
+
+        $0.tintColor = .systemYellow
+        $0.isSelected = false
+    }
+    
+    //MARK: - Closures
+    /// 즐겨찾기 버튼 액션용 클로져
+    var favoritesTouchClosure: ((Bool)->Void)?
     
     //MARK: - INIT
     override init(frame: CGRect) {
@@ -44,15 +60,23 @@ class CurrencyCell: UICollectionViewCell {
 
 //MARK: - METHOD: Update UI
 extension CurrencyCell {
-    func updateUI(isoCode: String, countryName: String, rate: String){
+    /// UI Components 표기 값 갱신 메소드
+    func updateUI(isoCode: String, countryName: String, rate: String, isFavorite: Bool) {
         isoCodeLabel.text = isoCode
         countryNameLabel.text = countryName
         currencyLabel.text = rate
+        favoritesButton.isSelected = isFavorite
+    }
+    /// 즐겨찾기 버튼 갱신 메소드
+    func updateFavoritesUI() {
+        favoritesButton.isSelected.toggle()
+        favoritesTouchClosure?(favoritesButton.isSelected)
     }
 }
 
 //MARK: - METHOD: configure
 extension CurrencyCell {
+    /// 초기 UI 설정 메소드
     func configureUI() {
         let mainView = UIView()
         let contryinfoStackView = UIStackView().then {
@@ -65,6 +89,12 @@ extension CurrencyCell {
         
         mainView.addSubview(contryinfoStackView)
         mainView.addSubview(currencyLabel)
+        mainView.addSubview(favoritesButton)
+        
+        favoritesButton.addAction(UIAction { [weak self] _ in
+            guard let self else { return }
+            self.updateFavoritesUI()
+        }, for: .touchUpInside)
         
         addSubview(mainView)
         
@@ -79,10 +109,16 @@ extension CurrencyCell {
         }
         
         currencyLabel.snp.makeConstraints {
+            $0.leading.greaterThanOrEqualTo(contryinfoStackView.snp.trailing).offset(16)
+            $0.centerY.equalToSuperview()
+            $0.width.equalTo(120)
+        }
+        
+        favoritesButton.snp.makeConstraints {
+            $0.leading.equalTo(currencyLabel.snp.trailing).offset(16)
             $0.trailing.equalToSuperview().inset(16)
             $0.centerY.equalToSuperview()
-            $0.leading.greaterThanOrEqualTo(contryinfoStackView.snp.trailing).offset(16)
-            $0.width.equalTo(120)
+
         }
         
     }

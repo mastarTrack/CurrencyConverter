@@ -7,9 +7,12 @@
 
 import Foundation
 
+/// 환율 정보 모델 메니저
 class WorldCurrencyManager {
     
+    /// API 추출 원본 데이터 모델
     private var worldCurrencyModel: WorldCurrencyModel?
+    /// 외부 호출용 데이터 모델
     private(set) var worldCurrencyDatas: [CurrencyData] = []
     
     
@@ -182,6 +185,7 @@ class WorldCurrencyManager {
 
 //MARK: - METHOD: UPDATE
 extension WorldCurrencyManager {
+    /// 모델값 업데이트 메소드
     func updateData(model: WorldCurrencyModel) {
         worldCurrencyModel = model
         guard let rates = worldCurrencyModel?.rates else {
@@ -191,8 +195,30 @@ extension WorldCurrencyManager {
         for item in rates {
             worldCurrencyDatas.append(CurrencyData(isoCode: item.key, rate: item.value, countryName: codeToCurreny[item.key] ?? ""))
         }
-        worldCurrencyDatas.sort{ $0.isoCode < $1.isoCode }
+        worldCurrencyDatas = sortData(datas: worldCurrencyDatas)
     }
+    
+    /// 입력된 코어데이터에 저장된 즐겨찾기 값을 비교하여 업데이트 진행 메소드
+    func updateDataToCoreDataFavorites(datas:[(String, Bool)]){
+        datas.forEach {
+            updateDataToFavorites(isoCode: $0.0, isFavorite: $0.1)
+        }
+    }
+    
+    /// 입력된 값을 통한 즐겨찾기 값 업데이트 메소드
+    func updateDataToFavorites(isoCode: String, isFavorite: Bool) {
+        if let index = worldCurrencyDatas.firstIndex(where: { $0.isoCode == isoCode }) {
+            worldCurrencyDatas[index].favorites = isFavorite
+            worldCurrencyDatas = sortData(datas: worldCurrencyDatas)
+        }
+    }
+    
+    /// 입력데이터 즐겨찾기 및 IsoCode명 기준 정렬 메소드
+    func sortData(datas: [CurrencyData]) -> [CurrencyData] {
+        return datas.sorted { ($0.favorites ? 0 : 1, $0.isoCode) < ($1.favorites ? 0 : 1, $1.isoCode) }
+    }
+    
+    
 }
 
 

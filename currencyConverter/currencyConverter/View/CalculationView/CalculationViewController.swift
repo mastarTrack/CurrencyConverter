@@ -9,7 +9,6 @@ import UIKit
 
 class CalculationViewController: UIViewController {
     private let calculationView = CalculationView()
-    private var stringAmount: String?
     private let viewModel: CalculationViewModel
     
     init(viewModel: CalculationViewModel) {
@@ -50,52 +49,37 @@ extension CalculationViewController {
     }
     
     private func setButtonAction() {
-        let resignTextField = UIAction { _ in
-            self.calculationView.resignTextField()
+        let resignTextField = UIAction { [weak self] _ in
+            self?.calculationView.resignTextField()
         }
         
-        let calculation = UIAction { _ in
-            // 입력이 빈칸일 경우
-            guard let string = self.stringAmount, !string.isEmpty else {
-                let alert = UIAlertController(status: .emptyAmount)
-                self.present(alert, animated: true)
-                return
-            }
-            
-            // 입력이 숫자가 아닐 경우
-            guard let amount = Double(string) else {
-                let alert = UIAlertController(status: .invalidAmount)
-                self.present(alert, animated: true)
-                return
-            }
-            
-//            let result = self.resultString(from: amount)
-//            self.calculationView.updateResultLabel(with: result)
+        let calculation = UIAction { [weak self] _ in
+            guard let self else { return }
+            self.viewModel.checkAlert()
+            self.viewModel.calculate()
         }
         
         calculationView.setButtonAction(resignTextField)
         calculationView.setButtonAction(calculation)
+        
+        // viewModel 동작 설정
+        viewModel.alert = { [weak self] alertType in
+            guard let alertType else { return }
+            let alert = UIAlertController(status: alertType)
+            self?.present(alert, animated: true)
+        }
+        
+        viewModel.update = { [weak self] text in
+            self?.calculationView.updateResultLabel(with: text)
+        }
     }
     
     private func setTextFieldAction() {
         let save = UIAction { [weak self] _ in
             let text = self?.calculationView.passAmountText()
-            self?.stringAmount = text
+            self?.viewModel.saveAmount(text ?? "")
         }
         
         calculationView.setTextFieldAction(save)
     }
 }
-
-//MARK: logic
-//extension CalculationViewController {
-//    private func calculate(with amount: Double) -> Double {
-//        return amount * data.value
-//    }
-//    
-//    private func resultString(from amount: Double) -> String {
-//        let result = calculate(with: amount)
-//        
-//        return "$\(String(format: "%.2f", amount)) → \(String(format: "%.2f", result)) \(data.currencyCode)"
-//    }
-//}

@@ -11,12 +11,33 @@ import Foundation
 class WorldCurrencyViewmodel {
     
     //MARK: - Properties
-    private(set) var manager = WorldCurrencyManager()
+    private var manager = WorldCurrencyManager()
     private var apiService = APIService()
+    private(set) var datas: [CurrencyData] = []
     
     //MARK: - Closures
     var updateCurrencyClosure: (()->Void)?
 
+}
+
+extension WorldCurrencyViewmodel {
+    func fatchModelToSearch(searchText: String) {
+        datas = searchText.isEmpty ? manager.worldCurrencyDatas : manager.worldCurrencyDatas.filter{
+            $0.isoCode.lowercased().contains(searchText.lowercased()) || $0.countryName.contains(searchText)
+        }
+    }
+}
+
+//MARK: - METHOD: Formatting
+extension WorldCurrencyViewmodel {
+     func formatCurrency(rate: Double, isoCode: String) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.currencyCode = isoCode
+        formatter.locale = Locale.current
+        
+        return formatter.string(from:  NSNumber(value: rate)) ?? "--"
+    }
 }
 
 //MARK: - METHOD: Datafatch
@@ -30,6 +51,7 @@ extension WorldCurrencyViewmodel {
             switch result {
             case .success(let result):
                 manager.updateData(model: result)
+                datas = manager.worldCurrencyDatas
                 DispatchQueue.main.async {
                     self.updateCurrencyClosure?()
                 }

@@ -195,16 +195,6 @@ extension WorldCurrencyManager {
     }
 }
 
-//MARK: - METHOD: Formatting
-extension WorldCurrencyManager {
-    func formatCurrency(rate: Double, isoCode: String) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencyCode = isoCode
-        formatter.locale = Locale.current
-        
-        return formatter.string(from:  NSNumber(value: rate)) ?? "--"
-    }
-}
+
 
 

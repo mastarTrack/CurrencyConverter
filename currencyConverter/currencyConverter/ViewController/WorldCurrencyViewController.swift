@@ -39,18 +39,26 @@ extension WorldCurrencyViewController {
     }
 }
 
+extension WorldCurrencyViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        vm.fatchModelToSearch(searchText: searchText)
+        collectionView.reloadData()
+    }
+    
+}
+
 
 //MARK: - METHOD: Configure CollectionView Datasource, Delegate
 extension WorldCurrencyViewController: UICollectionViewDelegate, UICollectionViewDataSource {
      
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return vm.manager.worldCurrencyDatas.count
+        return vm.datas.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CurrencyCell.identifier, for: indexPath) as! CurrencyCell
-        let rate = vm.manager.worldCurrencyDatas[indexPath.item]
-        cell.updateUI(isoCode: rate.isoCode, countryName: rate.countryName, rate: vm.manager.formatCurrency(rate: rate.rate, isoCode: rate.isoCode))
+        let rate = vm.datas[indexPath.item]
+        cell.updateUI(isoCode: rate.isoCode, countryName: rate.countryName, rate: vm.formatCurrency(rate: rate.rate, isoCode: rate.isoCode))
         return cell
     }
 }
@@ -78,6 +86,9 @@ extension WorldCurrencyViewController {
 //MARK: - METHOD: Configure
 extension WorldCurrencyViewController {
     func configureUI() {
+        
+        searchBar.delegate = self
+        
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewCompositionalLayout(section: currencySection()))
         collectionView.register(CurrencyCell.self, forCellWithReuseIdentifier: CurrencyCell.identifier)
         collectionView.dataSource = self

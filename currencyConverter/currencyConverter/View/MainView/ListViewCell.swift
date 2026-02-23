@@ -11,11 +11,20 @@ final class ListViewCell: UICollectionViewListCell {
     private let currencyLabel = UILabel()
     private let countryLabel = UILabel()
     private let rateLabel = UILabel()
+    private let starButton = UIButton()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         setAttributes()
         setLayout()
+        
+        accessories = [.customView(configuration: .init(customView: starButton, placement: .trailing(displayed: .always)))]
+        
+        let action = UIAction { [weak self] _ in
+            print("pushed")
+            self?.starButton.isSelected.toggle()
+        }
+        starButton.addAction(action, for: .touchUpInside)
     }
     
     required init?(coder: NSCoder) {
@@ -40,6 +49,10 @@ extension ListViewCell {
         
         rateLabel.font = .systemFont(ofSize: 16)
         rateLabel.textAlignment = .right
+        
+        starButton.setImage(UIImage(systemName: "star"), for: .normal)
+        starButton.setImage(UIImage(systemName: "star.fill"), for: .selected)
+        starButton.tintColor = .systemYellow
     }
     
     private func setLayout() {
@@ -59,7 +72,7 @@ extension ListViewCell {
         }
         
         rateLabel.snp.makeConstraints {
-            $0.trailing.equalToSuperview().inset(16)
+            $0.trailing.equalTo(separatorLayoutGuide.snp.trailing).inset(32)
             $0.centerY.equalToSuperview()
             $0.leading.greaterThanOrEqualTo(labelStack.snp.trailing).offset(16)
             $0.width.equalTo(120)

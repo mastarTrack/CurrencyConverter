@@ -14,6 +14,7 @@ class ViewController: UIViewController {
     
     private let viewModel = MainViewModel()
     
+    
     override func loadView() {
         self.view = mainView
     }
@@ -78,7 +79,7 @@ extension ViewController {
         let dataSource = UICollectionViewDiffableDataSource<Section, Rate>(collectionView: collectionView) { collectionView, indexPath, rate in
             return collectionView.dequeueConfiguredReusableCell(using: listCellRegistration, for: indexPath, item: rate)
         }
-        
+
         return dataSource
     }
     

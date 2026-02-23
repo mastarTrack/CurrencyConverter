@@ -16,6 +16,8 @@ class ViewController: UIViewController {
     private var originData: [Rate]? // 원본 데이터
     private var showingData: [Rate]? // 컬렉션뷰에 표시중인 데이터
     
+    private let mainVM = MainViewModel()
+    
     override func loadView() {
         self.view = mainView
     }
@@ -86,23 +88,11 @@ extension ViewController {
         self.dataSource.apply(snapShot)
     }
     
-    // 초기 데이터 설정
     private func setData() {
-        dataService.fetchCurrencyData(currency: "USD") { result in
-            guard let result else {
-                let alert = UIAlertController(status: .emptyData)
-                self.present(alert, animated: true)
-                return
-            }
-            
-            let rates = result.rates.reduce(into: []) {
-                $0.append(Rate(currencyCode: $1.key, value: $1.value))
-            }
-            
-            self.originData = rates
-            self.showingData = self.originData
-            self.setSnapshot(with: rates)
+        mainVM.update = { [weak self] (data: [Rate]) in
+            self?.setSnapshot(with: data)
         }
+        mainVM.fetchData()
     }
 }
 

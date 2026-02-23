@@ -43,16 +43,15 @@ class ExchangeRateTableViewCell: UITableViewCell {
     
     // 즐겨찾기 버튼 구현
     private let favoriteButton = UIButton().then {
-        let config = UIImage.SymbolConfiguration(pointSize: 25, weight: .regular)
+        let config = UIImage.SymbolConfiguration(pointSize: 30, weight: .regular)
         // SF symbol
         let image = UIImage(systemName: "star", withConfiguration: config)
         $0.setImage(image, for: .normal)
         $0.tintColor = .systemYellow
-        $0.addTarget(self, action: #selector(favoriteButtonTapped), for: .touchUpInside)
     }
     
     
-    // MARK: -- View 이벤트 전달
+    // MARK: -- View 이벤트 전달 클로저
     // favoriteButton 클로저
     var tappedfavoriteButton: (() -> Void)?
     
@@ -61,6 +60,7 @@ class ExchangeRateTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupUI()
+        setupAction()
     }
     
     required init?(coder: NSCoder) {
@@ -100,6 +100,12 @@ class ExchangeRateTableViewCell: UITableViewCell {
     }
     
     
+    // MARK: -- Action
+    private func setupAction() {
+        favoriteButton.addTarget(self, action: #selector(favoriteButtonTapped), for: .touchUpInside)
+    }
+
+    
     // MARK: -- @objc 메서드
     @objc
     private func favoriteButtonTapped() {
@@ -120,6 +126,6 @@ class ExchangeRateTableViewCell: UITableViewCell {
 
 
 #Preview {
-    let dummyViewModel = ExchangeRateViewModel()
-    return ExchangeRateViewController(viewModel: dummyViewModel)
+    let dummyMainViewModel = ExchangeRateViewModel()
+    return ExchangeRateViewController(viewModel: dummyMainViewModel)
 }

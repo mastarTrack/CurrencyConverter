@@ -41,7 +41,7 @@ final class MainViewModel: ViewModelProtocol {
             
             let rates = result.rates.reduce(into: []) {
                 $0.append(Rate(currencyCode: $1.key, value: $1.value))
-            }
+            }.sorted { $0.currencyCode < $1.currencyCode }
             
             self.originData = rates
             self.observedData = self.originData

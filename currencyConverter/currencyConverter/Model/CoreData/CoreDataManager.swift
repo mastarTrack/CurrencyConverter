@@ -34,7 +34,7 @@ class CoreDataManager {
     }
 }
 
-//MARK: CRUD
+//MARK: BookMark
 extension CoreDataManager {
     // 저장 - Create
     func saveBookMark(_ code: String) {
@@ -74,30 +74,6 @@ extension CoreDataManager {
         
         let fetchRequest = BookMark.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "currencyCode == %@", code)
-        
-        do {
-            // fetchRequest 실행
-            let result = try context.fetch(fetchRequest)
-            
-            // 결과 처리
-            for data in result as [NSManagedObject] {
-                // 삭제
-                context.delete(data)
-                print("삭제된 데이터: \(data)")
-            }
-            
-            // 변경사항 저장
-            try context.save()
-            print("데이터 삭제 완료")
-        } catch {
-            print("데이터 삭제 실패: \(error)")
-        }
-    }
-    
-    func deleteAllBookMark() {
-        let context = persistentContainer.viewContext
-        
-        let fetchRequest = BookMark.fetchRequest()
         
         do {
             // fetchRequest 실행

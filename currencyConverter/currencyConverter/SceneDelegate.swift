@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreData
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -16,8 +17,37 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
         
+        // 메인 화면 세팅
         let navigationController = UINavigationController(rootViewController: ExchangeRateViewController(viewModel: ExchangeRateViewModel()))
         
+        // 코어데이터에서 마지막 상태 읽어오기
+        let context = CoreDataManager.shared.context
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "AppState")
+        
+        do {
+            // 저장된 상태 있으면 꺼내기
+            if let result = try context.fetch(fetchRequest) as? [NSManagedObject],
+               let lastState = result.last,
+               let lastScreen = lastState.value(forKey: "lastScreen") as? String {
+                
+                if lastScreen == "Calculator",
+                   let currencyCode = lastState.value(forKey: "currencyCode") as? String,
+                   let currencyCountry = lastState.value(forKey: "currencyCountry") as? String {
+                    
+                    let calcViewModel = CalculatorViewModel(code: currencyCode, country: currencyCountry, rate: "1000.0")
+                    
+                    let calcVC = CalculatorViewController(viewModel: calcViewModel)
+
+                    // 리스트 화면 위에 계산기 화면을 얹어 시작
+                    navigationController.pushViewController(calcVC, animated: false)
+                    print("복원 완료: 계산기 화면 (\(currencyCode)")
+                } else {
+                    print("복원 완료: 리스트 화면")}
+                }
+            } catch {
+                    print("상태 복원 실패: \(error)")
+                }
+        // 완성된 화면 윈도우에 띄우기
         window.rootViewController = navigationController
         window.makeKeyAndVisible()
         self.window = window
@@ -45,10 +75,44 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to undo the changes made on entering the background.
     }
 
+    // MARK: -- 백그라운드
     func sceneDidEnterBackground(_ scene: UIScene) {
-        // Called as the scene transitions from the foreground to the background.
-        // Use this method to save data, release shared resources, and store enough scene-specific state information
-        // to restore the scene back to its current state.
+        
+        // 백그라운드 상태로 갈때 현 화면 상태 저장
+        saveCurrentAppState()
+    }
+    
+    // 앱 상태 저장 메서드
+    private func saveCurrentAppState() {
+        // 최 상단 뷰컨 찾기
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let window = windowScene.windows.first,
+              let rootVC = window.rootViewController as? UINavigationController,
+              let topVC = rootVC.topViewController else { return }
+        
+        let context = CoreDataManager.shared.context
+        
+        // 기존에 저장되어있던 상태 지우기
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "AppState")
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        _ = try? context.execute(deleteRequest)
+        
+        // 현 상태 기록하기
+        let newState = AppState(context: context)
+        
+        if topVC is ExchangeRateViewController {
+            newState.lastScreen = "List"
+            newState.currencyCode = nil
+            
+        } else if  let calcVC = topVC as? CalculatorViewController {
+            newState.lastScreen = "Calculator"
+            newState.currencyCode = calcVC.viewModel.selectedCode
+            newState.currencyCountry = calcVC.viewModel.selectedCountry
+            print("상태저장 완료: \(newState.currencyCode ?? "")")
+        }
+        
+        // 코어데이터 최종 저장
+        CoreDataManager.shared.saveContext()
     }
 
 

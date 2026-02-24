@@ -7,12 +7,12 @@
 
 
 import Foundation
-import Alamofire
 
 class ExchangeRateViewModel {
     
     var historyManager: HistoryManager
     var favoriteManager: FavoriteManager
+    var networkManager: NetworkManager
     
     var favoriteList: [Favorite] = []
     
@@ -33,19 +33,14 @@ class ExchangeRateViewModel {
         return viewData.isEmpty
     }
     
-    init(historyManager: HistoryManager, favoriteMananger: FavoriteManager) {
+    init(historyManager: HistoryManager, favoriteMananger: FavoriteManager, networkManager: NetworkManager) {
         self.historyManager = historyManager
         self.favoriteManager = favoriteMananger
+        self.networkManager = networkManager
     }
     
     func getItem(index: Int) -> ExchangeRate {
         return viewData[index]
-    }
-    
-    private func fetchData<T: Decodable>(url: URL, completion: @escaping(Result<T,AFError>) -> Void) {
-        AF.request(url).responseDecodable(of: T.self) { response in
-            completion(response.result)
-        }
     }
     
     func getCurrencyData() {
@@ -53,7 +48,7 @@ class ExchangeRateViewModel {
             print("잘못된 URL")
             return
         }
-        fetchData(url: url) { [weak self] (result: Result<CurrencyResponse,AFError>) in
+        networkManager.fetchData(url: url) { [weak self] (result: Result<CurrencyResponse,Error>) in
             guard let self else { return }
             switch result {
             case .success(let result):

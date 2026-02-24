@@ -21,8 +21,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let infoManager = InformationManager(container: container)
         let historyManager = HistoryManager(container: container)
         let favoriteManager = FavoriteManager(container: container)
+        let networkManager = NetworkManager()
         
-        let exchangeRateVM = ExchangeRateViewModel(historyManager: historyManager, favoriteMananger: favoriteManager)
+        let exchangeRateVM = ExchangeRateViewModel(historyManager: historyManager, favoriteMananger: favoriteManager, networkManager: networkManager)
         
         let navigationController = UINavigationController(rootViewController: ExchangeRateViewController(viewModel: exchangeRateVM))
         

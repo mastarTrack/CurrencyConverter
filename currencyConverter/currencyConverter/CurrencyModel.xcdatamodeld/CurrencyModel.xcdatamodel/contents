@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24411" systemVersion="25C56" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
-    <entity name="BookMark" representedClassName=".Currency" syncable="YES">
+    <entity name="CurrencyData" representedClassName=".CurrencyData" syncable="YES">
+        <attribute name="bookMark" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="currencyCode" optional="YES" attributeType="String"/>
+        <attribute name="value" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+    </entity>
+    <entity name="UpdateDate" representedClassName=".Date" syncable="YES">
+        <attribute name="lastUpdate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="nextUpdate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
     </entity>
 </model>

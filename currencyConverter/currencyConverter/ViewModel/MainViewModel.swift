@@ -29,16 +29,39 @@ final class MainViewModel: ViewModelProtocol {
     
     // 이니셜라이저
     init() {
-        fetchData()
+        setData()
     }
 }
 
 //MARK: 환율 데이터 설정 및 검색
 extension MainViewModel {
     // 초기 데이터 설정
-    func fetchData() {
-        let codes = coreDataManager.loadAllBookMark() ?? []
+    func setData() {
+        guard let rates = coreDataManager.loadCurrencyData() else {
+            // 저장된 데이터가 없을 경우
+            print("1번째 환율 정보 API 호출")
+            fetchData()
+            return
+        }
         
+        guard let dates = coreDataManager.loadUpdateDate() else {
+            print("날짜 정보 없음")
+            return
+        }
+        
+        if Date() < dates.nextUpdate { // 현재 날짜가 다음 업데이트 날짜보다 작을 경우
+            // 기존 데이터 유지
+            self.originData = rates
+            self.observedData = sortData(data: rates)
+        } else { // 현재 날짜가 다음 업데이트 날짜를 지났을 경우
+            // 신규 데이터 호출
+            print("신규 데이터 호출")
+            fetchData(previous: rates)
+        }
+    }
+    
+    // API 호출하여 데이터 가져오기
+    func fetchData(previous data: [Rate]? = nil) {
         // 환율 데이터 설정
         dataService.fetchCurrencyData(currency: "USD") {[weak self] result in
             guard let self else { return }
@@ -47,9 +70,23 @@ extension MainViewModel {
                 return
             }
             
-            let rates = result.rates.reduce(into: []) {
-                $0.append(Rate(currencyCode: $1.key, value: $1.value, bookMarked: codes.contains($1.key)))
+            let rates = result.rates.reduce(into: [Rate]()) { arr, rates in
+                guard let data else { // 기존 데이터가 없을 경우
+                    arr.append(Rate(currencyCode: rates.key, value: rates.value, bookMarked: false))
+                    return
+                }
+                
+                if let i = data.firstIndex(where: { $0.currencyCode == rates.key }) {
+                    arr.append(Rate(currencyCode: rates.key, value: rates.value, bookMarked: data[i].bookMarked))
+                } else {
+                    arr.append(Rate(currencyCode: rates.key, value: rates.value, bookMarked: false))
+                }
             }
+            
+            print(result.lastUpdate, result.nextUpdate)
+            
+            coreDataManager.saveCurrencyData(rates)
+            coreDataManager.saveUpdateDate(lastUpdate: result.lastUpdate, nextUpdate: result.nextUpdate)
 
             self.originData = rates
             self.observedData = sortData(data: rates)
@@ -92,11 +129,7 @@ extension MainViewModel {
         observedData = sortData(data: observedData ?? []) // 표시 데이터 변경
         
         // 코어데이터 저장
-        if bookMarked {
-            coreDataManager.saveBookMark(rate.currencyCode)
-        } else {
-            coreDataManager.deleteBookMark(rate.currencyCode)
-        }
+        coreDataManager.updateBookMark(of: rate.currencyCode, bookMarked: bookMarked)
     }
     
     // 데이터 정렬

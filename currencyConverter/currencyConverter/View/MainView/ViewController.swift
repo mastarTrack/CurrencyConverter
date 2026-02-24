@@ -25,7 +25,7 @@ class ViewController: UIViewController {
         setNavigationController()
         mainView.searchBar.delegate = self
         mainView.listView.delegate = self
-        setViewModelClosure()
+        setSnapshot(with: viewModel.observedData ?? [])
     }
     
     // viewModel 초기 클로저 설정

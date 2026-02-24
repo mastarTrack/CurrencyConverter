@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreData
 
 class ExchangeRateViewModel: ViewModelProtocol {
     
@@ -59,13 +60,29 @@ class ExchangeRateViewModel: ViewModelProtocol {
     
     // 원본 rates
     var rates: [SimpleRate] = []
+    
+    // 현 검색어 저장
+    private var currentSearchText = ""
 
     // 즐겨찾기 된 코드 목록
     var favoriteCodes: [String] = []
     
+    // 코어데이터 꺼내온 변수
+    let context = CoreDataManager.shared.context
+    
     
     // MARK: -- 데이터 가져오는 메서드
     private func fetchRates() {
+        
+        // 코어데이터(즐찾 목록) 가져오기
+        do {
+            let request = FavoriteCurrency.fetchRequest()
+            let results = try context.fetch(request)
+            self.favoriteCodes = results.compactMap { $0.favoriteCode }
+        } catch {
+            print("즐겨찾기 목록 불러오기 실패: \(error)")
+        }
+        
         NetworkManager.shared.fetchRates { [weak self] result in
             guard let self = self else { return }
             
@@ -79,7 +96,7 @@ class ExchangeRateViewModel: ViewModelProtocol {
                 self.rates = sortedRates
                 
                 // state => success
-                self.state = .success(rates: sortedRates)
+                self.sortAndSendRates(baseRates: self.rates)
                 
             case .failure(_):
                 
@@ -92,6 +109,9 @@ class ExchangeRateViewModel: ViewModelProtocol {
     
     // MARK: -- 데이터 필터링 메서드
     private func filterRates(searchText: String) {
+        // 검색어 저장하기
+        self.currentSearchText = searchText
+        
         if searchText.isEmpty { // 검색창이 비었을때
             sortAndSendRates(baseRates: rates)
         } else {
@@ -113,15 +133,14 @@ class ExchangeRateViewModel: ViewModelProtocol {
     }
     
     
+    // MARK: -- 즐겨찾기 기준 정렬 메서드
     private func sortAndSendRates(baseRates: [SimpleRate]) {
         // 즐겨찾기 그룹
-        let favoriteGroup = baseRates.filter { favoriteCodes.contains($0.currencyCode) }
-            .map { SimpleRate(currencyCode: $0.currencyCode, rate: $0.rate, isFavorite: true) }
+        let favoriteGroup = baseRates.filter { $0.isFavorite }
             .sorted { $0.currencyCode < $1.currencyCode }
         
         // !즐겨찾기 그룹
-        let normalGroup = baseRates.filter { !favoriteCodes.contains($0.currencyCode) }
-            .map { SimpleRate(currencyCode: $0.currencyCode, rate: $0.rate, isFavorite: false)}
+        let normalGroup = baseRates.filter { !$0.isFavorite }
             .sorted { $0.currencyCode < $1.currencyCode }
         
         let combinedGroup = favoriteGroup + normalGroup
@@ -131,17 +150,46 @@ class ExchangeRateViewModel: ViewModelProtocol {
     
     // MARK: -- 즐겨찾기 설정 메서드
     private func handleToggleFavorite(code: String) {
+        
+        // 원본 rates 배열 업데이트
+        if let index = rates.firstIndex(where: { $0.currencyCode == code }) {
+            rates[index].isFavorite.toggle()
+        }
+        
         // 이미 즐겨찾기 되어있는 경우
         if favoriteCodes.contains(code) {
             favoriteCodes.removeAll { $0 == code }
+            
             // 코어데이터에서도 삭제하는 로직
+            let fetchRequest = FavoriteCurrency.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "favoriteCode == %@", code)
+            
+            do {
+                // fetch request 실행
+                let result = try self.context.fetch(fetchRequest)
+                // 결과 처리
+                for data in result as [NSManagedObject] {
+                    // 삭제
+                    self.context.delete(data)
+                    print("삭제된 데이터: \(data)")
+                }
+            } catch {
+                print("데이터 삭제 실패: \(error)")
+            }
+            
         // 즐겨찾기 안되어있으면 추가하기
         } else {
             favoriteCodes.append(code)
+            
             // 코어데이터에도 추가하는 로직
+            let newFavorite = FavoriteCurrency(context: context)
+            newFavorite.favoriteCode = code
         }
         
+        // 변경된 내용 기기에 최종 저장
+        CoreDataManager.shared.saveContext()
+        
         // 즐겨찾기 설정이 변경되었으므로 업데이트
-        sortAndSendRates(baseRates: self.rates)
+        filterRates(searchText: self.currentSearchText)
     }
 }

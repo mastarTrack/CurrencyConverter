@@ -22,7 +22,6 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        viewModel.deleteAllBookMark()
         setNavigationController()
         mainView.searchBar.delegate = self
         mainView.listView.delegate = self
@@ -66,6 +65,11 @@ extension ViewController: UISearchBarDelegate {
         
         viewModel.searchData(searchText)
     }
+    
+    // 취소 버튼 선택시
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        viewModel.searchData("")
+    }
 }
 
 //MARK: set listView
@@ -74,19 +78,13 @@ extension ViewController {
     private func makeCollectionViewDiffableDataSource(_ collectionView: UICollectionView) -> UICollectionViewDiffableDataSource<Section, Rate> {
         let listCellRegistration = UICollectionView.CellRegistration<ListViewCell, Rate> { [weak self] cell, indexPath, rate in
             guard let self else { return }
-            
+        
             // 셀 설정
             let value = self.viewModel.fetchValueStringData(of: rate)
         
             cell.configure(rate, value: value) { [weak self] in
                 let bookMarked = cell.starButton.isSelected
                 self?.viewModel.updateBookMark(of: rate, to: bookMarked)
-                
-                if bookMarked {
-                    self?.viewModel.saveBookMark(rate)
-                } else {
-                    self?.viewModel.deleteBookMark(rate)
-                }
             }
         }
         

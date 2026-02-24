@@ -70,41 +70,44 @@ extension MainViewModel {
         }
     }
     
+    func cancelSearch() {
+        observedData = sortData(data: originData ?? [])
+    }
+    
     // 컬렉션뷰 셀 설정에 필요한 데이터 전달
     func fetchValueStringData(of data: Rate) -> String {
         let value = String(format: "%.4f", data.value)
         return value
     }
-    
-    // 북마크 여부 업데이트
-    func updateBookMark(of rate: Rate, to bookMarked: Bool) {
-        guard let i = originData?.firstIndex(of: rate) else { return }
-        originData?[i].bookMarked = bookMarked
-        
-        observedData = sortData(data: observedData ?? [])
-    }
 }
 
 //MARK: CoreData
 extension MainViewModel {
-    func saveBookMark(_ data: Rate) {
-        coreDataManager.saveBookMark(data.currencyCode)
+    // 북마크 여부 업데이트
+    func updateBookMark(of rate: Rate, to bookMarked: Bool) {
+        // 표시 데이터 변경
+        guard let i = originData?.firstIndex(of: rate) else { return } // 데이터 찾기
+        originData?[i].bookMarked = bookMarked // 북마크 값 변경
+        
+        observedData = sortData(data: observedData ?? []) // 표시 데이터 변경
+        
+        // 코어데이터 저장
+        if bookMarked {
+            coreDataManager.saveBookMark(rate.currencyCode)
+        } else {
+            coreDataManager.deleteBookMark(rate.currencyCode)
+        }
     }
     
-    func deleteBookMark(_ data: Rate) {
-        coreDataManager.deleteBookMark(data.currencyCode)
-    }
-    
-    func deleteAllBookMark() {
-        coreDataManager.deleteAllBookMark()
-    }
-    
+    // 데이터 정렬
     private func sortData(data: [Rate]) -> [Rate] {
         data.sorted {
-            if $0.bookMarked || $1.bookMarked { // 둘 중 하나가 bookMark일 경우
-                return $0.bookMarked ? true : false
-            } else {
-                return $0.currencyCode < $1.currencyCode
+            if $0.bookMarked && $1.bookMarked { // 두 값 모두 bookMark일 경우
+                return $0.currencyCode < $1.currencyCode // 알파벳순 정렬
+            } else if $0.bookMarked || $1.bookMarked { // 두 값 중 하나가 bookMark일 경우
+                return $0.bookMarked ? true : false // 기준값이 bookMark이면 현재 순서 유지, 아니면 두 값 위치를 바꿈
+            } else { // 두 값 모두 bookMark가 아닐 경우
+                return $0.currencyCode < $1.currencyCode // 알파벳순 정렬
             }
         }
     }

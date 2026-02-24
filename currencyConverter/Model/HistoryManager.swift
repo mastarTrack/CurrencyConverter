@@ -10,11 +10,7 @@ import Foundation
 import CoreData
 
 class HistoryManager {
-    var container: NSPersistentContainer
-    
-    init(container: NSPersistentContainer) {
-        self.container = container
-    }
+    private let container = CoreDataManager.shared.persistentContainer
 }
 
 extension HistoryManager {

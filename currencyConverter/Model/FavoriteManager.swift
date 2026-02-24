@@ -9,11 +9,7 @@ import Foundation
 import CoreData
 
 class FavoriteManager {
-    var container: NSPersistentContainer
-    
-    init(container: NSPersistentContainer) {
-        self.container = container
-    }
+    private let container = CoreDataManager.shared.persistentContainer
 }
 
 extension FavoriteManager {

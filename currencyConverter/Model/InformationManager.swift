@@ -11,11 +11,7 @@ import CoreData
 
 class InformationManager {
     
-    var container: NSPersistentContainer
-    
-    init(container: NSPersistentContainer) {
-        self.container = container
-    }
+    private let container = CoreDataManager.shared.persistentContainer
 }
 
 extension InformationManager {

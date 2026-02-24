@@ -28,9 +28,8 @@ class ExchangeRateViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        let favoriteManager = FavoriteManager(container: appDelegate.persistentContainer)
-        let historyManager = HistoryManager(container: appDelegate.persistentContainer)
+        let favoriteManager = FavoriteManager()
+        let historyManager = HistoryManager()
         viewModel.favoriteManager = favoriteManager
         viewModel.historyManager = historyManager
         

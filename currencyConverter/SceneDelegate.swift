@@ -6,6 +6,7 @@
 //
 
 import UIKit
+internal import CoreData
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -15,12 +16,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        let container = appDelegate.persistentContainer
-        
-        let infoManager = InformationManager(container: container)
-        let historyManager = HistoryManager(container: container)
-        let favoriteManager = FavoriteManager(container: container)
+        let infoManager = InformationManager()
+        let historyManager = HistoryManager()
+        let favoriteManager = FavoriteManager()
         let networkManager = NetworkManager()
         
         let exchangeRateVM = ExchangeRateViewModel(historyManager: historyManager, favoriteMananger: favoriteManager, networkManager: networkManager)
@@ -68,8 +66,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func sceneDidEnterBackground(_ scene: UIScene) {
         
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        let infoManager = InformationManager(container: appDelegate.persistentContainer)
+        let infoManager = InformationManager()
         let navigation = window?.rootViewController as! UINavigationController
         
         if let calculatorVC = navigation.topViewController as? CalculatorViewController {
@@ -78,7 +75,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             infoManager.saveInfo(code: nil, page: "exchangeRate")
         }
         
-        (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
+        CoreDataManager.shared.saveContext()
     }
 
 

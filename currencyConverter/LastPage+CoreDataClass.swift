@@ -16,4 +16,5 @@ public class LastPage: NSManagedObject {
     public static let className = "LastPage"
     public enum keys {
         static let isoCode = "isoCode"
-    }}
+    }
+}

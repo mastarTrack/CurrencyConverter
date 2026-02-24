@@ -44,6 +44,9 @@ class CurrencyCell: UICollectionViewCell {
         $0.tintColor = UIColor(named: CommonUtils.CustomColor.favoriteColor.rawValue)
         $0.isSelected = false
     }
+    private let trandLabel = UILabel().then {
+        $0.font = .systemFont(ofSize: 16)
+    }
     
     //MARK: - Closures
     /// 즐겨찾기 버튼 액션용 클로져
@@ -68,11 +71,19 @@ class CurrencyCell: UICollectionViewCell {
 //MARK: - METHOD: Update UI
 extension CurrencyCell {
     /// UI Components 표기 값 갱신 메소드
-    func updateUI(isoCode: String, countryName: String, rate: String, isFavorite: Bool) {
+    func updateUI(isoCode: String, countryName: String, rate: String, isFavorite: Bool, trand: Int16) {
         isoCodeLabel.text = isoCode
         countryNameLabel.text = countryName
         currencyLabel.text = rate
         favoritesButton.isSelected = isFavorite
+        
+        if trand == 1 {
+            trandLabel.text = "🔼"
+        } else if trand == -1 {
+            trandLabel.text = "🔽"
+        } else {
+            trandLabel.text = ""
+        }
     }
     /// 즐겨찾기 버튼 갱신 메소드
     func updateFavoritesUI() {
@@ -96,6 +107,7 @@ extension CurrencyCell {
         
         mainView.addSubview(contryinfoStackView)
         mainView.addSubview(currencyLabel)
+        mainView.addSubview(trandLabel)
         mainView.addSubview(favoritesButton)
         
         favoritesButton.addAction(UIAction { [weak self] _ in
@@ -121,8 +133,13 @@ extension CurrencyCell {
             $0.width.equalTo(120)
         }
         
+        trandLabel.snp.makeConstraints {
+            $0.leading.greaterThanOrEqualTo(currencyLabel.snp.trailing).offset(8)
+            $0.centerY.equalToSuperview()
+            $0.width.equalTo(30)
+        }
         favoritesButton.snp.makeConstraints {
-            $0.leading.equalTo(currencyLabel.snp.trailing).offset(16)
+            $0.leading.equalTo(trandLabel.snp.trailing).offset(8)
             $0.trailing.equalToSuperview().inset(16)
             $0.centerY.equalToSuperview()
 

@@ -20,8 +20,10 @@ class WorldCurrencyViewmodel: BaseViewModelProtocol {
     private(set) var datas: [CurrencyData] = []
     /// 검색값 저장 텍스트
     private var searchText = ""
-    /// CoreData 컨테이너
-    var coreData: NSPersistentContainer!
+    /// 다음 업데이트 시간 Unix 값 저장용 변수
+    private var saveNextDateUnix: Double = 0.0
+    /// 시간 체크 및 업데이트 작업을 확인하기 위한 타이머
+    var timer: Timer?
     
     //MARK: - Closures
     /// 업데이트 요청 클로저
@@ -31,9 +33,53 @@ class WorldCurrencyViewmodel: BaseViewModelProtocol {
     
     //MARK: - Init
     init() {
-        fatchWorldCurrency()
+        guard let saveNextDateUnix = CurrencyCoreDataManager.readUpdateUnixData(),
+        let saveWorldCurrency = CurrencyCoreDataManager.readWorldCurrencyData() else {
+            print("return")
+            fatchWorldCurrency()
+            return
+        }
+        self.saveNextDateUnix = saveNextDateUnix
+        let currenttime = Date().timeIntervalSince1970
+        
+        print(saveNextDateUnix)
+        print(Date())
+        print(currenttime)
+        
+        // 업데이트 예정 날짜보다 이전일 경우
+        if currenttime < self.saveNextDateUnix {
+            manager.updataData(model: saveWorldCurrency)
+            datas = manager.worldCurrencyDatas
+            DispatchQueue.main.async {
+                self.updateCurrencyClosure?(nil)
+                self.getLastPageData()
+            }
+        } else {
+            fatchWorldCurrency()
+        }
+        
+        setUpdateCheckTimer()
     }
 }
+
+//MARK: - METHOD: Timer
+extension WorldCurrencyViewmodel {
+    func setUpdateCheckTimer() {
+        timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
+            guard let self else { return }
+            self.timerAction()
+        }
+    }
+    
+    func timerAction() {
+        let currenttime = Date().timeIntervalSince1970
+        // 업데이트 예정 날짜보다 이전일 경우
+        if currenttime > saveNextDateUnix {
+            fatchWorldCurrency()
+        }
+    }
+}
+
 
 //MARK: - METHOD: DataUpdate
 extension WorldCurrencyViewmodel {
@@ -49,24 +95,16 @@ extension WorldCurrencyViewmodel {
     /// 즐겨찾기 체크 업데이트 메소드
     func updateDataToFavorites(isoCode: String, isFavorite: Bool){
         manager.updateDataToFavorites(isoCode: isoCode, isFavorite: isFavorite)
-        
-        /// CoreData 즐겨찾기 데이터 관리
-        if isFavorite {
-            CurrencyCoreDataManager.createFavoriteData(isoCode: isoCode, isFavorite: isFavorite)
-        } else {
-            CurrencyCoreDataManager.deleteFavoriteData(isoCode: isoCode)
-        }
-        
         fatchModelToSearch(searchText: searchText)
         datas = manager.sortData(datas: datas)
     }
 }
 
 extension WorldCurrencyViewmodel {
+    /// 프로그램 종료 후 마지막으로 저장된 페이지 로드 메소드
     func getLastPageData() {
-        guard let data = CurrencyCoreDataManager.loadLastPageData(),
+        guard let data = CurrencyCoreDataManager.readLastPageData(),
         !data.isEmpty else { return }
-        
         if let currencyData = datas.firstIndex(where: { $0.isoCode == data }) {
             lastPageClosure?(datas[currencyData])
         }
@@ -84,11 +122,9 @@ extension WorldCurrencyViewmodel {
             guard let self else { return }
             switch result {
             case .success(let result):
-                manager.updateData(model: result)
-                
-                let favoriteDatas = CurrencyCoreDataManager.ReadFavoriteData()
-                manager.updateDataToCoreDataFavorites(datas: favoriteDatas)
-                datas = manager.worldCurrencyDatas
+                self.manager.updateData(model: result)
+                self.saveNextDateUnix = result.timeNextUpdateUnix
+                self.datas = manager.worldCurrencyDatas
                 DispatchQueue.main.async {
                     self.updateCurrencyClosure?(nil)
                     self.getLastPageData()

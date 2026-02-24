@@ -35,6 +35,7 @@ class WorldCurrencyViewController: BaseViewController {
         navigationItem.backButtonDisplayMode = .default
         setViewModelClosure()
         configureUI()
+        print(Date())
         // Do any additional setup after loading the view.
     }
 }
@@ -88,7 +89,7 @@ extension WorldCurrencyViewController: UICollectionViewDelegate, UICollectionVie
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CurrencyCell.identifier, for: indexPath) as! CurrencyCell
         let rate = vm.datas[indexPath.item]
-        cell.updateUI(isoCode: rate.isoCode, countryName: rate.countryName, rate: CommonUtils.formatCurrency(rate: rate.rate, isoCode: rate.isoCode, digit: 4), isFavorite: rate.favorites)
+        cell.updateUI(isoCode: rate.isoCode, countryName: rate.countryName, rate: CommonUtils.formatCurrency(rate: rate.rate, isoCode: rate.isoCode, digit: 4), isFavorite: rate.favorites, trand: rate.trand)
         cell.favoritesTouchClosure = {[weak self] isFavorite in
             guard let self else { return }
             vm.updateDataToFavorites(isoCode: rate.isoCode, isFavorite: isFavorite)

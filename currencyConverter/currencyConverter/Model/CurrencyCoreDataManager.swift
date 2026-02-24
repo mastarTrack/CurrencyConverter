@@ -20,6 +20,106 @@ class CurrencyCoreDataManager {
     }()
 }
 
+//MARK: - METHOD: WorldCurrency
+extension CurrencyCoreDataManager {
+    static func createWorldCurrencyData(datas: [CurrencyData]) {
+        guard let context = context else { return }
+        guard let entity = NSEntityDescription.entity(forEntityName: WorldCurrency.className,
+                                                      in: context) else { return }
+        for data in datas {
+            let currency = NSManagedObject(entity: entity, insertInto: context)
+            currency.setValue(data.isoCode, forKey: WorldCurrency.keys.isoCode)
+            currency.setValue(data.countryName, forKey: WorldCurrency.keys.countryName)
+            currency.setValue(data.rate, forKey: WorldCurrency.keys.rate)
+            currency.setValue(data.favorites, forKey: WorldCurrency.keys.favorites)
+            currency.setValue(data.trand, forKey: WorldCurrency.keys.trand)
+        }
+        do {
+            try context.save()
+        } catch {
+            print("Save Error: WorldCurrency Data")
+        }
+    }
+    
+    static func readWorldCurrencyData() -> [CurrencyData]? {
+        do {
+            guard let currencyDatas = try context?.fetch(WorldCurrency.fetchRequest()) else { return nil }
+            return currencyDatas.reduce(into: [CurrencyData]()) {
+                $0.append(CurrencyData(isoCode: $1.isoCode ?? "",
+                                       rate: $1.rate,
+                                       countryName: $1.countryName ?? "",
+                                       favorites: $1.favorites,
+                                       trand: $1.trand))
+            }
+        } catch {
+            print("Read Error: WorldCurrency Data")
+            return nil
+        }
+    }
+        
+    static func updateWorldCurrencyData(currencydata: CurrencyData) {
+        guard let context = context else { return }
+
+        let fetchRequest = WorldCurrency.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "\(WorldCurrency.keys.isoCode) == %@", currencydata.isoCode)
+        
+        do {
+            let result = try context.fetch(fetchRequest)
+            if let data = result.first {
+                data.isoCode = currencydata.isoCode
+                data.countryName = currencydata.countryName
+                data.favorites = currencydata.favorites
+                data.rate = currencydata.rate
+                data.trand = currencydata.trand
+            }
+            try context.save()
+        } catch {
+            print("Delete Failed")
+        }
+    }
+    
+    static func deleteAllWorldCurrencyData() {
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: WorldCurrency.fetchRequest())
+        do {
+            try context?.execute(deleteRequest)
+            try context?.save()
+        } catch {
+            print("delete All Error: WorldCurrency Data")
+
+        }
+    }
+}
+
+
+//MARK: - METHOD: UpdateUnix
+extension CurrencyCoreDataManager {
+    static func updateUpdateUnixData(UnixDate: Double) {
+        guard let context = context else { return }
+        do {
+            let updateUnixData = try context.fetch(UpdateUnix.fetchRequest())
+            if let data = updateUnixData.first {
+                data.updateUnix = UnixDate
+            } else {
+                let newData = UpdateUnix(context: context)
+                newData.updateUnix = UnixDate
+            }
+            try context.save()
+        } catch {
+            print("Save Error: LastPage Data")
+        }
+    }
+    
+    static func readUpdateUnixData() -> Double? {
+        do {
+            guard let updateUnixData = try context?.fetch(UpdateUnix.fetchRequest()) else { return nil }
+            return updateUnixData.first?.updateUnix ?? 0
+        } catch {
+            print("Load Error: LastPage Data")
+            return nil
+        }
+    }
+}
+
 //MARK: - METHOD: LastPage
 extension CurrencyCoreDataManager {
     static func updateLastPageData(isoCode: String) {
@@ -38,7 +138,7 @@ extension CurrencyCoreDataManager {
         }
     }
     
-    static func loadLastPageData() -> String? {
+    static func readLastPageData() -> String? {
         do {
             guard let lastPageData = try context?.fetch(LastPage.fetchRequest()) else { return nil }
             return lastPageData.first?.isoCode
@@ -47,54 +147,4 @@ extension CurrencyCoreDataManager {
             return nil
         }
     }
-}
-
-
-//MARK: - METHOD: Favorites
-extension CurrencyCoreDataManager {
-    /// 즐겨찾기 CoreData 저장 메소드
-    static func createFavoriteData(isoCode: String, isFavorite: Bool) {
-        guard let context = context else { return }
-        guard let entity = NSEntityDescription.entity(forEntityName: Favorites.className,
-                                                      in: context) else { return }
-        
-        let favoriteData = NSManagedObject(entity: entity, insertInto: context)
-        favoriteData.setValue(isoCode, forKey: Favorites.keys.isoCode)
-        favoriteData.setValue(isFavorite, forKey: Favorites.keys.isFavorite)
-        
-        do {
-            try context.save()
-            print("Save is Success")
-        } catch {
-            print("Save is Failed")
-        }
-    }
-    
-    /// 즐겨찾기 CoreData 읽기 메소드
-    static func ReadFavoriteData() -> [(String, Bool)] {
-        do {
-            guard let favoritesDatas = try context?.fetch(Favorites.fetchRequest()) else { return [] }
-            return favoritesDatas.reduce(into: [(String, Bool)]() ){ $0.append( ($1.isoCode, $1.isFavorite) as! (String, Bool)) }
-        } catch {
-            print("Read Failed")
-            return []
-        }
-    }
-    
-    /// 즐겨찾기 CoreData 삭제 메소드
-    static func deleteFavoriteData(isoCode: String) {
-        let fetchRequest = Favorites.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "\(Favorites.keys.isoCode) == %@", isoCode)
-        
-        do {
-            guard let result = try context?.fetch(fetchRequest) else { return }
-            for data in result as [NSManagedObject] {
-                context?.delete(data)
-            }
-            try context?.save()
-        } catch {
-            print("Delete Failed")
-        }
-    }
-    
 }

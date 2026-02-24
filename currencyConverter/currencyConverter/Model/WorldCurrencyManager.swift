@@ -9,14 +9,11 @@ import Foundation
 
 /// 환율 정보 모델 메니저
 class WorldCurrencyManager {
-    
-    /// API 추출 원본 데이터 모델
-    private var worldCurrencyModel: WorldCurrencyModel?
+
     /// 외부 호출용 데이터 모델
     private(set) var worldCurrencyDatas: [CurrencyData] = []
-    
-    
-    let codeToCurreny = [
+            
+    private let codeToCurreny = [
         "USD": "미국",
         "AED": "아랍에미리트",
         "AFN": "아프가니스탄",
@@ -185,17 +182,46 @@ class WorldCurrencyManager {
 
 //MARK: - METHOD: UPDATE
 extension WorldCurrencyManager {
-    /// 모델값 업데이트 메소드
+    /// API 값을 통한 모델값 업데이트 메소드
     func updateData(model: WorldCurrencyModel) {
-        worldCurrencyModel = model
-        guard let rates = worldCurrencyModel?.rates else {
+        var apiDatas: [CurrencyData] = []
+        guard model.rates.count != 0 else {
             worldCurrencyDatas = []
             return
         }
-        for item in rates {
-            worldCurrencyDatas.append(CurrencyData(isoCode: item.key, rate: item.value, countryName: codeToCurreny[item.key] ?? ""))
+        for item in model.rates {
+            apiDatas.append(CurrencyData(isoCode: item.key, rate: item.value, countryName: codeToCurreny[item.key] ?? ""))
+        }
+        
+        if worldCurrencyDatas.count == 0 {
+            worldCurrencyDatas = apiDatas
+        } else {
+            for data in apiDatas {
+                guard let index = worldCurrencyDatas.firstIndex(where: { $0.isoCode == data.isoCode }) else { continue }
+                if abs(data.rate - worldCurrencyDatas[index].rate) > 0.01 {
+                    if data.rate > worldCurrencyDatas[index].rate {
+                        worldCurrencyDatas[index].trand = 1
+                    } else {
+                        worldCurrencyDatas[index].trand = -1
+                    }
+                } else {
+                    worldCurrencyDatas[index].trand = 0
+                }
+                worldCurrencyDatas[index].rate = data.rate
+            }
         }
         worldCurrencyDatas = sortData(datas: worldCurrencyDatas)
+        
+        // Coredata 저장
+        CurrencyCoreDataManager.updateUpdateUnixData(UnixDate: model.timeNextUpdateUnix)
+        CurrencyCoreDataManager.deleteAllWorldCurrencyData()
+        CurrencyCoreDataManager.createWorldCurrencyData(datas: worldCurrencyDatas)
+        print( "Update: \(model.timeNextUpdateUnix)")
+    }
+    
+    /// 모델값 업데이트 메소드
+    func updataData(model: [CurrencyData]){
+        worldCurrencyDatas = sortData(datas: model)
     }
     
     /// 입력된 코어데이터에 저장된 즐겨찾기 값을 비교하여 업데이트 진행 메소드
@@ -209,6 +235,7 @@ extension WorldCurrencyManager {
     func updateDataToFavorites(isoCode: String, isFavorite: Bool) {
         if let index = worldCurrencyDatas.firstIndex(where: { $0.isoCode == isoCode }) {
             worldCurrencyDatas[index].favorites = isFavorite
+            CurrencyCoreDataManager.updateWorldCurrencyData(currencydata: worldCurrencyDatas[index])
             worldCurrencyDatas = sortData(datas: worldCurrencyDatas)
         }
     }

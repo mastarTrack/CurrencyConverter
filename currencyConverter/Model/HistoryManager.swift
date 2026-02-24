@@ -5,7 +5,6 @@
 //  Created by 손영빈 on 2/20/26.
 //
 
-//TODO: catch에서 에러처리
 
 import Foundation
 import CoreData

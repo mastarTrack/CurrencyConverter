@@ -5,7 +5,6 @@
 //  Created by 손영빈 on 2/20/26.
 //
 
-//TODO: saveInfo, fetchData 메서드가 공통된 로직인데, 하나로 합칠 수는 없나 ?
 
 import Foundation
 import CoreData

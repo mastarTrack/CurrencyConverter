@@ -16,13 +16,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        let infoManager = InformationManager(container: appDelegate.persistentContainer)
-        let historyManager = HistoryManager(container: appDelegate.persistentContainer)
+        let container = appDelegate.persistentContainer
+        
+        let infoManager = InformationManager(container: container)
+        let historyManager = HistoryManager(container: container)
+        let favoriteManager = FavoriteManager(container: container)
+        
+        let exchangeRateVM = ExchangeRateViewModel(historyManager: historyManager, favoriteMananger: favoriteManager)
+        
+        let navigationController = UINavigationController(rootViewController: ExchangeRateViewController(viewModel: exchangeRateVM))
+        
         let info = infoManager.fetchData()
-        
-        let window = UIWindow(windowScene: windowScene)
-        let navigationController = UINavigationController(rootViewController: ExchangeRateViewController())
-        
         if info?.page == "calculator", let code = info?.code {
             if let history = historyManager.fetchData(code: code) {
                 let exchangeRate = ExchangeRate(code: code, rate: history.rate)
@@ -33,6 +37,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             }
         }
         
+        let window = UIWindow(windowScene: windowScene)
         window.rootViewController = navigationController
         window.makeKeyAndVisible()
         self.window = window

@@ -5,7 +5,6 @@
 //  Created by 손영빈 on 2/13/26.
 //
 
-//TODO: 0,음수일 때 에러처리
 
 import Foundation
 

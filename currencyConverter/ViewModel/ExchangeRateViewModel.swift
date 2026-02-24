@@ -5,16 +5,15 @@
 //  Created by 손영빈 on 2/13/26.
 //
 
-//TODO: FavoriteManager 연결, starButton 클릭시 호출 메서드 생성, 좋아요 기준 정렬 메서드 생성
 
 import Foundation
 import Alamofire
 
 class ExchangeRateViewModel {
     
-    var historyManager: HistoryManager?
+    var historyManager: HistoryManager
+    var favoriteManager: FavoriteManager
     
-    var favoriteManager: FavoriteManager?
     var favoriteList: [Favorite] = []
     
     var updateData: (() -> Void)?
@@ -32,6 +31,11 @@ class ExchangeRateViewModel {
     
     var isDataEmpty: Bool {
         return viewData.isEmpty
+    }
+    
+    init(historyManager: HistoryManager, favoriteMananger: FavoriteManager) {
+        self.historyManager = historyManager
+        self.favoriteManager = favoriteMananger
     }
     
     func getItem(index: Int) -> ExchangeRate {
@@ -56,7 +60,7 @@ class ExchangeRateViewModel {
                 let sortedRates = result.rates.sorted{ $0.key < $1.key }
                 let currentUnix = result.unix
                 allData = sortedRates.map { code, rate in
-                    let lastData = self.historyManager?.fetchData(code: code)
+                    let lastData = self.historyManager.fetchData(code: code)
                     var exchangeRate = ExchangeRate(code: code, rate: rate)
                     if let last = lastData, last.unix != Int64(currentUnix) {
                         let diff = rate - last.rate
@@ -70,7 +74,7 @@ class ExchangeRateViewModel {
                 }
                 viewData = allData
                 sortByFavorite()
-                self.historyManager?.saveData(rates: result.rates, unix: Int64(currentUnix))
+                self.historyManager.saveData(rates: result.rates, unix: Int64(currentUnix))
             case .failure(let error):
                 print(error)
             }
@@ -92,7 +96,7 @@ class ExchangeRateViewModel {
     
     // 좋아요 기준으로 정렬하는 메서드
     func sortByFavorite() {
-        self.favoriteList = favoriteManager?.fetchFavorites() ?? []
+        self.favoriteList = favoriteManager.fetchFavorites()
         let codes = favoriteList.map { $0.code }
         self.viewData.sort { a, b in
             let isAFavorite = codes.contains(a.code)
@@ -105,7 +109,7 @@ class ExchangeRateViewModel {
     }
     
     func toggleFavorite(code: String) {
-        favoriteManager?.toggleFavorite(code: code)
+        favoriteManager.toggleFavorite(code: code)
         sortByFavorite()
     }
     

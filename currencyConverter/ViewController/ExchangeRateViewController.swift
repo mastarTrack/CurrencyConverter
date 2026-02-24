@@ -10,7 +10,16 @@ import UIKit
 class ExchangeRateViewController: UIViewController {
     
     private let exchangeView = ExchangeView()
-    private let viewModel = ExchangeRateViewModel()
+    private let viewModel: ExchangeRateViewModel
+    
+    init(viewModel: ExchangeRateViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func loadView() {
         self.view = exchangeView

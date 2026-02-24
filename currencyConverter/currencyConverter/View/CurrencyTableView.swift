@@ -18,6 +18,8 @@ final class CurrencyTableView: UIView {
     private var items: [Item] = []
     var onSelectItem: ((Item) -> Void)?
     
+    private var favoriteSet: Set<String> = []
+    
     private let emptyLabel = UILabel().then {
         $0.text = "검색 결과 없음"
         $0.textColor = .gray
@@ -42,13 +44,34 @@ final class CurrencyTableView: UIView {
     }
     
     func update(newItems: [Item]) {
-        self.items = newItems
+        var updatedItems: [Item] = []
+
+        for newItem in newItems {
+            var item = newItem
+            
+            if favoriteSet.contains(newItem.currency) {
+                item.isFavorite = true
+            } else {
+                item.isFavorite = false
+            }
+            
+            updatedItems.append(item)
+        }
+        
+        self.items = sortFavoriteFirst(updatedItems)
         collectionView.reloadData()
         
-        if newItems.isEmpty {
+        if self.items.isEmpty {
             collectionView.backgroundView = emptyLabel
         } else {
-            collectionView.backgroundColor = nil
+            collectionView.backgroundView = nil
+        }
+    }
+    
+    private func sortFavoriteFirst(_ items: [Item]) -> [Item] {
+        items.sorted {
+            if $0.isFavorite != $1.isFavorite { return $0.isFavorite && !$1.isFavorite }
+            return $0.currency < $1.currency
         }
     }
     
@@ -71,6 +94,25 @@ final class CurrencyTableView: UIView {
 
         return UICollectionViewCompositionalLayout(section: section)
     }
+    
+    // 셀에서 받은 정보로 즐겨찾기 바꿔주기
+    private func setFavorite(_ isFavorite: Bool, item: Item) {
+        if isFavorite {
+            favoriteSet.insert(item.currency)
+        } else {
+            favoriteSet.remove(item.currency)
+        }
+        
+        // 현재 items에도 반영
+        if let index = items.firstIndex(where: { $0.currency == item.currency }) {
+            items[index].isFavorite = isFavorite
+        }
+        
+        // 정렬 후 보여주기
+        items = sortFavoriteFirst(items)
+        collectionView.reloadData()
+    }
+    
 }
 
 extension CurrencyTableView: UICollectionViewDelegate {
@@ -92,6 +134,12 @@ extension CurrencyTableView: UICollectionViewDataSource {
         }
         let item = items[indexPath.item]
         cell.setData(item: item)
+        
+        // cell에서 즐겨찾기 상태 바뀔때마다 호출해서 셀에 해당 정보 받아옴
+        cell.onTapFavorite = { [weak self] tappedItem, isFavorite in
+            self?.setFavorite(isFavorite, item: tappedItem)
+        }
+        
         return cell
     }
 }

@@ -9,6 +9,10 @@ import UIKit
 import SnapKit
 import Then
 
+// 버튼이 선택됨
+// 해당 셀의 아이템 정보 저장해서 뷰컨 거쳐서 뷰모델로..??
+// 콜렉션 뷰에서 맨 위로 보냄
+
 final class CustomButton: UIControl {
     private let imageView = UIImageView()
     
@@ -37,6 +41,7 @@ final class CustomButton: UIControl {
             $0.center.equalToSuperview()
         }
         
+        // 여기서는 .touchUpInside로 눌렸는지 표시만 해주는 역할
         // 뷰컨에선 for: .valueChanged 이런식으로 받아야함
         addAction(UIAction { [weak self] _ in
             guard let self = self else { return }

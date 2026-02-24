@@ -15,6 +15,12 @@ final class ListCell: UICollectionViewCell {
     private let separatorView = UIView()
     private let favoritesButton = CustomButton()
     
+    // 현재표시 아이템
+    private var currentItem: Item?
+    
+    // 줘야할것 해당 셀의 item
+    var onTapFavorite: ((Item, Bool) -> Void)?
+    
     private let currencyLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 16, weight: .medium)
     }
@@ -47,10 +53,19 @@ final class ListCell: UICollectionViewCell {
         
         configure()
         setupSeparator()
+        
+        applyFavoriteButtonTapped()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func applyFavoriteButtonTapped() {
+        favoritesButton.addAction(UIAction { [weak self] _ in
+            guard let self, let item = self.currentItem else { return }
+            self.onTapFavorite?(item, self.favoritesButton.isSelected)
+        }, for: .valueChanged)
     }
     
     private func setupSeparator() {
@@ -91,8 +106,10 @@ final class ListCell: UICollectionViewCell {
     }
     
     func setData(item: Item) {
+        currentItem = item
         currencyLabel.text = item.currency
         rateLabel.text = item.rate
         countryLabel.text = item.country
+        favoritesButton.isSelected = item.isFavorite
     }
 }

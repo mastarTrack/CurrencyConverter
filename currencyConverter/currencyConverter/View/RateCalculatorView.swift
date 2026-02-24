@@ -11,7 +11,6 @@ import SnapKit
 import Then
 
 class RateCalculatorView: UIView {
-    
     private let currencyLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 24, weight: .bold)
     }

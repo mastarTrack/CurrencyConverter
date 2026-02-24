@@ -8,4 +8,5 @@ struct Item: Hashable {
     let currency: String
     let country: String
     let rate: String
+    var isFavorite: Bool = false
 }

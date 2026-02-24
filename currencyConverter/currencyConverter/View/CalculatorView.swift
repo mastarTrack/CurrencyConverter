@@ -12,13 +12,6 @@ import Then
 class CalculatorView: UIView {
     
     // MARK: -- 계산기 View UI 컴포넌트 선언
-    // 환율 계산기 타이틀
-    private let titleLabel = UILabel().then {
-        $0.text = "환율 계산기"
-        $0.font = .systemFont(ofSize: 35, weight: .bold)
-        $0.textAlignment = .left
-    }
-    
     // 통화 + 국가 스택뷰
     private let labelStackView = UIStackView().then {
         $0.axis = .vertical
@@ -30,12 +23,13 @@ class CalculatorView: UIView {
     private let codeLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 24, weight: .bold)
         $0.textAlignment = .center
+        $0.textColor = UIColor(named: "TextColor")
     }
     
     // 국가 이름 레이블
     private let countryLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 16, weight: .regular)
-        $0.textColor = .gray
+        $0.textColor = UIColor(named: "SecondaryTextColor")
     }
     
     // 입력 필드
@@ -63,6 +57,8 @@ class CalculatorView: UIView {
         $0.font = .systemFont(ofSize: 20, weight: .medium)
         $0.textAlignment = .center
         $0.numberOfLines = 0
+        $0.textColor = UIColor(named: "TextColor")
+
     }
     
     
@@ -79,7 +75,7 @@ class CalculatorView: UIView {
     // MARK: -- 초기화
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.backgroundColor = .white
+        self.backgroundColor = UIColor(named: "BackgroundColor")
         setupLayout()
     }
     
@@ -93,17 +89,12 @@ class CalculatorView: UIView {
         
         [codeLabel, countryLabel].forEach { labelStackView.addArrangedSubview($0) }
         
-        [titleLabel, labelStackView, amountTextField, convertButton, resultLabel].forEach {
+        [labelStackView, amountTextField, convertButton, resultLabel].forEach {
             self.addSubview($0)
         }
         
-        titleLabel.snp.makeConstraints {
-            $0.top.equalTo(safeAreaLayoutGuide)
-            $0.leading.equalTo(safeAreaLayoutGuide).offset(20)
-        }
-        
         labelStackView.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(32)
+            $0.top.equalTo(safeAreaLayoutGuide).inset(32)
             $0.centerX.equalToSuperview()
         }
         
@@ -145,4 +136,10 @@ class CalculatorView: UIView {
     func configureNum(result: String){
         resultLabel.text = result
     }
+}
+
+
+#Preview {
+    let dummyCalculatorViewModel = CalculatorViewModel(code: "234", country: "234", rate: "4324")
+    CalculatorViewController(viewModel: dummyCalculatorViewModel)
 }

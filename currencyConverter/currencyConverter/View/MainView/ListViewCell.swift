@@ -11,8 +11,11 @@ final class ListViewCell: UICollectionViewListCell {
     private let currencyLabel = UILabel()
     private let countryLabel = UILabel()
     private let rateLabel = UILabel()
+    
     private(set) var starButton = UIButton()
     private var starButtonSelected: (() -> Void)?
+    
+    private let iconLabel = UILabel()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -20,7 +23,7 @@ final class ListViewCell: UICollectionViewListCell {
         setLayout()
         setButtonAction()
         
-        accessories = [.customView(configuration: .init(customView: starButton, placement: .trailing(displayed: .always)))]
+//        accessories = [.customView(configuration: .init(customView: starButton, placement: .trailing(displayed: .always)))]
     }
     
     required init?(coder: NSCoder) {
@@ -33,6 +36,7 @@ extension ListViewCell {
         currencyLabel.text = rate.currencyCode
         countryLabel.text = rate.country
         rateLabel.text = value
+        
         starButton.isSelected = rate.bookMarked
         starButtonSelected = action
     }
@@ -62,6 +66,9 @@ extension ListViewCell {
         starButton.setImage(UIImage(systemName: "star"), for: .normal)
         starButton.setImage(UIImage(systemName: "star.fill"), for: .selected)
         starButton.tintColor = .favorite
+        
+        iconLabel.text = "-"
+        iconLabel.font = .systemFont(ofSize: 16)
     }
     
     private func setLayout() {
@@ -69,6 +76,8 @@ extension ListViewCell {
         
         contentView.addSubview(labelStack)
         contentView.addSubview(rateLabel)
+        contentView.addSubview(iconLabel)
+        contentView.addSubview(starButton)
         
         contentView.snp.makeConstraints{
             $0.top.horizontalEdges.equalToSuperview()
@@ -81,10 +90,21 @@ extension ListViewCell {
         }
         
         rateLabel.snp.makeConstraints {
-            $0.trailing.equalToSuperview().inset(32)
+            $0.trailing.equalTo(iconLabel.snp.leading).offset(-10)
             $0.centerY.equalToSuperview()
             $0.leading.greaterThanOrEqualTo(labelStack.snp.trailing).offset(16)
             $0.width.equalTo(120)
+        }
+        
+        iconLabel.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.trailing.equalTo(starButton.snp.leading).inset(10)
+        }
+        
+        starButton.snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(16)
+            $0.centerY.equalToSuperview()
+            $0.width.height.equalTo(50)
         }
 
     }

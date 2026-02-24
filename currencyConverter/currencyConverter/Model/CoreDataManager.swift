@@ -52,7 +52,6 @@ extension CoreDataManager {
             
             do {
                 try context.save()
-                print("환율 정보 저장 성공")
             } catch {
                 print("환율 정보 저장 실패")
             }
@@ -69,7 +68,6 @@ extension CoreDataManager {
 
         do {
             try context.save()
-            print("환율 정보 저장 성공")
         } catch {
             print("환율 정보 저장 실패")
         }
@@ -127,30 +125,6 @@ extension CoreDataManager {
             }
         } catch {
             print("북마크 수정 실패")
-        }
-    }
-    
-    func deleteAllData() {
-        let currencyFetchRequest = CurrencyData.fetchRequest()
-        let dateFetchRequest = UpdateDate.fetchRequest()
-        
-        do {
-            let currencyData = try context.fetch(currencyFetchRequest)
-            let updateDate = try context.fetch(dateFetchRequest)
-            
-            currencyData.forEach {
-                context.delete($0 as NSManagedObject)
-            }
-            
-            updateDate.forEach {
-                context.delete($0 as NSManagedObject)
-            }
-            
-            try context.save()
-            print("삭제 완료")
-
-        } catch {
-            
         }
     }
 }

@@ -60,8 +60,8 @@ extension MainViewModel {
         // 환율 데이터 설정
         dataService.fetchCurrencyData(currency: "USD") {[weak self] result in
             guard let self else { return }
-            guard let result else {
-                self.dataStatus = .emptyData
+            guard let result else { // 결과가 없을 경우
+                self.dataStatus = .emptyData // 오류 출력
                 return
             }
             

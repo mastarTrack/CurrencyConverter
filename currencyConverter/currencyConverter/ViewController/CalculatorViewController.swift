@@ -31,7 +31,10 @@ class CalculatorViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        self.title = "환율 계산기"
+        self.navigationController?.navigationBar.prefersLargeTitles = true
+        
         bindingData()
         viewModel.action?(.viewDidLoad)
     }

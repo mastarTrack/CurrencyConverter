@@ -50,6 +50,12 @@ extension WorldCurrencyViewController {
             }
             self.collectionView.reloadData()
         }
+        
+        vm.lastPageClosure = {[weak self] currencyData in
+            guard let self else { return }
+            let ccVC = CurrencyCalculatorViewController(currencyData: currencyData)
+            navigationController?.pushViewController(ccVC, animated: true)
+        }
     }
 }
 
@@ -69,8 +75,7 @@ extension WorldCurrencyViewController: UICollectionViewDelegate, UICollectionVie
     
     /// CollectionView 셀 선택 값 처리 메소드
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        vm.selectData = vm.datas[indexPath.item]
-        let ccVC = CurrencyCalculator(viewModel: vm as! WorldCurrencyViewmodel)
+        let ccVC = CurrencyCalculatorViewController(currencyData: vm.datas[indexPath.item])
         navigationController?.pushViewController(ccVC, animated: true)
     }
     

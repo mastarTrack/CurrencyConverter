@@ -2,7 +2,7 @@
 //  Favorites+CoreDataProperties.swift
 //  currencyConverter
 //
-//  Created by Hanjuheon on 2/23/26.
+//  Created by Hanjuheon on 2/24/26.
 //
 //
 
@@ -17,9 +17,9 @@ extension Favorites {
     @nonobjc public class func fetchRequest() -> NSFetchRequest<Favorites> {
         return NSFetchRequest<Favorites>(entityName: "Favorites")
     }
-    
-    @NSManaged public var isoCode: String?
+
     @NSManaged public var isFavorite: Bool
+    @NSManaged public var isoCode: String?
 
 }
 

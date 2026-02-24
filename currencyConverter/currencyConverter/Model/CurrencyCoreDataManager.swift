@@ -18,9 +18,40 @@ class CurrencyCoreDataManager {
         }
         return appDelegate.persistentContainer.viewContext
     }()
+}
+
+//MARK: - METHOD: LastPage
+extension CurrencyCoreDataManager {
+    static func updateLastPageData(isoCode: String) {
+        guard let context = context else { return }
+        do {
+            let lastPageData = try context.fetch(LastPage.fetchRequest())
+            if let data = lastPageData.first {
+                data.isoCode = isoCode
+            } else {
+                let newData = LastPage(context: context)
+                newData.isoCode = isoCode
+            }
+            try context.save()
+        } catch {
+            print("Save Error: LastPage Data")
+        }
+    }
     
-    
-    //MARK: - METHOD: Favorites
+    static func loadLastPageData() -> String? {
+        do {
+            guard let lastPageData = try context?.fetch(LastPage.fetchRequest()) else { return nil }
+            return lastPageData.first?.isoCode
+        } catch {
+            print("Load Error: LastPage Data")
+            return nil
+        }
+    }
+}
+
+
+//MARK: - METHOD: Favorites
+extension CurrencyCoreDataManager {
     /// 즐겨찾기 CoreData 저장 메소드
     static func createFavoriteData(isoCode: String, isFavorite: Bool) {
         guard let context = context else { return }
@@ -65,4 +96,5 @@ class CurrencyCoreDataManager {
             print("Delete Failed")
         }
     }
+    
 }

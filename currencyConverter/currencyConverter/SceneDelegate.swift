@@ -58,8 +58,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Called as the scene transitions from the foreground to the background.
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
+        saveLastScene()
     }
-
-
 }
 
+
+extension SceneDelegate {
+    func saveLastScene() {
+        guard let nv = window?.rootViewController as? UINavigationController,
+              let ccVC = nv.topViewController as? CurrencyCalculatorViewController
+        else {
+            CurrencyCoreDataManager.updateLastPageData(isoCode: "")
+            return
+        }
+        CurrencyCoreDataManager.updateLastPageData(isoCode: ccVC.currencyData.isoCode)
+    }
+}

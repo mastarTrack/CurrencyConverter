@@ -4,4 +4,7 @@
         <attribute name="isFavorite" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="isoCode" optional="YES" attributeType="String"/>
     </entity>
+    <entity name="LastPage" representedClassName="LastPage" syncable="YES">
+        <attribute name="isoCode" optional="YES" attributeType="String"/>
+    </entity>
 </model>

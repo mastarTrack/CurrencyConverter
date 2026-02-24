@@ -11,7 +11,6 @@ import CoreData
 
 /// 전세계 달러 대비 환율 정보 처리용 ViewModel
 class WorldCurrencyViewmodel: BaseViewModelProtocol {
-
     //MARK: - Properties
     /// 전세계 환율 모델 메니저
     private var manager = WorldCurrencyManager()
@@ -23,26 +22,16 @@ class WorldCurrencyViewmodel: BaseViewModelProtocol {
     private var searchText = ""
     /// CoreData 컨테이너
     var coreData: NSPersistentContainer!
-    /// 지정 국가 환율 데이터
-    var selectData: CurrencyData?
     
     //MARK: - Closures
     /// 업데이트 요청 클로저
     var updateCurrencyClosure: ((String?)->Void)?
 
+    var lastPageClosure: ((CurrencyData)->Void)?
+    
     //MARK: - Init
     init() {
         fatchWorldCurrency()
-    }
-}
-
-
-//MARK: - METHOD: Calculate
-extension WorldCurrencyViewmodel {
-    /// 입력된 통화에 선택된 통화를 계산하는 메소드
-    func calculateSelectDataCurrency(amount: Double) -> Double? {
-        guard let selectData = selectData else { return nil }
-        return amount*selectData.rate
     }
 }
 
@@ -73,6 +62,17 @@ extension WorldCurrencyViewmodel {
     }
 }
 
+extension WorldCurrencyViewmodel {
+    func getLastPageData() {
+        guard let data = CurrencyCoreDataManager.loadLastPageData(),
+        !data.isEmpty else { return }
+        
+        if let currencyData = datas.firstIndex(where: { $0.isoCode == data }) {
+            lastPageClosure?(datas[currencyData])
+        }
+    }
+}
+
 //MARK: - METHOD: Datafatch
 extension WorldCurrencyViewmodel {
     /// 달러기준 전세계 환율 조회 API 호출 메소드
@@ -88,10 +88,10 @@ extension WorldCurrencyViewmodel {
                 
                 let favoriteDatas = CurrencyCoreDataManager.ReadFavoriteData()
                 manager.updateDataToCoreDataFavorites(datas: favoriteDatas)
-                
                 datas = manager.worldCurrencyDatas
                 DispatchQueue.main.async {
                     self.updateCurrencyClosure?(nil)
+                    self.getLastPageData()
                 }
             case .failure(let error):
                 DispatchQueue.main.async {

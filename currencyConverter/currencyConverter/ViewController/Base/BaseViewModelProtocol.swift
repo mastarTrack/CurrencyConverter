@@ -10,13 +10,12 @@ protocol BaseViewModelProtocol {
     
     //MARK: - Properties
     var datas: [CurrencyData] { get }
-    var selectData: CurrencyData?  {get set}
     
     //MARK: - Closures
     var updateCurrencyClosure: ((String?)->Void)? { set get }
+    var lastPageClosure: ((CurrencyData)->Void)? { set get }
     
     //MARK: - METHOD
-    func calculateSelectDataCurrency(amount: Double) -> Double?
     func fatchModelToSearch(searchText: String)
     func updateDataToFavorites(isoCode: String, isFavorite: Bool)
 }

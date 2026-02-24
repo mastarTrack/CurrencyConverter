@@ -12,12 +12,13 @@ final class ListViewCell: UICollectionViewListCell {
     private let countryLabel = UILabel()
     private let rateLabel = UILabel()
     private(set) var starButton = UIButton()
+    private var starButtonSelected: (() -> Void)?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         setAttributes()
         setLayout()
-//        setButtonAction()
+        setButtonAction()
         
         accessories = [.customView(configuration: .init(customView: starButton, placement: .trailing(displayed: .always)))]
     }
@@ -28,21 +29,22 @@ final class ListViewCell: UICollectionViewListCell {
 }
 
 extension ListViewCell {
-    func configure(_ rate: Rate, value: String) {
+    func configure(_ rate: Rate, value: String, action: @escaping (() -> Void)) {
         currencyLabel.text = rate.currencyCode
         countryLabel.text = rate.country
         rateLabel.text = value
         starButton.isSelected = rate.bookMarked
+        starButtonSelected = action
     }
     
-//    func setButtonAction() {
-//        let select = UIAction { [weak self] _ in
-//            self?.starButton.isSelected.toggle()
-//            viewModel.observedData.bookmarked = starButton.isSelected
-//        }
-//        
-//        starButton.addAction(select, for: .touchUpInside)
-//    }
+    func setButtonAction() {
+        let select = UIAction { [weak self] _ in
+            self?.starButton.isSelected.toggle()
+            self?.starButtonSelected?()
+        }
+        
+        starButton.addAction(select, for: .touchUpInside)
+    }
 }
 
 extension ListViewCell {
@@ -79,11 +81,12 @@ extension ListViewCell {
         }
         
         rateLabel.snp.makeConstraints {
-//            $0.trailing.equalTo(inputAccessoryView?.snp.leading)
+            $0.trailing.equalToSuperview().inset(32)
             $0.centerY.equalToSuperview()
             $0.leading.greaterThanOrEqualTo(labelStack.snp.trailing).offset(16)
             $0.width.equalTo(120)
         }
+
     }
     
     private func setLabelStackView() -> UIStackView {

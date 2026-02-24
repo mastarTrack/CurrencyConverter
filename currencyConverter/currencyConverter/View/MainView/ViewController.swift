@@ -74,17 +74,20 @@ extension ViewController {
     private func makeCollectionViewDiffableDataSource(_ collectionView: UICollectionView) -> UICollectionViewDiffableDataSource<Section, Rate> {
         let listCellRegistration = UICollectionView.CellRegistration<ListViewCell, Rate> { [weak self] cell, indexPath, rate in
             guard let self else { return }
-            guard let data = self.viewModel.observedData?[indexPath.row] else { return }
             
             // 셀 설정
             let value = self.viewModel.fetchValueStringData(of: rate)
-            cell.configure(rate, value: value)
-            
-            let action = UIAction { [weak self] _ in
-                print("selected: \(rate.currencyCode)")
+        
+            cell.configure(rate, value: value) { [weak self] in
+                let bookMarked = cell.starButton.isSelected
+                self?.viewModel.updateBookMark(of: rate, to: bookMarked)
+                
+                if bookMarked {
+                    self?.viewModel.saveBookMark(rate)
+                } else {
+                    self?.viewModel.deleteBookMark(rate)
+                }
             }
-            
-            cell.starButton.addAction(action, for: .touchUpInside)
         }
         
         let dataSource = UICollectionViewDiffableDataSource<Section, Rate>(collectionView: collectionView) { collectionView, indexPath, rate in

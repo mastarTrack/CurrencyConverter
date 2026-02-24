@@ -26,7 +26,7 @@ class MainView: UIView {
     // 검색 결과 없음 화면
     let emptyLabel = UILabel().then {
         $0.text = "검색 결과 없음"
-        $0.textColor = .gray
+        $0.textColor = UIColor(named: "SecondaryTextColor")
         $0.font = .systemFont(ofSize: 25, weight: .regular)
         $0.textAlignment = .center
         $0.isHidden = true
@@ -36,7 +36,7 @@ class MainView: UIView {
     // MARK: -- 초기화
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.backgroundColor = .white
+        self.backgroundColor = UIColor(named: "BackgroundColor")
         setupLayout()
     }
     
@@ -53,7 +53,7 @@ class MainView: UIView {
         }
 
         searchBar.snp.makeConstraints {
-            $0.top.equalTo(self.safeAreaLayoutGuide)
+            $0.top.equalTo(self.safeAreaLayoutGuide).offset(10)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(30)
         }

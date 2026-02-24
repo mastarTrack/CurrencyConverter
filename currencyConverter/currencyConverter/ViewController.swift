@@ -11,14 +11,20 @@ import SnapKit
 final class ViewController: UIViewController {
     private let currencyView = CurrencyTableView()
     private let currencyViewModel = CurrencyViewModel()
+    private let searchBar = UISearchBar()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         
+        navigationItem.title = "환율 정보"
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.largeTitleDisplayMode = .always
+        
         bindViewModel()
-        configureCurrencyView()
+        
         configureSearchBar()
+        configureCurrencyView()
         
         currencyViewModel.fetchCurrencyData()
     }
@@ -27,17 +33,21 @@ final class ViewController: UIViewController {
         view.addSubview(currencyView)
         
         currencyView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.top.equalTo(searchBar.snp.bottom)
             $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
         }
     }
     
     private func configureSearchBar() {
-        let searchBar = UISearchBar()
         searchBar.placeholder = "통화 검색"
         searchBar.delegate = self
         
-        navigationItem.titleView = searchBar
+        view.addSubview(searchBar)
+        
+        searchBar.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.leading.trailing.equalToSuperview()
+        }
     }
     
     private func bindViewModel() {
@@ -77,7 +87,6 @@ final class ViewController: UIViewController {
 }
 
 extension ViewController: UISearchBarDelegate {
-
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         currencyViewModel.filterCurrency(with: searchText)
     }

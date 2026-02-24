@@ -13,6 +13,7 @@ import Then
 final class ListCell: UICollectionViewCell {
     static let identifier = "ListCell"
     private let separatorView = UIView()
+    private let favoritesButton = CustomButton()
     
     private let currencyLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 16, weight: .medium)
@@ -42,6 +43,7 @@ final class ListCell: UICollectionViewCell {
         contentView.backgroundColor = .clear
         contentView.addSubview(labelStackView)
         contentView.addSubview(rateLabel)
+        contentView.addSubview(favoritesButton)
         
         configure()
         setupSeparator()
@@ -71,13 +73,21 @@ final class ListCell: UICollectionViewCell {
             $0.leading.equalToSuperview().inset(16)
             $0.centerY.equalToSuperview()
         }
-
-        rateLabel.snp.makeConstraints {
+        
+        favoritesButton.snp.makeConstraints {
+            $0.height.width.equalTo(35)
             $0.trailing.equalToSuperview().inset(16)
             $0.centerY.equalToSuperview()
-            $0.leading.greaterThanOrEqualTo(labelStackView.snp.trailing).offset(16)
-            $0.width.equalTo(120)
         }
+
+        rateLabel.snp.makeConstraints {
+            $0.trailing.equalTo(favoritesButton.snp.leading).offset(-16)
+            $0.centerY.equalToSuperview()
+            $0.leading.greaterThanOrEqualTo(labelStackView.snp.trailing).offset(16)
+        }
+        
+        labelStackView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        rateLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
     }
     
     func setData(item: Item) {

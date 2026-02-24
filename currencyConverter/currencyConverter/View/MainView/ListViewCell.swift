@@ -32,13 +32,15 @@ final class ListViewCell: UICollectionViewListCell {
 }
 
 extension ListViewCell {
-    func configure(_ rate: Rate, value: String, action: @escaping (() -> Void)) {
+    func configure(_ rate: Rate, value: String, icon: String, action: @escaping (() -> Void)) {
         currencyLabel.text = rate.currencyCode
         countryLabel.text = rate.country
         rateLabel.text = value
         
         starButton.isSelected = rate.bookMarked
         starButtonSelected = action
+        
+        iconLabel.text = icon
     }
     
     func setButtonAction() {
@@ -67,12 +69,12 @@ extension ListViewCell {
         starButton.setImage(UIImage(systemName: "star.fill"), for: .selected)
         starButton.tintColor = .favorite
         
-        iconLabel.text = "-"
         iconLabel.font = .systemFont(ofSize: 16)
     }
     
     private func setLayout() {
         let labelStack = setLabelStackView()
+        let iconWidth = UILabel().getTextWidth()
         
         contentView.addSubview(labelStack)
         contentView.addSubview(rateLabel)
@@ -99,6 +101,7 @@ extension ListViewCell {
         iconLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.trailing.equalTo(starButton.snp.leading).inset(10)
+            $0.width.equalTo(iconWidth)
         }
         
         starButton.snp.makeConstraints {
@@ -115,5 +118,14 @@ extension ListViewCell {
         stack.spacing = 4
         return stack
     }
+}
 
+// 아이콘 너비 얻기
+extension UILabel {
+    func getTextWidth() -> CGFloat {
+        let text = "⬆️"
+        let font = UIFont.systemFont(ofSize: 16)
+        
+        return text.size(withAttributes: [NSAttributedString.Key.font: font]).width
+    }
 }

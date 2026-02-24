@@ -81,9 +81,9 @@ extension ViewController {
             guard let self else { return }
         
             // 셀 설정
-            let value = self.viewModel.fetchValueStringData(of: rate)
-        
-            cell.configure(rate, value: value) { [weak self] in
+            let (value, icon) = self.viewModel.fetchValueStringData(of: rate)            
+            
+            cell.configure(rate, value: value, icon: icon) { [weak self] in
                 let bookMarked = cell.starButton.isSelected
                 self?.viewModel.updateBookMark(of: rate, to: bookMarked)
             }

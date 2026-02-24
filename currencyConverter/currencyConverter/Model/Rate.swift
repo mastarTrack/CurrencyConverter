@@ -9,15 +9,17 @@ class Rate: Hashable {
     let currencyCode: String
     let value: Double
     var bookMarked: Bool
+    var fluctuation: Double?
     
     var country: String {
         get { mapCodeandCountry(currencyCode) }
     }
     
-    init(currencyCode: String, value: Double, bookMarked: Bool) {
+    init(currencyCode: String, value: Double, bookMarked: Bool, fluctuation: Double? = nil) {
         self.currencyCode = currencyCode
         self.value = value
         self.bookMarked = bookMarked
+        self.fluctuation = fluctuation
     }
     
     func hash(into hasher: inout Hasher) {

@@ -11,8 +11,11 @@ final class MainViewModel: ViewModelProtocol {
     var update: (([Rate]) -> Void)?
     var alert: ((AlertType) -> Void)?
     
-    private let dataService = DataService()
-    private let coreDataManager = CoreDataManager()
+//    private let dataService = DataService()
+//    private let coreDataManager = CoreDataManager()
+    
+    private let dataService = TestDataService()
+    private let coreDataManager = TestCoreDataManager()
     
     private var originData: [Rate]? // 원본 데이터
     private(set) var observedData: [Rate]? { // 컬렉션뷰에 표시중인 데이터
@@ -71,8 +74,10 @@ extension MainViewModel {
                     return
                 }
                 
+                // 기존 데이터가 있을 경우
                 if let i = data.firstIndex(where: { $0.currencyCode == rates.key }) {
-                    arr.append(Rate(currencyCode: rates.key, value: rates.value, bookMarked: data[i].bookMarked))
+                    let fluctuation = data[i].value - rates.value
+                    arr.append(Rate(currencyCode: rates.key, value: rates.value, bookMarked: data[i].bookMarked, fluctuation: fluctuation))
                 } else {
                     arr.append(Rate(currencyCode: rates.key, value: rates.value, bookMarked: false))
                 }
@@ -107,9 +112,12 @@ extension MainViewModel {
     }
     
     // 컬렉션뷰 셀 설정에 필요한 데이터 전달
-    func fetchValueStringData(of data: Rate) -> String {
+    func fetchValueStringData(of data: Rate) -> (String, String) {
         let value = String(format: "%.4f", data.value)
-        return value
+        
+        guard let fluctuation = data.fluctuation else { return (value, "")}
+        let icon = abs(fluctuation) <= 0.01 ? "" : fluctuation > 0 ? "⬆️" : "⬇️"
+        return (value, icon)
     }
 }
 

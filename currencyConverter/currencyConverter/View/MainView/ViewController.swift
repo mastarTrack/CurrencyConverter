@@ -14,7 +14,6 @@ class ViewController: UIViewController {
     
     private let viewModel = MainViewModel()
     
-    
     override func loadView() {
         self.view = mainView
     }
@@ -25,7 +24,9 @@ class ViewController: UIViewController {
         setNavigationController()
         mainView.searchBar.delegate = self
         mainView.listView.delegate = self
-        setSnapshot(with: viewModel.observedData ?? [])
+        
+        setViewModelClosure()
+        viewModel.setData()
     }
     
     // viewModel 초기 클로저 설정

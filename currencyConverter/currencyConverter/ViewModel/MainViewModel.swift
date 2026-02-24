@@ -26,11 +26,6 @@ final class MainViewModel: ViewModelProtocol {
             alert?(dataStatus ?? .emptyData)
         }
     }
-    
-    // 이니셜라이저
-    init() {
-        setData()
-    }
 }
 
 //MARK: 환율 데이터 설정 및 검색
@@ -126,10 +121,11 @@ extension MainViewModel {
         guard let i = originData?.firstIndex(of: rate) else { return } // 데이터 찾기
         originData?[i].bookMarked = bookMarked // 북마크 값 변경
         
-        observedData = sortData(data: observedData ?? []) // 표시 데이터 변경
-        
         // 코어데이터 저장
         coreDataManager.updateBookMark(of: rate.currencyCode, bookMarked: bookMarked)
+        
+        // 표시 데이터 변경
+        observedData = sortData(data: observedData ?? [])        
     }
     
     // 데이터 정렬

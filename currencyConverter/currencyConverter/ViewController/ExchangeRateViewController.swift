@@ -37,7 +37,14 @@ class ExchangeRateViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .white
+        // 네비게이션 타이틀 설정
+        self.title = "환율 정보"
+        self.navigationController?.navigationBar.prefersLargeTitles = true
+        
+        // 백 버튼 타이틀 추가
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "환율 정보")
+        
+        view.backgroundColor = UIColor(named: "BackgroundColor")
         
         setupDelegates()
         bindingData()
@@ -153,11 +160,6 @@ extension ExchangeRateViewController: UISearchBarDelegate {
     // textDidChange -> 글자가 한 글자라도 타이핑 될 때 마다 실행됨
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         viewModel.action?(.filter(text: searchText))
-    }
-    
-    // 키보드에서 검색 버튼 눌렀을때
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.resignFirstResponder() // 키보드 내려감
     }
 }
 

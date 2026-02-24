@@ -26,7 +26,7 @@ extension FavoriteManager {
                 let newFavorite = Favorite(context: self.container.viewContext)
                 newFavorite.code = code
             }
-            try self.container.viewContext.save()
+            CoreDataManager.shared.saveContext()
         } catch { // 오류 출력 구문 필요
             print("Favorite toggle 실패")
         }

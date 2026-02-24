@@ -26,7 +26,7 @@ extension InformationManager {
             information.code = code
             information.page = page
             
-            try self.container.viewContext.save()
+            CoreDataManager.shared.saveContext()
         } catch {
             print("데이터 저장 실패")
         }

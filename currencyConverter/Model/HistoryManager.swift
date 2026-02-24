@@ -42,11 +42,7 @@ extension HistoryManager {
                 print("데이터 처리 실패")
             }
         }
-        do {
-            try self.container.viewContext.save()
-        } catch {
-            print("데이터 저장 실패")
-        }
+        CoreDataManager.shared.saveContext()
     }
     
     // ViewModel에서 사용할 CoreData에서 데이터 불러오는 메서드

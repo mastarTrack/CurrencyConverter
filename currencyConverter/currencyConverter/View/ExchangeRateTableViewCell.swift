@@ -19,20 +19,20 @@ class ExchangeRateTableViewCell: UITableViewCell {
     // 통화 코드
     private let codeLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 16, weight: .bold)
-        $0.textColor = .black
+        $0.textColor = UIColor(named: "TextColor")
     }
     
     // 환율
     private let currencyLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 16, weight: .regular)
-        $0.textColor = .black
+        $0.textColor = UIColor(named: "TextColor")
         $0.textAlignment = .right
     }
     
     // 국가명
     private let countryLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 14, weight: .regular)
-        $0.textColor = .gray
+        $0.textColor = UIColor(named: "SecondaryTextColor")
     }
     
     // 통화 코드 + 국가명 스택뷰
@@ -41,9 +41,15 @@ class ExchangeRateTableViewCell: UITableViewCell {
         $0.spacing = 4
     }
     
+    // 업다운 아이콘
+    private let upDownLabel = UILabel().then {
+        $0.text = "📈"
+        $0.font = .systemFont(ofSize: 25)
+    }
+    
     // 즐겨찾기 버튼 구현
     private let favoriteButton = UIButton().then {
-        let config = UIImage.SymbolConfiguration(pointSize: 30, weight: .regular)
+        let config = UIImage.SymbolConfiguration(pointSize: 40, weight: .bold)
         // SF symbol
         let image = UIImage(systemName: "star", withConfiguration: config)
         $0.setImage(image, for: .normal)
@@ -73,7 +79,7 @@ class ExchangeRateTableViewCell: UITableViewCell {
         
         [codeLabel, countryLabel].forEach { labelStackView.addArrangedSubview($0)}
         
-        [labelStackView, currencyLabel, favoriteButton].forEach { contentView.addSubview($0) }
+        [labelStackView, currencyLabel, upDownLabel, favoriteButton].forEach { contentView.addSubview($0) }
         
         contentView.snp.makeConstraints {
             $0.edges.equalToSuperview()
@@ -86,10 +92,15 @@ class ExchangeRateTableViewCell: UITableViewCell {
         }
         
         currencyLabel.snp.makeConstraints {
-            $0.trailing.equalTo(favoriteButton.snp.leading).offset(-10)
+            $0.trailing.equalTo(upDownLabel.snp.leading).offset(-10)
             $0.centerY.equalToSuperview()
             $0.leading.greaterThanOrEqualTo(labelStackView.snp.trailing).offset(16)
             $0.width.equalTo(120)
+        }
+        
+        upDownLabel.snp.makeConstraints {
+            $0.trailing.equalTo(favoriteButton.snp.leading).offset(-10)
+            $0.centerY.equalToSuperview()
         }
         
         favoriteButton.snp.makeConstraints {

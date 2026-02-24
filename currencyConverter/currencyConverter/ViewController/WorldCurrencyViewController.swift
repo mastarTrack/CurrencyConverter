@@ -31,7 +31,7 @@ class WorldCurrencyViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "환율 정보"
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(named: CommonUtils.CustomColor.background.rawValue)
         navigationItem.backButtonDisplayMode = .default
         setViewModelClosure()
         configureUI()

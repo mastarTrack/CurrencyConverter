@@ -18,18 +18,20 @@ class CurrencyCell: UICollectionViewCell {
     /// IsoCode 표기 레이블
     private let isoCodeLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 16, weight: .medium)
+        $0.textColor = UIColor(named: CommonUtils.CustomColor.textColor.rawValue)
         $0.text = "---"
     }
     /// 국가이름 표기 레이블
     private let countryNameLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 14)
-        $0.textColor = .gray
+        $0.textColor = UIColor(named: CommonUtils.CustomColor.secondaryTextColor.rawValue)
         $0.text = "------"
     }
     /// 국가 환율 표기 레이블
     private let currencyLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 16)
         $0.textAlignment = .right
+        $0.textColor = UIColor(named: CommonUtils.CustomColor.textColor.rawValue)
         $0.text = "000"
     }
     /// 즐겨찾기 버튼
@@ -39,7 +41,7 @@ class CurrencyCell: UICollectionViewCell {
         $0.setImage(UIImage(systemName: "star", withConfiguration: config), for: .normal)
         $0.setImage(UIImage(systemName: "star.fill", withConfiguration: config), for: .selected)
 
-        $0.tintColor = .systemYellow
+        $0.tintColor = UIColor(named: CommonUtils.CustomColor.favoriteColor.rawValue)
         $0.isSelected = false
     }
     
@@ -50,6 +52,11 @@ class CurrencyCell: UICollectionViewCell {
     //MARK: - INIT
     override init(frame: CGRect) {
         super.init(frame: frame)
+        contentView.backgroundColor = UIColor(named: CommonUtils.CustomColor.cellBackground.rawValue)
+        contentView.layer.borderColor = UIColor(named: CommonUtils.CustomColor.cellBorderLine.rawValue)?
+            .resolvedColor(with: traitCollection)
+            .cgColor
+        contentView.layer.borderWidth = 0.3
         configureUI()
     }
     
@@ -96,7 +103,7 @@ extension CurrencyCell {
             self.updateFavoritesUI()
         }, for: .touchUpInside)
         
-        addSubview(mainView)
+        contentView.addSubview(mainView)
         
         mainView.snp.makeConstraints {
             $0.edges.equalToSuperview()

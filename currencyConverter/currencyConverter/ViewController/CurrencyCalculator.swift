@@ -30,6 +30,7 @@ class CurrencyCalculator: BaseViewController {
         $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         $0.layer.cornerRadius = 8
         $0.setTitle("환율 계산", for: .normal)
+        $0.backgroundColor = UIColor(named: CommonUtils.CustomColor.buttonColor.rawValue)
     }
     
     /// 결과값 도출 레이블
@@ -37,6 +38,7 @@ class CurrencyCalculator: BaseViewController {
         $0.font = .systemFont(ofSize: 20, weight: .medium)
         $0.textAlignment = .center
         $0.numberOfLines = 0
+        $0.textColor = UIColor(named: CommonUtils.CustomColor.textColor.rawValue)
     }
     
     //MARK: - Init
@@ -51,7 +53,7 @@ class CurrencyCalculator: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(named: CommonUtils.CustomColor.background.rawValue)
         navigationItem.backButtonDisplayMode = .default
         self.title = "환율 계산기"
         ConfigureUI()
@@ -101,18 +103,19 @@ extension CurrencyCalculator {
         
         let isoLabel = UILabel().then {
             $0.font = .systemFont(ofSize: 24, weight: .bold)
-            $0.text = vm.selectData?.isoCode
+            $0.textColor = UIColor(named: CommonUtils.CustomColor.textColor.rawValue)
+            $0.text = vm.selectData?.isoCode ?? "ISO Code"
         }
         
         let countryLabel = UILabel().then {
             $0.font = .systemFont(ofSize: 16)
-            $0.textColor = .gray
-            $0.text = vm.selectData?.countryName
+            $0.textColor = UIColor(named: CommonUtils.CustomColor.secondaryTextColor.rawValue)
+            $0.text = vm.selectData?.countryName ?? "Country Name"
         }
         
         let basicCurrencyLabel = UILabel().then {
             $0.font = .systemFont(ofSize: 16)
-            $0.textColor = .gray
+            $0.textColor = UIColor(named: CommonUtils.CustomColor.secondaryTextColor.rawValue)
             $0.text = "USD $1 = \(CommonUtils.formatCurrency(rate: vm.selectData?.rate ?? 0, isoCode: vm.selectData?.isoCode ?? "", digit: 4))"
         }
         

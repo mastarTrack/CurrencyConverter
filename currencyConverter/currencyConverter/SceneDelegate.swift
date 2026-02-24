@@ -22,7 +22,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let appearance = UINavigationBarAppearance()
         
         appearance.configureWithTransparentBackground()
-        appearance.backgroundColor = .white
+        appearance.backgroundColor = UIColor(named: CommonUtils.CustomColor.background.rawValue)
         UINavigationBar.appearance().standardAppearance = appearance
         //UINavigationBar.appearance().
         

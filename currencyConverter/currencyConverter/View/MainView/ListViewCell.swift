@@ -11,20 +11,15 @@ final class ListViewCell: UICollectionViewListCell {
     private let currencyLabel = UILabel()
     private let countryLabel = UILabel()
     private let rateLabel = UILabel()
-    private let starButton = UIButton()
+    private(set) var starButton = UIButton()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         setAttributes()
         setLayout()
+//        setButtonAction()
         
         accessories = [.customView(configuration: .init(customView: starButton, placement: .trailing(displayed: .always)))]
-        
-        let action = UIAction { [weak self] _ in
-            print("pushed")
-            self?.starButton.isSelected.toggle()
-        }
-        starButton.addAction(action, for: .touchUpInside)
     }
     
     required init?(coder: NSCoder) {
@@ -33,26 +28,38 @@ final class ListViewCell: UICollectionViewListCell {
 }
 
 extension ListViewCell {
-    func configure(code: String, country: String, rate: String) {
-        currencyLabel.text = code
-        countryLabel.text = country
-        rateLabel.text = rate
+    func configure(_ rate: Rate, value: String) {
+        currencyLabel.text = rate.currencyCode
+        countryLabel.text = rate.country
+        rateLabel.text = value
+        starButton.isSelected = rate.bookMarked
     }
+    
+//    func setButtonAction() {
+//        let select = UIAction { [weak self] _ in
+//            self?.starButton.isSelected.toggle()
+//            viewModel.observedData.bookmarked = starButton.isSelected
+//        }
+//        
+//        starButton.addAction(select, for: .touchUpInside)
+//    }
 }
 
 extension ListViewCell {
     private func setAttributes() {
         currencyLabel.font = .systemFont(ofSize: 16, weight: .medium)
+        currencyLabel.textColor = .text
         
         countryLabel.font = .systemFont(ofSize: 14)
-        countryLabel.textColor = .gray
+        countryLabel.textColor = .secondaryText
         
         rateLabel.font = .systemFont(ofSize: 16)
         rateLabel.textAlignment = .right
+        rateLabel.textColor = .text
         
         starButton.setImage(UIImage(systemName: "star"), for: .normal)
         starButton.setImage(UIImage(systemName: "star.fill"), for: .selected)
-        starButton.tintColor = .systemYellow
+        starButton.tintColor = .favorite
     }
     
     private func setLayout() {
@@ -72,7 +79,7 @@ extension ListViewCell {
         }
         
         rateLabel.snp.makeConstraints {
-            $0.trailing.equalTo(separatorLayoutGuide.snp.trailing).inset(32)
+//            $0.trailing.equalTo(inputAccessoryView?.snp.leading)
             $0.centerY.equalToSuperview()
             $0.leading.greaterThanOrEqualTo(labelStack.snp.trailing).offset(16)
             $0.width.equalTo(120)

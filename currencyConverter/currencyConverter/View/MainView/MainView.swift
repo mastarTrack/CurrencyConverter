@@ -27,16 +27,16 @@ final class MainView: UIView {
 //MARK: initial set
 extension MainView {
     private func setAttributes() {
-        backgroundColor = .white
+        backgroundColor = .background
         
         searchBar.placeholder = "통화 검색"
         searchBar.searchTextField.backgroundColor = .systemGray5
-        searchBar.backgroundColor = .white
+        searchBar.backgroundColor = .background
         searchBar.searchBarStyle = .minimal
         
         listView.showsVerticalScrollIndicator = false
         
-        emptyResultView.backgroundColor = .white
+        emptyResultView.backgroundColor = .background
         emptyResultView.isHidden = true
     }
     
@@ -87,7 +87,7 @@ extension MainView {
         let label = UILabel()
         label.text = "검색 결과 없음"
         label.font = .systemFont(ofSize: 16, weight: .medium)
-        label.textColor = .systemGray3
+        label.textColor = .secondaryText
         return label
     }
     

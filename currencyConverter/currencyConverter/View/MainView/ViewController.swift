@@ -22,6 +22,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+//        viewModel.deleteAllBookMark()
         setNavigationController()
         mainView.searchBar.delegate = self
         mainView.listView.delegate = self
@@ -39,6 +40,7 @@ class ViewController: UIViewController {
             self?.present(alert, animated: true)
         }
     }
+    
 }
 
 //MARK: navigation controller
@@ -72,8 +74,17 @@ extension ViewController {
     private func makeCollectionViewDiffableDataSource(_ collectionView: UICollectionView) -> UICollectionViewDiffableDataSource<Section, Rate> {
         let listCellRegistration = UICollectionView.CellRegistration<ListViewCell, Rate> { [weak self] cell, indexPath, rate in
             guard let self else { return }
-            let (code, country, value) = self.viewModel.fetchRateStringData(of: rate)
-            cell.configure(code: code, country: country, rate: value)
+            guard let data = self.viewModel.observedData?[indexPath.row] else { return }
+            
+            // 셀 설정
+            let value = self.viewModel.fetchValueStringData(of: rate)
+            cell.configure(rate, value: value)
+            
+            let action = UIAction { [weak self] _ in
+                print("selected: \(rate.currencyCode)")
+            }
+            
+            cell.starButton.addAction(action, for: .touchUpInside)
         }
         
         let dataSource = UICollectionViewDiffableDataSource<Section, Rate>(collectionView: collectionView) { collectionView, indexPath, rate in
@@ -90,12 +101,13 @@ extension ViewController {
         snapShot.appendItems(data, toSection: .main)
         self.dataSource.apply(snapShot)
     }
+    
 }
 
 extension ViewController: UICollectionViewDelegate {
     // 컬렉션뷰 셀 선택 시 CalculationVC push
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let data = viewModel.fetchRateData(of: indexPath)
+        let data = viewModel.observedData?[indexPath.row]
         guard let data else { return }
         
         let calculationVM = CalculationViewModel(data: data)
@@ -103,4 +115,5 @@ extension ViewController: UICollectionViewDelegate {
         self.navigationController?.pushViewController(CalculationViewController(viewModel: calculationVM), animated: true)
         collectionView.deselectItem(at: indexPath, animated: true)
     }
+    
 }

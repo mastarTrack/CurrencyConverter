@@ -1,0 +1,10 @@
+//
+//  CurrencyResponse.swift
+//  currencyConverter
+//
+//  Created by t2025-m0143 on 2/19/26.
+//
+
+struct CurrencyResponse: Codable {
+    let rates: [String: Double]
+}

@@ -134,3 +134,14 @@ CoreData 저장
 정렬 후 UI 갱신
 ```
 ---
+
+## 🔍 Instruments를 활용한 메모리 누수 점검
+앱의 안정성을 확보하기 위해 Xcode Instruments의
+Allocations + Leaks instruments를 사용하여 메모리 누수 테스트를 진행했습니다.
+
+<img width="1462" height="837" alt="스크린샷 2026-02-25 오후 7 21 14" src="https://github.com/user-attachments/assets/39f23761-431b-4baa-a639-2b7ba8ea6e23" />
+
+
+## 📦 DebugSwift를 활용한 메모리 누수 점검
+
+<img width="1206" height="2622" alt="FFDFBA2A-75EC-40D4-A05D-A35410F6D69F" src="https://github.com/user-attachments/assets/00d44a35-e968-488f-b8c5-37f47f445f04" />

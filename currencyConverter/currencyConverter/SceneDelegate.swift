@@ -23,7 +23,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // 코어데이터에서 마지막 상태 읽어오기
         let context = CoreDataManager.shared.context
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "AppState")
-        
+
         do {
             // 저장된 상태 있으면 꺼내기
             if let result = try context.fetch(fetchRequest) as? [NSManagedObject],
@@ -33,9 +33,23 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 if lastScreen == "Calculator",
                    let currencyCode = lastState.value(forKey: "currencyCode") as? String,
                    let currencyCountry = lastState.value(forKey: "currencyCountry") as? String {
+                   
+                    // CachedRate에서 환율 가져오기
+                   let rateFetchRequest = CachedRate.fetchRequest()
+                    rateFetchRequest.predicate = NSPredicate(format: "currencyCode == %@", currencyCode)
+                    rateFetchRequest.fetchLimit = 1
                     
-                    let calcViewModel = CalculatorViewModel(code: currencyCode, country: currencyCountry, rate: "1000.0")
+                    var savedRateString = "0.0"
                     
+                    do {
+                    if let cachedRate = try context.fetch(rateFetchRequest).first {
+                        savedRateString = String(cachedRate.rate)
+                    }
+                } catch {
+                    print("CachedRate 불러오기 실패: \(error)")
+                }
+                
+                    let calcViewModel = CalculatorViewModel(code: currencyCode, country: currencyCountry, rate: savedRateString)
                     let calcVC = CalculatorViewController(viewModel: calcViewModel)
 
                     // 리스트 화면 위에 계산기 화면을 얹어 시작

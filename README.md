@@ -132,3 +132,10 @@ CoreData Entity
 iOS Developer (Swift)
 
 ---
+
+## ✨ 메모리 누수 체크
+메모리 누수 이상 없음
+<img width="1759" height="1002" alt="스크린샷 2026-02-25 오후 7 21 57" src="https://github.com/user-attachments/assets/21651421-f131-4685-9c93-df10f3642f0d" />
+<img width="365" height="749" alt="스크린샷 2026-02-25 오후 8 07 28" src="https://github.com/user-attachments/assets/66bec756-f2db-4308-bfd6-c86d4e465715" />
+
+

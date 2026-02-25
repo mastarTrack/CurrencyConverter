@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24512" systemVersion="25D125" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="AppState" representedClassName=".AppState" syncable="YES">
+        <attribute name="lastScreen" optional="YES" attributeType="String"/>
+        <attribute name="selectedCurrency" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="CurrencyRate" representedClassName=".CurrencyRate" syncable="YES">
+        <attribute name="currency" optional="YES" attributeType="String"/>
+        <attribute name="rate" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+    </entity>
+    <entity name="FavoriteCurrency" representedClassName=".FavoriteCurrency" syncable="YES">
+        <attribute name="currency" attributeType="String"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="currency"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+</model>

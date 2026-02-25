@@ -10,15 +10,37 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-
-
-    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        guard let windowScene = (scene as? UIWindowScene) else { return }
+    
+    
+    func scene(
+        _ scene: UIScene,
+        willConnectTo session: UISceneSession,
+        options connectionOptions: UIScene.ConnectionOptions
+    ) {
+        guard let windowScene = scene as? UIWindowScene else { return }
+        
         let window = UIWindow(windowScene: windowScene)
         
-        window.rootViewController = ViewController()
-        window.makeKeyAndVisible()
+        let listVC = ViewController()
+        let nav = UINavigationController(rootViewController: listVC)
         
+        let country = CurrencyCountryMap().currencyCountryMap
+        let last = CoreDataManager.shared.loadLastScreen()
+        
+        if last.screen == .calculator, let currency = last.selectedCurrency {
+            if let rate = CoreDataManager.shared.fetchRate(currency: currency) {
+                let item = Item(currency: currency, country: country[currency] ?? "unknow", rate: String(rate), isFavorite: false)
+                let vm = RateCalculatorViewModel(selectedItem: item)
+                let calculatorVC = RateCalculatorViewController(viewModel: vm)
+                
+                nav.pushViewController(calculatorVC, animated: false)
+            } else {
+                CoreDataManager.shared.saveLastScreen(.list, selectedCurrency: nil)
+            }
+        }
+        
+        window.rootViewController = nav
+        window.makeKeyAndVisible()
         self.window = window
     }
 

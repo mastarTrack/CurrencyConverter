@@ -1,0 +1,140 @@
+//
+//  WorldCurrencyViewmodel.swift
+//  currencyConverter
+//
+//  Created by Hanjuheon on 2/20/26.
+//
+
+import Alamofire
+import Foundation
+import CoreData
+
+/// 전세계 달러 대비 환율 정보 처리용 ViewModel
+class WorldCurrencyViewmodel: BaseViewModelProtocol {
+    //MARK: - Properties
+    /// 전세계 환율 모델 메니저
+    private var manager = WorldCurrencyManager()
+    /// API 서비스 크래스
+    private var apiService = APIService()
+    /// 뷰에 전송용 환율 데이터
+    private(set) var datas: [CurrencyData] = []
+    /// 검색값 저장 텍스트
+    private var searchText = ""
+    /// 다음 업데이트 시간 Unix 값 저장용 변수
+    private var saveNextDateUnix: Double = 0.0
+    /// 시간 체크 및 업데이트 작업을 확인하기 위한 타이머
+    var timer: Timer?
+    
+    //MARK: - Closures
+    /// 업데이트 요청 클로저
+    var updateCurrencyClosure: ((String?)->Void)?
+
+    var lastPageClosure: ((CurrencyData)->Void)?
+    
+    //MARK: - Init
+    init() {
+        guard let saveNextDateUnix = CurrencyCoreDataManager.readUpdateUnixData(),
+        let saveWorldCurrency = CurrencyCoreDataManager.readWorldCurrencyData() else {
+            print("return")
+            fatchWorldCurrency()
+            return
+        }
+        self.saveNextDateUnix = saveNextDateUnix
+        let currenttime = Date().timeIntervalSince1970
+        
+        print(saveNextDateUnix)
+        print(Date())
+        print(currenttime)
+        
+        // 업데이트 예정 날짜보다 이전일 경우
+        if currenttime < self.saveNextDateUnix {
+            manager.updataData(model: saveWorldCurrency)
+            datas = manager.worldCurrencyDatas
+            DispatchQueue.main.async {
+                self.updateCurrencyClosure?(nil)
+                self.getLastPageData()
+            }
+        } else {
+            fatchWorldCurrency()
+        }
+        
+        setUpdateCheckTimer()
+    }
+}
+
+//MARK: - METHOD: Timer
+extension WorldCurrencyViewmodel {
+    func setUpdateCheckTimer() {
+        timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
+            guard let self else { return }
+            self.timerAction()
+        }
+    }
+    
+    func timerAction() {
+        let currenttime = Date().timeIntervalSince1970
+        // 업데이트 예정 날짜보다 이전일 경우
+        if currenttime > saveNextDateUnix {
+            fatchWorldCurrency()
+        }
+    }
+}
+
+
+//MARK: - METHOD: DataUpdate
+extension WorldCurrencyViewmodel {
+    
+    /// 입력된 값이 포함된 데이터 조회 메소드
+    func fatchModelToSearch(searchText: String) {
+        self.searchText = searchText
+        datas = self.searchText.isEmpty ? manager.worldCurrencyDatas : manager.worldCurrencyDatas.filter{
+            $0.isoCode.lowercased().contains(self.searchText.lowercased()) || $0.countryName.contains(self.searchText)
+        }
+    }
+    
+    /// 즐겨찾기 체크 업데이트 메소드
+    func updateDataToFavorites(isoCode: String, isFavorite: Bool){
+        manager.updateDataToFavorites(isoCode: isoCode, isFavorite: isFavorite)
+        fatchModelToSearch(searchText: searchText)
+        datas = manager.sortData(datas: datas)
+    }
+}
+
+extension WorldCurrencyViewmodel {
+    /// 프로그램 종료 후 마지막으로 저장된 페이지 로드 메소드
+    func getLastPageData() {
+        guard let data = CurrencyCoreDataManager.readLastPageData(),
+        !data.isEmpty else { return }
+        if let currencyData = datas.firstIndex(where: { $0.isoCode == data }) {
+            lastPageClosure?(datas[currencyData])
+        }
+    }
+}
+
+//MARK: - METHOD: Datafatch
+extension WorldCurrencyViewmodel {
+    /// 달러기준 전세계 환율 조회 API 호출 메소드
+    func fatchWorldCurrency(){
+        guard let url = URLComponents(string: apiService.baseURL)?.url else {
+            fatalError("fatchWorldCurrency url Error")
+        }
+        apiService.fatchWorldCurrency(url: url) { [weak self] (result: Result<WorldCurrencyModel, AFError>) in
+            guard let self else { return }
+            switch result {
+            case .success(let result):
+                self.manager.updateData(model: result)
+                self.saveNextDateUnix = result.timeNextUpdateUnix
+                self.datas = manager.worldCurrencyDatas
+                DispatchQueue.main.async {
+                    self.updateCurrencyClosure?(nil)
+                    self.getLastPageData()
+                }
+            case .failure(let error):
+                DispatchQueue.main.async {
+                    self.updateCurrencyClosure?(error.localizedDescription)
+                }
+            }
+        }
+    }
+}
+

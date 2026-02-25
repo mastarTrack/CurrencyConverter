@@ -16,7 +16,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
         
-        window.rootViewController = ViewController()
+        let vc = WorldCurrencyViewController()
+        let nc = UINavigationController(rootViewController: vc)
+        
+        let appearance = UINavigationBarAppearance()
+        
+        appearance.configureWithTransparentBackground()
+        appearance.backgroundColor = UIColor(named: CommonUtils.CustomColor.background.rawValue)
+        UINavigationBar.appearance().standardAppearance = appearance
+        //UINavigationBar.appearance().
+        
+        window.rootViewController = nc
         window.makeKeyAndVisible()
         
         self.window = window
@@ -48,8 +58,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Called as the scene transitions from the foreground to the background.
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
+        saveLastScene()
     }
-
-
 }
 
+
+extension SceneDelegate {
+    func saveLastScene() {
+        guard let nv = window?.rootViewController as? UINavigationController,
+              let ccVC = nv.topViewController as? CurrencyCalculatorViewController
+        else {
+            CurrencyCoreDataManager.updateLastPageData(isoCode: "")
+            return
+        }
+        CurrencyCoreDataManager.updateLastPageData(isoCode: ccVC.currencyData.isoCode)
+    }
+}

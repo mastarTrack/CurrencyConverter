@@ -6,8 +6,26 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		84C0DC772F48108D00DA2DAE /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = 84C0DC762F48108D00DA2DAE /* Then */; };
+		84C0DC7A2F48109700DA2DAE /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 84C0DC792F48109700DA2DAE /* SnapKit */; };
+		84C0DC7D2F48113500DA2DAE /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 84C0DC7C2F48113500DA2DAE /* Alamofire */; };
+		84C0DDA22F4D6A7300DA2DAE /* LastPage+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C0DDA12F4D6A7300DA2DAE /* LastPage+CoreDataProperties.swift */; };
+		84C0DDA32F4D6A7300DA2DAE /* LastPage+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C0DDA02F4D6A7300DA2DAE /* LastPage+CoreDataClass.swift */; };
+		84C0DDB82F4D90D500DA2DAE /* UpdateUnix+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C0DDB52F4D90D500DA2DAE /* UpdateUnix+CoreDataProperties.swift */; };
+		84C0DDB92F4D90D500DA2DAE /* UpdateUnix+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C0DDB42F4D90D500DA2DAE /* UpdateUnix+CoreDataClass.swift */; };
+		84C0DDBA2F4D90D500DA2DAE /* WorldCurrency+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C0DDB62F4D90D500DA2DAE /* WorldCurrency+CoreDataClass.swift */; };
+		84C0DDBB2F4D90D500DA2DAE /* WorldCurrency+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C0DDB72F4D90D500DA2DAE /* WorldCurrency+CoreDataProperties.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		1630A57B2F3AFD88007DF1DF /* currencyConverter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = currencyConverter.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		84C0DDA02F4D6A7300DA2DAE /* LastPage+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LastPage+CoreDataClass.swift"; sourceTree = "<group>"; };
+		84C0DDA12F4D6A7300DA2DAE /* LastPage+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LastPage+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		84C0DDB42F4D90D500DA2DAE /* UpdateUnix+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UpdateUnix+CoreDataClass.swift"; sourceTree = "<group>"; };
+		84C0DDB52F4D90D500DA2DAE /* UpdateUnix+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UpdateUnix+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		84C0DDB62F4D90D500DA2DAE /* WorldCurrency+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WorldCurrency+CoreDataClass.swift"; sourceTree = "<group>"; };
+		84C0DDB72F4D90D500DA2DAE /* WorldCurrency+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WorldCurrency+CoreDataProperties.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -36,6 +54,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				84C0DC7D2F48113500DA2DAE /* Alamofire in Frameworks */,
+				84C0DC772F48108D00DA2DAE /* Then in Frameworks */,
+				84C0DC7A2F48109700DA2DAE /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -45,6 +66,12 @@
 		1630A5722F3AFD88007DF1DF = {
 			isa = PBXGroup;
 			children = (
+				84C0DDB42F4D90D500DA2DAE /* UpdateUnix+CoreDataClass.swift */,
+				84C0DDB52F4D90D500DA2DAE /* UpdateUnix+CoreDataProperties.swift */,
+				84C0DDB62F4D90D500DA2DAE /* WorldCurrency+CoreDataClass.swift */,
+				84C0DDB72F4D90D500DA2DAE /* WorldCurrency+CoreDataProperties.swift */,
+				84C0DDA02F4D6A7300DA2DAE /* LastPage+CoreDataClass.swift */,
+				84C0DDA12F4D6A7300DA2DAE /* LastPage+CoreDataProperties.swift */,
 				1630A57D2F3AFD88007DF1DF /* currencyConverter */,
 				1630A57C2F3AFD88007DF1DF /* Products */,
 			);
@@ -78,6 +105,9 @@
 			);
 			name = currencyConverter;
 			packageProductDependencies = (
+				84C0DC762F48108D00DA2DAE /* Then */,
+				84C0DC792F48109700DA2DAE /* SnapKit */,
+				84C0DC7C2F48113500DA2DAE /* Alamofire */,
 			);
 			productName = currencyConverter;
 			productReference = 1630A57B2F3AFD88007DF1DF /* currencyConverter.app */;
@@ -107,6 +137,11 @@
 			);
 			mainGroup = 1630A5722F3AFD88007DF1DF;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				84C0DC752F48108D00DA2DAE /* XCRemoteSwiftPackageReference "Then" */,
+				84C0DC782F48109700DA2DAE /* XCRemoteSwiftPackageReference "SnapKit" */,
+				84C0DC7B2F48113500DA2DAE /* XCRemoteSwiftPackageReference "Alamofire" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 1630A57C2F3AFD88007DF1DF /* Products */;
 			projectDirPath = "";
@@ -132,6 +167,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				84C0DDB82F4D90D500DA2DAE /* UpdateUnix+CoreDataProperties.swift in Sources */,
+				84C0DDB92F4D90D500DA2DAE /* UpdateUnix+CoreDataClass.swift in Sources */,
+				84C0DDBA2F4D90D500DA2DAE /* WorldCurrency+CoreDataClass.swift in Sources */,
+				84C0DDBB2F4D90D500DA2DAE /* WorldCurrency+CoreDataProperties.swift in Sources */,
+				84C0DDA22F4D6A7300DA2DAE /* LastPage+CoreDataProperties.swift in Sources */,
+				84C0DDA32F4D6A7300DA2DAE /* LastPage+CoreDataClass.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -149,7 +190,6 @@
 				INFOPLIST_FILE = currencyConverter/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
@@ -185,7 +225,6 @@
 				INFOPLIST_FILE = currencyConverter/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
@@ -351,6 +390,51 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		84C0DC752F48108D00DA2DAE /* XCRemoteSwiftPackageReference "Then" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/devxoul/Then.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.0;
+			};
+		};
+		84C0DC782F48109700DA2DAE /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.7.1;
+			};
+		};
+		84C0DC7B2F48113500DA2DAE /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.11.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		84C0DC762F48108D00DA2DAE /* Then */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 84C0DC752F48108D00DA2DAE /* XCRemoteSwiftPackageReference "Then" */;
+			productName = Then;
+		};
+		84C0DC792F48109700DA2DAE /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 84C0DC782F48109700DA2DAE /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
+		84C0DC7C2F48113500DA2DAE /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 84C0DC7B2F48113500DA2DAE /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 1630A5732F3AFD88007DF1DF /* Project object */;
 }

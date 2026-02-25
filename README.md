@@ -26,7 +26,7 @@
 
 - **UIKit**
 - **SnapKit**
-- **URLSession**
+- **Alamofire**
 - **MVVM Architecture**
 - **CoreData**
 - **UITableView**
@@ -38,9 +38,10 @@
 본 프로젝트는 **MVVM 패턴**을 기반으로 설계되었습니다.
 ```
 📦 currencyConverter
-┣ 📂 View
+┣ 📂 ViewController
 ┃ ┣ ExchangeRateViewController.swift
 ┃ ┣ CalculatorViewController.swift
+┣ 📂 View
 ┃ ┣ MainView.swift
 ┃ ┣ CalculatorView.swift
 ┃ ┗ ExchangeRateTableViewCell.swift
@@ -87,3 +88,39 @@
 - Custom UITableViewCell 레이아웃 구성
 
 ---
+
+## 🌐 Data Flow
+
+### 환율 데이터 요청 흐름
+
+```
+ExchangeRateViewModel
+↓
+NetworkManager.fetchRates()
+↓
+Alamofire
+↓
+JSON Response
+↓
+Model Decoding
+↓
+View Update
+```
+
+---
+
+### 즐겨찾기 저장 흐름
+
+```
+사용자 버튼 클릭
+↓
+클로저 전달
+↓
+ViewModel 처리
+↓
+CoreDataManager
+↓
+CoreData 저장
+↓
+정렬 후 UI 갱신
+```

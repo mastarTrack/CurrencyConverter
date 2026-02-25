@@ -87,14 +87,22 @@ currencyConverter
 
 # 2. 메모리 이슈 디버깅
 ## 1) Memory Graph Debugger 사용하기
+<img width="2672" height="1522" alt="image" src="https://github.com/user-attachments/assets/03a35b80-b3ec-4d7a-bcfd-fdb734b6940d" />
 
 메모리 그래프에서는 별다른 느낌표가 발생하지 않았습니다.
+
+<img width="2560" height="1440" alt="image" src="https://github.com/user-attachments/assets/7eac5d23-b209-4ad7-a47b-cb9175bcfb30" />
 
 메모리 사용량 확인 시에도 메모리 사용량이 크게 튄 부분이 없는 것으로 보입니다.
 
 ## 2) Leaks Instrument 사용하기
 
 Leaks Instrument를 활용해보아도 감지되는 누수가 없는 것으로 확인하였습니다.
+
+<img width="3164" height="1878" alt="image" src="https://github.com/user-attachments/assets/b3fc0eb0-ef53-4593-936c-d319590da2af" />
+
+![f](https://github.com/user-attachments/assets/0333a375-2e07-491b-9c08-2b24529e16c4)
+
 
 # 3. 회고
 

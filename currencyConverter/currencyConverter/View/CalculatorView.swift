@@ -48,7 +48,6 @@ class CalculatorView: UIView {
         $0.setTitleColor(.white, for: .normal)
         $0.backgroundColor = .systemBlue
         $0.layer.cornerRadius = 8
-        $0.addTarget(self, action: #selector(convertButtonTapped), for: .touchUpInside)
     }
     
     // 결과 표시
@@ -77,6 +76,7 @@ class CalculatorView: UIView {
         super.init(frame: frame)
         self.backgroundColor = UIColor(named: "BackgroundColor")
         setupLayout()
+        setupAction()
     }
     
     required init?(coder: NSCoder) {
@@ -120,6 +120,12 @@ class CalculatorView: UIView {
     }
     
     
+    // MARK: -- Action
+    private func setupAction() {
+        convertButton.addTarget(self, action: #selector(convertButtonTapped), for: .touchUpInside)
+    }
+
+    
     // MARK: -- @objc 메서드
     @objc
     private func convertButtonTapped() {
@@ -136,10 +142,4 @@ class CalculatorView: UIView {
     func configureNum(result: String){
         resultLabel.text = result
     }
-}
-
-
-#Preview {
-    let dummyCalculatorViewModel = CalculatorViewModel(code: "234", country: "234", rate: "4324")
-    CalculatorViewController(viewModel: dummyCalculatorViewModel)
 }

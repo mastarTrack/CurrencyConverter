@@ -43,8 +43,8 @@ class ExchangeRateTableViewCell: UITableViewCell {
     
     // 업다운 아이콘
     private let upDownLabel = UILabel().then {
-        $0.text = "📈"
         $0.font = .systemFont(ofSize: 25)
+        $0.textAlignment = .center
     }
     
     // 즐겨찾기 버튼 구현
@@ -59,7 +59,7 @@ class ExchangeRateTableViewCell: UITableViewCell {
     
     // MARK: -- View 이벤트 전달 클로저
     // favoriteButton 클로저
-    var tappedfavoriteButton: (() -> Void)?
+    var tappedFavoriteButton: (() -> Void)?
     
     
     // MARK: -- 초기화
@@ -81,11 +81,6 @@ class ExchangeRateTableViewCell: UITableViewCell {
         
         [labelStackView, currencyLabel, upDownLabel, favoriteButton].forEach { contentView.addSubview($0) }
         
-        contentView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-            $0.height.equalTo(60)
-        }
-        
         labelStackView.snp.makeConstraints {
             $0.leading.equalToSuperview().offset(16)
             $0.centerY.equalToSuperview()
@@ -101,6 +96,7 @@ class ExchangeRateTableViewCell: UITableViewCell {
         upDownLabel.snp.makeConstraints {
             $0.trailing.equalTo(favoriteButton.snp.leading).offset(-10)
             $0.centerY.equalToSuperview()
+            $0.width.equalTo(24) // 아이콘 없어도 자리 차지하도록 넓이 고정
         }
         
         favoriteButton.snp.makeConstraints {
@@ -120,23 +116,16 @@ class ExchangeRateTableViewCell: UITableViewCell {
     // MARK: -- @objc 메서드
     @objc
     private func favoriteButtonTapped() {
-        tappedfavoriteButton?() // 클로저 전달
+        tappedFavoriteButton?() // 클로저 전달
     }
 
     
     // MARK: -- text 데이터 대입 메서드
-    func configure(code: String, rate: String, country: String, isFavorite: Bool) {
+    func tableViewCellConfigure(code: String, rate: String, country: String, isFavorite: String, upDown: String) {
         codeLabel.text = code
         currencyLabel.text = rate
         countryLabel.text = country
-        
-        let imageName = isFavorite ? "star.fill" : "star"
-        favoriteButton.setImage(UIImage(systemName: imageName), for: .normal)
+        favoriteButton.setImage(UIImage(systemName: isFavorite), for: .normal)
+        upDownLabel.text = upDown
     }
-}
-
-
-#Preview {
-    let dummyMainViewModel = ExchangeRateViewModel()
-    return ExchangeRateViewController(viewModel: dummyMainViewModel)
 }

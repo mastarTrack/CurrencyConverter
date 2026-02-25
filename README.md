@@ -5,11 +5,13 @@
 
 ---
 
-<img width="603" height="1311" alt="Simulator Screenshot - iPhone 17 Pro - 2026-02-25 at 11 05 33" src="https://github.com/user-attachments/assets/668d7de3-1f7f-4b0d-8b32-72ed7854610b" />
+<img width="400" height="1100" alt="Simulator Screenshot - iPhone 17 Pro - 2026-02-25 at 11 05 33" src="https://github.com/user-attachments/assets/668d7de3-1f7f-4b0d-8b32-72ed7854610b" />
 
-<img width="1206" height="2622" alt="Simulator Screenshot - iPhone 17 Pro - 2026-02-25 at 11 06 17" src="https://github.com/user-attachments/assets/016bb5f8-534e-4fc8-8312-3c8c6cbf28f1" />
+<img width="400" height="1100" alt="Simulator Screenshot - iPhone 17 Pro - 2026-02-25 at 11 06 17" src="https://github.com/user-attachments/assets/016bb5f8-534e-4fc8-8312-3c8c6cbf28f1" />
 
-<img width="1206" height="2622" alt="Simulator Screenshot - iPhone 17 Pro - 2026-02-25 at 11 06 02" src="https://github.com/user-attachments/assets/bd9bb4ba-85b9-4742-9261-9a7784ac9bfb" />
+<img width="400" height="1100" alt="Simulator Screenshot - iPhone 17 Pro - 2026-02-25 at 11 06 02" src="https://github.com/user-attachments/assets/bd9bb4ba-85b9-4742-9261-9a7784ac9bfb" />
+
+<img width="400" height="1100" alt="image" src="https://github.com/user-attachments/assets/0f17436b-68f6-490c-ad37-33dc4f86f86f" />
 
 
 ## 📱 프로젝트 소개
@@ -34,6 +36,24 @@
 ## 🧱 Architecture
 
 본 프로젝트는 **MVVM 패턴**을 기반으로 설계되었습니다.
+📦 currencyConverter
+┣ 📂 View
+┃ ┣ ExchangeRateViewController.swift
+┃ ┣ CalculatorViewController.swift
+┃ ┣ MainView.swift
+┃ ┣ CalculatorView.swift
+┃ ┗ ExchangeRateTableViewCell.swift
+┣ 📂 ViewModel
+┃ ┣ ExchangeRateViewModel.swift
+┃ ┣ CalculatorViewModel.swift
+┃ ┗ ViewModelProtocol.swift
+┣ 📂 Model
+┃ ┣ ExchangeRate.swift
+┃ ┗ countryDictionary.swift
+┣ 📂 Manager
+┃ ┣ NetworkManager.swift
+┃ ┗ CoreDataManager.swift
+┗ SceneDelegate.swift
 
 ---
 

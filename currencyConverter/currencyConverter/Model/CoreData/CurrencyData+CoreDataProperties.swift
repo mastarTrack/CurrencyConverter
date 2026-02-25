@@ -21,6 +21,7 @@ extension CurrencyData {
     @NSManaged public var currencyCode: String
     @NSManaged public var value: Double
     @NSManaged public var bookMark: Bool
+    @NSManaged public var fluctuation: Double
 
 }
 

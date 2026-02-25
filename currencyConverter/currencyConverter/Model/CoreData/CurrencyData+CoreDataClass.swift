@@ -18,5 +18,6 @@ public class CurrencyData: NSManagedObject {
         static let currencyCode = "currencyCode"
         static let value = "value"
         static let bookMark = "bookMark"
+        static let fluctuation = "fluctuation"
     }
 }

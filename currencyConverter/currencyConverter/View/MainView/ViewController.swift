@@ -12,7 +12,7 @@ class ViewController: UIViewController {
     private let mainView = MainView()
     private lazy var dataSource = makeCollectionViewDiffableDataSource(mainView.listView)
     
-    private let viewModel = MainViewModel()
+    private(set) var viewModel = MainViewModel()
     
     override func loadView() {
         self.view = mainView

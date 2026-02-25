@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreData
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -36,6 +37,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneWillResignActive(_ scene: UIScene) {
         // Called when the scene will move from an active state to an inactive state.
         // This may occur due to temporary interruptions (ex. an incoming phone call).
+        let coreDataManager = CoreDataManager()
+        
+        if let current = (window?.rootViewController as? UINavigationController)?.topViewController {
+            if let vc = current as? ViewController {
+                coreDataManager.saveVC("mainVC")
+            } else if let vc = current as? CalculationViewController {
+                let rate = vc.viewModel.rate
+                coreDataManager.saveVC("calcVC", data: rate)
+            }
+        } else { print("failed to get view controller")}
     }
 
     func sceneWillEnterForeground(_ scene: UIScene) {

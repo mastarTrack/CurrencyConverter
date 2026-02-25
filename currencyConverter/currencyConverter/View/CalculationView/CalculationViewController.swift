@@ -9,7 +9,7 @@ import UIKit
 
 class CalculationViewController: UIViewController {
     private let calculationView = CalculationView()
-    private let viewModel: CalculationViewModel
+    private(set) var viewModel: CalculationViewModel
     
     init(viewModel: CalculationViewModel) {
         self.viewModel = viewModel

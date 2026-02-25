@@ -14,6 +14,7 @@ public typealias DateCoreDataClassSet = NSSet
 
 public class UpdateDate: NSManagedObject {
     public static let className = "UpdateDate"
+
     public enum Key {
         static let lastUpdate = "lastUpdate"
         static let nextUpdate = "nextUpdate"

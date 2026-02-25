@@ -7,11 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0A6831C92F4DC89B0064A093 /* FavoriteCurrency+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6831C82F4DC89B0064A093 /* FavoriteCurrency+CoreDataProperties.swift */; };
+		0A6831CA2F4DC89B0064A093 /* FavoriteCurrency+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6831C72F4DC89B0064A093 /* FavoriteCurrency+CoreDataClass.swift */; };
+		0A817FF62F4E6F3C00B297F5 /* AppState+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A817FF32F4E6F3C00B297F5 /* AppState+CoreDataProperties.swift */; };
+		0A817FF72F4E6F3C00B297F5 /* CurrencyRate+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A817FF52F4E6F3C00B297F5 /* CurrencyRate+CoreDataProperties.swift */; };
+		0A817FF82F4E6F3C00B297F5 /* CurrencyRate+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A817FF42F4E6F3C00B297F5 /* CurrencyRate+CoreDataClass.swift */; };
+		0A817FF92F4E6F3C00B297F5 /* AppState+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A817FF22F4E6F3C00B297F5 /* AppState+CoreDataClass.swift */; };
 		0AB4981C2F47F6B70002BEC2 /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = 0AB4981B2F47F6B70002BEC2 /* Then */; };
 		0AB4981F2F47F6CF0002BEC2 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0AB4981E2F47F6CF0002BEC2 /* SnapKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0A6831C72F4DC89B0064A093 /* FavoriteCurrency+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FavoriteCurrency+CoreDataClass.swift"; sourceTree = "<group>"; };
+		0A6831C82F4DC89B0064A093 /* FavoriteCurrency+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FavoriteCurrency+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		0A817FF22F4E6F3C00B297F5 /* AppState+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+CoreDataClass.swift"; sourceTree = "<group>"; };
+		0A817FF32F4E6F3C00B297F5 /* AppState+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		0A817FF42F4E6F3C00B297F5 /* CurrencyRate+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CurrencyRate+CoreDataClass.swift"; sourceTree = "<group>"; };
+		0A817FF52F4E6F3C00B297F5 /* CurrencyRate+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CurrencyRate+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		1630A57B2F3AFD88007DF1DF /* currencyConverter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = currencyConverter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -52,6 +64,12 @@
 		1630A5722F3AFD88007DF1DF = {
 			isa = PBXGroup;
 			children = (
+				0A817FF22F4E6F3C00B297F5 /* AppState+CoreDataClass.swift */,
+				0A817FF32F4E6F3C00B297F5 /* AppState+CoreDataProperties.swift */,
+				0A817FF42F4E6F3C00B297F5 /* CurrencyRate+CoreDataClass.swift */,
+				0A817FF52F4E6F3C00B297F5 /* CurrencyRate+CoreDataProperties.swift */,
+				0A6831C72F4DC89B0064A093 /* FavoriteCurrency+CoreDataClass.swift */,
+				0A6831C82F4DC89B0064A093 /* FavoriteCurrency+CoreDataProperties.swift */,
 				1630A57D2F3AFD88007DF1DF /* currencyConverter */,
 				1630A57C2F3AFD88007DF1DF /* Products */,
 			);
@@ -145,6 +163,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0A6831C92F4DC89B0064A093 /* FavoriteCurrency+CoreDataProperties.swift in Sources */,
+				0A6831CA2F4DC89B0064A093 /* FavoriteCurrency+CoreDataClass.swift in Sources */,
+				0A817FF62F4E6F3C00B297F5 /* AppState+CoreDataProperties.swift in Sources */,
+				0A817FF72F4E6F3C00B297F5 /* CurrencyRate+CoreDataProperties.swift in Sources */,
+				0A817FF82F4E6F3C00B297F5 /* CurrencyRate+CoreDataClass.swift in Sources */,
+				0A817FF92F4E6F3C00B297F5 /* AppState+CoreDataClass.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

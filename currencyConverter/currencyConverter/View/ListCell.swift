@@ -23,11 +23,12 @@ final class ListCell: UICollectionViewCell {
     
     private let currencyLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 16, weight: .medium)
+        $0.textColor = .label
     }
     
     private let countryLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 14)
-        $0.textColor = .gray
+        $0.textColor = .secondaryLabel
     }
     
     private lazy var labelStackView = UIStackView(arrangedSubviews: [
@@ -40,6 +41,7 @@ final class ListCell: UICollectionViewCell {
     
     private let rateLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 16)
+        $0.textColor = .label
         $0.textAlignment = .right
     }
     

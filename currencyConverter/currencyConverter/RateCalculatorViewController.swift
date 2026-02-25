@@ -23,11 +23,16 @@ final class RateCalculatorViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
         
         configure()
         bindViewModel()
         bindActions()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        CoreDataManager.shared.saveLastScreen(.calculator, selectedCurrency: viewModel.item.currency)
     }
     
     private func bindViewModel() {

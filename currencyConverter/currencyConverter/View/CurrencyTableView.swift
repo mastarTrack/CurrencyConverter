@@ -22,7 +22,7 @@ final class CurrencyTableView: UIView {
     
     private let emptyLabel = UILabel().then {
         $0.text = "검색 결과 없음"
-        $0.textColor = .gray
+        $0.textColor = .secondaryLabel
         $0.textAlignment = .center
         $0.font = .systemFont(ofSize: 18)
     }
@@ -33,7 +33,7 @@ final class CurrencyTableView: UIView {
         super.init(frame: frame)
         
         addSubview(collectionView)
-        collectionView.backgroundColor = .white
+        collectionView.backgroundColor = .systemBackground
         collectionView.register(ListCell.self, forCellWithReuseIdentifier: ListCell.identifier)
         collectionView.dataSource = self
         collectionView.delegate = self
@@ -44,18 +44,20 @@ final class CurrencyTableView: UIView {
     }
     
     func update(newItems: [Item]) {
+        
+        favoriteSet = CoreDataManager.shared.fetchAllFavoriteCurrencies()
         var updatedItems: [Item] = []
-
+        
         for newItem in newItems {
-            var item = newItem
+            var updatedItem = newItem
             
             if favoriteSet.contains(newItem.currency) {
-                item.isFavorite = true
+                updatedItem.isFavorite = true
             } else {
-                item.isFavorite = false
+                updatedItem.isFavorite = false
             }
             
-            updatedItems.append(item)
+            updatedItems.append(updatedItem)
         }
         
         self.items = sortFavoriteFirst(updatedItems)
@@ -85,36 +87,35 @@ final class CurrencyTableView: UIView {
             heightDimension: .absolute(60)
         )
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
-
+        
         let group = NSCollectionLayoutGroup.vertical(layoutSize: itemSize, subitems: [item])
-
+        
         let section = NSCollectionLayoutSection(group: group)
         section.interGroupSpacing = 0
         section.contentInsets = .zero
-
+        
         return UICollectionViewCompositionalLayout(section: section)
     }
     
     // 셀에서 받은 정보로 즐겨찾기 바꿔주기
     private func setFavorite(_ isFavorite: Bool, item: Item) {
         if isFavorite {
-            favoriteSet.insert(item.currency)
+            CoreDataManager.shared.addFavorite(currency: item.currency)
         } else {
-            favoriteSet.remove(item.currency)
+            CoreDataManager.shared.removeFavorite(currency: item.currency)
         }
         
-        // 현재 items에도 반영
+        favoriteSet = CoreDataManager.shared.fetchAllFavoriteCurrencies()
+        
         if let index = items.firstIndex(where: { $0.currency == item.currency }) {
             items[index].isFavorite = isFavorite
+            
+            // 정렬 후 보여주기
+            items = sortFavoriteFirst(items)
+            collectionView.reloadData()
         }
-        
-        // 정렬 후 보여주기
-        items = sortFavoriteFirst(items)
-        collectionView.reloadData()
     }
-    
 }
-
 extension CurrencyTableView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let selectedItem = items[indexPath.item]

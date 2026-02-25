@@ -15,7 +15,7 @@ final class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
         
         navigationItem.title = "환율 정보"
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -27,6 +27,11 @@ final class ViewController: UIViewController {
         configureCurrencyView()
         
         currencyViewModel.fetchCurrencyData()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        CoreDataManager.shared.saveLastScreen(.list, selectedCurrency: nil)
     }
     
     private func configureCurrencyView() {

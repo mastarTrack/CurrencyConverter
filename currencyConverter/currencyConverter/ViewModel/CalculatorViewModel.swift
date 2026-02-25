@@ -74,7 +74,7 @@ class CalculatorViewModel: ViewModelProtocol{
         
         let total = Number * Double(selectedRate!)!
         let formattedTotal = String(format: "%.2f", total)
-        let resultString =  "$\(amount ?? "0") → \(formattedTotal) \(selectedCode ?? "0")"
+        let resultString =  "$\(Number) → \(formattedTotal) \(selectedCode ?? "")"
 
         state = .calculateSuccess(result: resultString)
     }

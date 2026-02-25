@@ -25,11 +25,11 @@ class CoreDataManager {
         return container
     }()
     
-    
     // context로 데이터 추출
     var context: NSManagedObjectContext {
         return persistentContainer.viewContext
     }
+    
     
     // MARK: - Core Data Saving support
     // 변경 사항이 있을 경우 데이터 저장

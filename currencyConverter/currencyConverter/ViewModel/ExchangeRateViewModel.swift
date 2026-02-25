@@ -92,7 +92,7 @@ class ExchangeRateViewModel: ViewModelProtocol {
             case .success(let response):
                 // Dictionary를 Array로 변환함
                 let sortedRates = response.rates.map { key, value in
-                    return SimpleRate(currencyCode: key, rate: value, isFavorite: self.favoriteCodes.contains(key), upDown: self.checkUpDownUpdateCache(code: key, newRate: value, newTime: Int64(response.timeLastUpdateUtc) ?? 0))
+                    return SimpleRate(currencyCode: key, rate: value, isFavorite: self.favoriteCodes.contains(key), upDown: self.checkUpDownUpdateCache(code: key, newRate: value, newTime: String(response.timeLastUpdateUtc)))
                 }.sorted { $0.currencyCode < $1.currencyCode }
                 
                 self.rates = sortedRates // 정렬한 데이터 (배열) 대입
@@ -195,7 +195,7 @@ class ExchangeRateViewModel: ViewModelProtocol {
     
     
     // MARK: -- 환율등락 비교 및 코어데이터 캐싱
-    private func checkUpDownUpdateCache(code: String, newRate: Double, newTime: Int64) -> String {
+    private func checkUpDownUpdateCache(code: String, newRate: Double, newTime: String) -> String {
         let context = CoreDataManager.shared.context
         
         // 코어데이터에서 옛날 데이터 찾아오기
@@ -211,10 +211,11 @@ class ExchangeRateViewModel: ViewModelProtocol {
                 
                 // 시간 변경 (환율 갱신)
                 if newTime != cachedTime {
+                    print(newRate - cachedRate)
                     var upDown = ""
                     if (newRate - cachedRate) >= 0.01 {
                         upDown = "📈"
-                    } else if (cachedRate - newRate) >= -0.01 {
+                    } else if (cachedRate - newRate) <= -0.01 {
                         upDown = "📉"
                     }
                     

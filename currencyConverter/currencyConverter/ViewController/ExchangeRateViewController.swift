@@ -47,8 +47,8 @@ class ExchangeRateViewController: UIViewController {
         view.backgroundColor = UIColor(named: "BackgroundColor")
         
         setupDelegates()
-        bindingData()
         viewModel.action?(.viewDidLoad)
+        bindingData()
     }
     
     
@@ -94,7 +94,7 @@ class ExchangeRateViewController: UIViewController {
 extension UIViewController {
     // 에러 알럿 표시 메서드
     func showErrorAlert(message: String) {
-        let alert = UIAlertController(title: "오류", message: "데이터를 불러올 수 없습니다", preferredStyle: .alert)
+        let alert = UIAlertController(title: "오류", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .default))
         self.present(alert, animated: true)
     }
@@ -120,15 +120,19 @@ extension ExchangeRateViewController: UITableViewDataSource, UITableViewDelegate
         // 국가명
         let countryName = CountryDictionary.countryDictionary[currencyName] ?? "알 수 없음"
         
-        // 포맷팅된 환율 넣기
+        // 포맷팅된 환율
         let formattedRate = String(format: "%.4f", currencyData.rate)
+
+        // 즐겨찾기 이미지 이름
+        let favorite = currencyData.isFavorite ? "star.fill" : "star"
         
-        let favorite = currencyData.isFavorite
+        // upDown 이모지
+        let upDownString = currencyData.upDown
         
         // 테이블 뷰 셀에 데이터 집어넣기
-        cell.configure(code: currencyName, rate: formattedRate, country: countryName, isFavorite: favorite)
+        cell.tableViewCellConfigure(code: currencyName, rate: formattedRate, country: countryName, isFavorite: favorite, upDown: upDownString)
         
-        cell.tappedfavoriteButton = { [weak self] in
+        cell.tappedFavoriteButton = { [weak self] in
             self?.viewModel.action?(.toggleFavorite(code: currencyName))
         }
         return cell
@@ -161,10 +165,4 @@ extension ExchangeRateViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         viewModel.action?(.filter(text: searchText))
     }
-}
-
-
-#Preview {
-    let dummyViewModel = ExchangeRateViewModel()
-    return ExchangeRateViewController(viewModel: dummyViewModel)
 }

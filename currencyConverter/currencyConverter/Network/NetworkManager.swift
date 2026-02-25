@@ -20,13 +20,12 @@ class NetworkManager {
         // JSON 요청하기
         AF.request(url, method: .get)
             .validate() // 유효성 검사하기 (200번대 아니면 자동 실패 처리)
-        // JSON을 Swift Struct 형태로 변환
+            // JSON을 Swift Struct 형태로 변환
             .responseDecodable(of: ExchangeRateResponse.self) { response in
                 // 응답 처리하기
                 switch response.result {
                 case .success(let data):
-                    // 성공하면 데이터 전달하기
-                    completion(.success(data))
+                    completion(.success(data)) // 성공하면 데이터 전달하기
                 case .failure(let error):
                     completion(.failure(error))
                 }

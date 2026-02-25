@@ -18,16 +18,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let coreDataManager = CoreDataManager()
         let lastVC = coreDataManager.loadVC()
+        var calcVC: CalculationViewController?
         
-        if let lastVC {
-            if lastVC.vc == "mainVC" {
-                window.rootViewController = UINavigationController(rootViewController: ViewController())
-            } else if let code = lastVC.code, lastVC.vc == "calcVC" {
-                let rate = coreDataManager.loadCurrencyCodeData(of: code)
-                window.rootViewController = UINavigationController(rootViewController: CalculationViewController(viewModel: CalculationViewModel(data: rate ?? Rate(currencyCode: "", value: 0, bookMarked: false))))
-            }
-        } else {
-            window.rootViewController = UINavigationController(rootViewController: ViewController())
+        if let code = lastVC?.code, lastVC?.vc == "calcVC" {
+            let rate = coreDataManager.loadCurrencyCodeData(of: code) ?? Rate(currencyCode: "", value: 0, bookMarked: false)
+            calcVC = CalculationViewController(viewModel: CalculationViewModel(data: rate))
+        }
+        
+        window.rootViewController = UINavigationController(rootViewController: ViewController())
+        window.makeKeyAndVisible()
+        
+        if let calcVC {
+            (window.rootViewController as? UINavigationController)?.pushViewController(calcVC, animated: true)
         }
         
         window.makeKeyAndVisible()

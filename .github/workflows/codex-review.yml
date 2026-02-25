@@ -1,0 +1,12 @@
+name: Codex Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Codex Review
+        uses: codex/review-action@v1

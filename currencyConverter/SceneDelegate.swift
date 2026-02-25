@@ -14,8 +14,29 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
+        
+        let infoManager = InformationManager()
+        let historyManager = HistoryManager()
+        let favoriteManager = FavoriteManager()
+        let networkManager = NetworkManager()
+        
+        let exchangeRateVM = ExchangeRateViewModel(historyManager: historyManager, favoriteMananger: favoriteManager, networkManager: networkManager)
+        
+        let navigationController = UINavigationController(rootViewController: ExchangeRateViewController(viewModel: exchangeRateVM))
+        
+        let info = infoManager.fetchData()
+        if info?.page == "calculator", let code = info?.code {
+            if let history = historyManager.fetchData(code: code) {
+                let exchangeRate = ExchangeRate(code: code, rate: history.rate)
+                let calculatorVM = CalculatorViewModel(item: exchangeRate)
+                let calculatorVC = CalculatorViewController(viewModel: calculatorVM)
+                
+                navigationController.pushViewController(calculatorVC, animated: true)
+            }
+        }
+        
         let window = UIWindow(windowScene: windowScene)
-        window.rootViewController = UINavigationController(rootViewController: ViewController())
+        window.rootViewController = navigationController
         window.makeKeyAndVisible()
         self.window = window
     }
@@ -43,12 +64,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     func sceneDidEnterBackground(_ scene: UIScene) {
-        // Called as the scene transitions from the foreground to the background.
-        // Use this method to save data, release shared resources, and store enough scene-specific state information
-        // to restore the scene back to its current state.
-
-        // Save changes in the application's managed object context when the application transitions to the background.
-        (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
+        
+        let infoManager = InformationManager()
+        let navigation = window?.rootViewController as! UINavigationController
+        
+        if let calculatorVC = navigation.topViewController as? CalculatorViewController {
+            infoManager.saveInfo(code: calculatorVC.viewModel.item.code, page: "calculator")
+        } else {
+            infoManager.saveInfo(code: nil, page: "exchangeRate")
+        }
+        
+        CoreDataManager.shared.saveContext()
     }
 
 

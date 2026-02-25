@@ -11,7 +11,7 @@ class CalculatorViewController: UIViewController {
     
     // MARK: -- View,VM 인스턴스 생성
     private let calculatorView = CalculatorView()
-    private let viewModel: CalculatorViewModel
+    let viewModel: CalculatorViewModel
     
     // 초기화
     init(viewModel: CalculatorViewModel) {
@@ -32,6 +32,7 @@ class CalculatorViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // 네비게이션바 타이틀 설정
         self.title = "환율 계산기"
         self.navigationController?.navigationBar.prefersLargeTitles = true
         
@@ -54,13 +55,13 @@ class CalculatorViewController: UIViewController {
         // VM의 state 변화 -> View 업데이트
         viewModel.stateChanged = { [weak self] state in
             DispatchQueue.main.async {
-                self?.render(state) // state 메서드 호출
+                self?.render(state)
             }
         }
         
     }
     
-    // state 상태에 따라 View 렌더링하기
+    // VM의 state 상태에 따라 View 렌더링하기
     private func render(_ state: CalculatorViewModel.State) {
         switch state {
         case .none:

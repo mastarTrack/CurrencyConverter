@@ -36,6 +36,7 @@
 ## 🧱 Architecture
 
 본 프로젝트는 **MVVM 패턴**을 기반으로 설계되었습니다.
+'''
 📦 currencyConverter
 ┣ 📂 View
 ┃ ┣ ExchangeRateViewController.swift
@@ -54,7 +55,7 @@
 ┃ ┣ NetworkManager.swift
 ┃ ┗ CoreDataManager.swift
 ┗ SceneDelegate.swift
-
+'''
 ---
 
 ## ✨ 주요 기능

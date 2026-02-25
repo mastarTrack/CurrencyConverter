@@ -11,7 +11,8 @@
 
 <img width="400" height="1100" alt="Simulator Screenshot - iPhone 17 Pro - 2026-02-25 at 11 06 02" src="https://github.com/user-attachments/assets/bd9bb4ba-85b9-4742-9261-9a7784ac9bfb" />
 
-<img width="400" height="1100" alt="image" src="https://github.com/user-attachments/assets/0f17436b-68f6-490c-ad37-33dc4f86f86f" />
+<img width="400" height="1100" alt="4DB73475-E5A9-4057-B18A-5A0130CDCD44" src="https://github.com/user-attachments/assets/15783e1c-006c-4bbf-af2e-b720ff4e9a4a" />
+
 
 
 ## 📱 프로젝트 소개
@@ -88,6 +89,12 @@
 - Custom UITableViewCell 레이아웃 구성
 
 ---
+
+### 🌙 야간 모드 (Dark Mode) 지원
+
+- 시스템 Appearance(Light/Dark)에 따라 자동으로 UI가 전환되도록 구현
+- 색상 Asset을 활용하여 배경색, 텍스트 색상등이 자연스럽게 변경되도록 설계
+- 다크 모드 환경에서도 가독성과 사용자 경험을 유지하도록 UI 대비를 고려
 
 ## 🌐 Data Flow
 

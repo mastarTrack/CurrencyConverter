@@ -21,6 +21,7 @@ class MainView: UIView {
     // 테이블 뷰
     let tableView = UITableView().then {
         $0.register(ExchangeRateTableViewCell.self, forCellReuseIdentifier: ExchangeRateTableViewCell.id)
+        $0.rowHeight = 60
     }
 
     // 검색 결과 없음 화면
@@ -68,10 +69,4 @@ class MainView: UIView {
         }
         
     }
-}
-
-
-#Preview {
-    let dummyViewModel = ExchangeRateViewModel()
-    return ExchangeRateViewController(viewModel: dummyViewModel)
 }

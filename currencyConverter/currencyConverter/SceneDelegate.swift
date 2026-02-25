@@ -16,7 +16,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
         
-        window.rootViewController = UINavigationController(rootViewController: ViewController())
+        let coreDataManager = CoreDataManager()
+        let lastVC = coreDataManager.loadVC()
+        
+        if let lastVC {
+            if lastVC.vc == "mainVC" {
+                window.rootViewController = UINavigationController(rootViewController: ViewController())
+            } else if let code = lastVC.code, lastVC.vc == "calcVC" {
+                let rate = coreDataManager.loadCurrencyCodeData(of: code)
+                window.rootViewController = UINavigationController(rootViewController: CalculationViewController(viewModel: CalculationViewModel(data: rate ?? Rate(currencyCode: "", value: 0, bookMarked: false))))
+            }
+        } else {
+            window.rootViewController = UINavigationController(rootViewController: ViewController())
+        }
+        
         window.makeKeyAndVisible()
         
         self.window = window

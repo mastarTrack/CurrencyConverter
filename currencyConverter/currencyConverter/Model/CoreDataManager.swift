@@ -44,17 +44,22 @@ extension CoreDataManager {
     func saveCurrencyData(_ rate: [Rate]) {
         guard let entity = NSEntityDescription.entity(forEntityName: CurrencyData.className, in: context) else { return }
         
-        rate.forEach {
-            let currencyData = NSManagedObject(entity: entity, insertInto: context)
-            currencyData.setValue($0.currencyCode, forKey: CurrencyData.Key.currencyCode)
-            currencyData.setValue($0.value, forKey: CurrencyData.Key.value)
-            currencyData.setValue($0.bookMarked, forKey: CurrencyData.Key.bookMark)
-            currencyData.setValue($0.fluctuation, forKey: CurrencyData.Key.fluctuation)
-            
-            do {
-                try context.save()
-            } catch {
-                print("환율 정보 저장 실패")
+        if loadCurrencyData() != nil {
+            updateCurrencyData(rate)
+            return
+        } else {
+            rate.forEach {
+                let currencyData = NSManagedObject(entity: entity, insertInto: context)
+                currencyData.setValue($0.currencyCode, forKey: CurrencyData.Key.currencyCode)
+                currencyData.setValue($0.value, forKey: CurrencyData.Key.value)
+                currencyData.setValue($0.bookMarked, forKey: CurrencyData.Key.bookMark)
+                currencyData.setValue($0.fluctuation, forKey: CurrencyData.Key.fluctuation)
+                
+                do {
+                    try context.save()
+                } catch {
+                    print("환율 정보 저장 실패")
+                }
             }
         }
     }
@@ -62,11 +67,17 @@ extension CoreDataManager {
     // 업데이트 날짜 저장
     func saveUpdateDate(lastUpdate: Date, nextUpdate: Date) {
         guard let entity = NSEntityDescription.entity(forEntityName: UpdateDate.className, in: context) else { return }
-        let updateDate = NSManagedObject(entity: entity, insertInto: context)
         
-        updateDate.setValue(lastUpdate, forKey: UpdateDate.Key.lastUpdate)
-        updateDate.setValue(nextUpdate, forKey: UpdateDate.Key.nextUpdate)
-
+        if loadUpdateDate() != nil {
+            updateUpdateDate(lastUpdate: lastUpdate, nextUpdate: nextUpdate)
+            return
+        } else {
+            let updateDate = NSManagedObject(entity: entity, insertInto: context) // 만듦과 동시에 코어데이터에 값이 없는 상태로 저장됨
+            
+            updateDate.setValue(lastUpdate, forKey: UpdateDate.Key.lastUpdate)
+            updateDate.setValue(nextUpdate, forKey: UpdateDate.Key.nextUpdate)
+        }
+        
         do {
             try context.save()
         } catch {
@@ -77,13 +88,14 @@ extension CoreDataManager {
     // 마지막 화면 저장
     func saveVC(_ vc: String, data: Rate? = nil) {
         guard let entity = NSEntityDescription.entity(forEntityName: LastVC.className, in: context) else { print("no entity"); return }
-        let lastVC = NSManagedObject(entity: entity, insertInto: context)
         let code = data?.currencyCode
         
         if loadVC() != nil {
             updateLastVC(vc, code: code)
             return
         } else {
+            let lastVC = NSManagedObject(entity: entity, insertInto: context)
+            
             lastVC.setValue(vc, forKey: LastVC.Key.viewController)
             lastVC.setValue(code, forKey: LastVC.Key.currencyCode)
         }
@@ -113,6 +125,28 @@ extension CoreDataManager {
             return rates
         } catch {
             print("CurrencyData 불러오기 실패")
+            return nil
+        }
+    }
+    
+    func loadCurrencyCodeData(of code: String) -> Rate? {
+        do {
+            let fetchRequest = CurrencyData.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "\(CurrencyData.Key.currencyCode) == %@", code)
+            
+            guard let data = try context.fetch(fetchRequest) as? [NSManagedObject] else { return nil }
+            if data.isEmpty { return nil }
+            
+            let code = data[0].value(forKey: CurrencyData.Key.currencyCode) as! String
+            let value = data[0].value(forKey: CurrencyData.Key.value) as! Double
+            let bookMark = data[0].value(forKey: CurrencyData.Key.bookMark) as! Bool
+            let fluctuation = data[0].value(forKey: CurrencyData.Key.fluctuation) as! Double
+            
+            let rate = Rate(currencyCode: code, value: value, bookMarked: bookMark, fluctuation: fluctuation)
+            
+            return rate
+        } catch {
+            print("code currencyData 불러오기 실패")
             return nil
         }
     }
@@ -167,10 +201,46 @@ extension CoreDataManager {
         }
     }
     
+    // 업데이트 날짜 업데이트
     func updateUpdateDate(lastUpdate: Date, nextUpdate: Date) {
-        let fetchRequest = UpdateDate.fetchRequest()
+        do {
+            let result = try context.fetch(UpdateDate.fetchRequest())
+            
+            if let target = result.first {
+                target.setValue(lastUpdate, forKey: UpdateDate.Key.lastUpdate)
+                target.setValue(nextUpdate, forKey: UpdateDate.Key.nextUpdate)
+                
+                try context.save()
+            }
+        } catch {
+            print("업데이트 날짜 수정 실패")
+        }
     }
     
+    // 환율 정보 업데이트
+    func updateCurrencyData(_ rate: [Rate]) {
+        do {
+            let result = try context.fetch(CurrencyData.fetchRequest())
+            guard result.count == rate.count else {
+                print("환율 정보 수 불일치")
+                return
+            }
+            
+            for i in result.indices {
+                result[i].setValue(rate[i].currencyCode, forKey: CurrencyData.Key.currencyCode)
+                result[i].setValue(rate[i].value, forKey: CurrencyData.Key.value)
+                result[i].setValue(rate[i].bookMarked, forKey: CurrencyData.Key.bookMark)
+                result[i].setValue(rate[i].fluctuation, forKey: CurrencyData.Key.fluctuation)
+            }
+
+            try context.save()
+        } catch {
+            print("환율 정보 수정 실패")
+        }
+
+    }
+    
+    // 마지막 화면 업데이트
     func updateLastVC(_ vc: String, code: String?) {
         let fetchRequest = LastVC.fetchRequest()
         

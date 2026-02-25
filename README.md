@@ -103,6 +103,14 @@ Leaks Instrument를 활용해보아도 감지되는 누수가 없는 것으로 �
 
 ![f](https://github.com/user-attachments/assets/0333a375-2e07-491b-9c08-2b24529e16c4)
 
+## 3) DebugSwift 활용하기
+
+<p align="center"> 
+    <img width=40% src="https://github.com/user-attachments/assets/25e15cad-ed07-4805-acb5-bc843425a8e5">
+    <img width=40% height="1077" alt="스크린샷 2026-02-25 19 23 25" src="https://github.com/user-attachments/assets/630f507e-8077-426d-985f-c516630cd0e1" />
+</p>
+
+DebugSwift를 활용하여 디버깅해보았음에도 메모리 누수가 없는 것으로 확인하였습니다.
 
 # 3. 회고
 

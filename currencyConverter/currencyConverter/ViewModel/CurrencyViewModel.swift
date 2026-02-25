@@ -21,25 +21,33 @@ class CurrencyViewModel {
     func fetchCurrencyData() {
         Task {
             do {
-                let result: ExchangeRateResponse =
-                try await networkingService.makeRequest(with: selectedCountry)
+                let result: ExchangeRateResponse = try await networkingService.makeRequest(with: selectedCountry)
                 
                 if result.rates.isEmpty {
-                    onError?("데이터를 불러올 수 없습니다")
+                    await MainActor.run {
+                        self.onError?("데이터를 불러올 수 없습니다")
+                    }
                     return
                 }
                 
-                allItems = result.rates.map {(currency, rate) in
+                CoreDataManager.shared.upsertRates(result.rates)
+                
+                let items = result.rates.map { (currency, rate) in
                     Item(
                         currency: currency,
-                        country: result.currencyCountryMap[currency] ?? "unknow",
-                        rate: String(format: "%.4f", rate))
+                        country: result.currencyCountryMap[currency] ?? "unknown",
+                        rate: String(format: "%.4f", rate)
+                    )
                 }
-                
-                self.upDate?(allItems)
-                
+                // UI 업데이트는 MainActor에서
+                await MainActor.run {
+                    self.allItems = items
+                    self.upDate?(items)
+                }
             } catch {
-                onError?("데이터를 불러올 수 없습니다")
+                await MainActor.run {
+                    self.onError?("데이터를 불러올 수 없습니다")
+                }
             }
         }
     }

@@ -14,19 +14,15 @@ import Then
 // 트러블 슈팅 간단하게라도 적어두기
 // MVVM 역할 분담 나누기(이유 작성)
 
-struct Item: Hashable {
-    let currency: String
-    let country: String
-    let rate: String
-}
-
 final class CurrencyTableView: UIView {
     private var items: [Item] = []
     var onSelectItem: ((Item) -> Void)?
     
+    private var favoriteSet: Set<String> = []
+    
     private let emptyLabel = UILabel().then {
         $0.text = "검색 결과 없음"
-        $0.textColor = .gray
+        $0.textColor = .secondaryLabel
         $0.textAlignment = .center
         $0.font = .systemFont(ofSize: 18)
     }
@@ -37,7 +33,7 @@ final class CurrencyTableView: UIView {
         super.init(frame: frame)
         
         addSubview(collectionView)
-        collectionView.backgroundColor = .white
+        collectionView.backgroundColor = .systemBackground
         collectionView.register(ListCell.self, forCellWithReuseIdentifier: ListCell.identifier)
         collectionView.dataSource = self
         collectionView.delegate = self
@@ -48,13 +44,35 @@ final class CurrencyTableView: UIView {
     }
     
     func update(newItems: [Item]) {
-        self.items = newItems
+        favoriteSet = CoreDataManager.shared.fetchAllFavoriteCurrencies()
+        var updatedItems: [Item] = []
+        
+        for newItem in newItems {
+            var updatedItem = newItem
+            
+            if favoriteSet.contains(newItem.currency) {
+                updatedItem.isFavorite = true
+            } else {
+                updatedItem.isFavorite = false
+            }
+            
+            updatedItems.append(updatedItem)
+        }
+        
+        self.items = sortFavoriteFirst(updatedItems)
         collectionView.reloadData()
         
-        if newItems.isEmpty {
+        if self.items.isEmpty {
             collectionView.backgroundView = emptyLabel
         } else {
-            collectionView.backgroundColor = nil
+            collectionView.backgroundView = nil
+        }
+    }
+    
+    private func sortFavoriteFirst(_ items: [Item]) -> [Item] {
+        items.sorted {
+            if $0.isFavorite != $1.isFavorite { return $0.isFavorite && !$1.isFavorite }
+            return $0.currency < $1.currency
         }
     }
     
@@ -68,17 +86,35 @@ final class CurrencyTableView: UIView {
             heightDimension: .absolute(60)
         )
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
-
+        
         let group = NSCollectionLayoutGroup.vertical(layoutSize: itemSize, subitems: [item])
-
+        
         let section = NSCollectionLayoutSection(group: group)
         section.interGroupSpacing = 0
         section.contentInsets = .zero
-
+        
         return UICollectionViewCompositionalLayout(section: section)
     }
+    
+    // 셀에서 받은 정보로 즐겨찾기 바꿔주고 갱신
+    private func setFavorite(_ isFavorite: Bool, item: Item) {
+        if isFavorite {
+            CoreDataManager.shared.addFavorite(currency: item.currency)
+        } else {
+            CoreDataManager.shared.removeFavorite(currency: item.currency)
+        }
+        
+        favoriteSet = CoreDataManager.shared.fetchAllFavoriteCurrencies()
+        
+        if let index = items.firstIndex(where: { $0.currency == item.currency }) {
+            items[index].isFavorite = isFavorite
+            
+            // 정렬 후 보여주기
+            items = sortFavoriteFirst(items)
+            collectionView.reloadData()
+        }
+    }
 }
-
 extension CurrencyTableView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let selectedItem = items[indexPath.item]
@@ -98,85 +134,12 @@ extension CurrencyTableView: UICollectionViewDataSource {
         }
         let item = items[indexPath.item]
         cell.setData(item: item)
+        
+        // cell에서 즐겨찾기 상태 바뀔때마다 호출돼서 셀에 해당 정보 받아옴
+        cell.onTapFavorite = { [weak self] tappedItem, isFavorite in
+            self?.setFavorite(isFavorite, item: tappedItem)
+        }
+        
         return cell
     }
 }
-
-final class ListCell: UICollectionViewCell {
-    static let identifier = "ListCell"
-    private let separatorView = UIView()
-    
-    private let currencyLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 16, weight: .medium)
-    }
-    
-    private let countryLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 14)
-        $0.textColor = .gray
-    }
-    
-    private lazy var labelStackView = UIStackView(arrangedSubviews: [
-        currencyLabel,
-        countryLabel
-    ]).then {
-        $0.axis = .vertical
-        $0.spacing = 4
-    }
-    
-    private let rateLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 16)
-        $0.textAlignment = .right
-    }
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        
-        contentView.backgroundColor = .clear
-        contentView.addSubview(labelStackView)
-        contentView.addSubview(rateLabel)
-        
-        configure()
-        setupSeparator()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    private func setupSeparator() {
-        separatorView.translatesAutoresizingMaskIntoConstraints = false
-        separatorView.backgroundColor = .separator
-        contentView.addSubview(separatorView)
-        
-        let onePixel = 1.0 / UIScreen.main.scale
-        let inset: CGFloat = 16
-        
-        NSLayoutConstraint.activate([
-            separatorView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: inset),
-            separatorView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -inset),
-            separatorView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            separatorView.heightAnchor.constraint(equalToConstant: onePixel)
-        ])
-    }
-    
-    private func configure() {
-        labelStackView.snp.makeConstraints {
-            $0.leading.equalToSuperview().inset(16)
-            $0.centerY.equalToSuperview()
-        }
-
-        rateLabel.snp.makeConstraints {
-            $0.trailing.equalToSuperview().inset(16)
-            $0.centerY.equalToSuperview()
-            $0.leading.greaterThanOrEqualTo(labelStackView.snp.trailing).offset(16)
-            $0.width.equalTo(120)
-        }
-    }
-    
-    func setData(item: Item) {
-        currencyLabel.text = item.currency
-        rateLabel.text = item.rate
-        countryLabel.text = item.country
-    }
-}
-

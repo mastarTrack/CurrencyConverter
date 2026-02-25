@@ -36,6 +36,10 @@ class CalculatorViewController: UIViewController {
         calculatorView.config(code: viewModel.item.code)
         calculatorView.delegate = self
     }
+    
+    deinit {
+        print("CalculatorViewController deinit")
+    }
 }
 
 extension CalculatorViewController {

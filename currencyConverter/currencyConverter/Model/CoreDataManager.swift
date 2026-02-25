@@ -6,6 +6,11 @@
 //
 import CoreData
 
+enum LastScreen: String {
+    case list
+    case calculator
+}
+
 class CoreDataManager {
     
     static let shared = CoreDataManager()

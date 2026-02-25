@@ -116,7 +116,7 @@ extension MainViewModel {
     func fetchValueStringData(of data: Rate) -> (String, String) {
         let value = String(format: "%.4f", data.value)
         
-        guard let fluctuation = data.fluctuation else { return (value, "")}
+        let fluctuation = data.fluctuation
         let icon = abs(fluctuation) <= 0.01 ? "" : fluctuation > 0 ? "⬆️" : "⬇️"
         return (value, icon)
     }

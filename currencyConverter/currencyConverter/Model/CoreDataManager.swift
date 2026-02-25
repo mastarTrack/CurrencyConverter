@@ -76,12 +76,13 @@ extension CoreDataManager {
     
     // 마지막 화면 저장
     func saveVC(_ vc: String, data: Rate? = nil) {
-        guard let entity = NSEntityDescription.entity(forEntityName: LastVC.className, in: context) else { return }
+        guard let entity = NSEntityDescription.entity(forEntityName: LastVC.className, in: context) else { print("no entity"); return }
         let lastVC = NSManagedObject(entity: entity, insertInto: context)
-        guard let code = data?.currencyCode else { return }
+        let code = data?.currencyCode
         
-        if let prev = loadVC() {
+        if loadVC() != nil {
             updateLastVC(vc, code: code)
+            return
         } else {
             lastVC.setValue(vc, forKey: LastVC.Key.viewController)
             lastVC.setValue(code, forKey: LastVC.Key.currencyCode)
@@ -89,7 +90,7 @@ extension CoreDataManager {
         
         do {
             try context.save()
-            print(loadVC())
+            print("마지막 화면 저장 성공")
         } catch {
             print("마지막 화면 저장 실패")
         }
@@ -179,6 +180,9 @@ extension CoreDataManager {
             if let target = result.last {
                 target.setValue(vc, forKey: LastVC.Key.viewController)
                 target.setValue(code, forKey: LastVC.Key.currencyCode)
+                
+                try context.save()
+                print("lastVC 수정 완료")
             }
         } catch {
             print("lastVC 수정 실패")

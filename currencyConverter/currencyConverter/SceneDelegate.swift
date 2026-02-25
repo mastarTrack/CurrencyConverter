@@ -40,7 +40,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let coreDataManager = CoreDataManager()
         
         if let current = (window?.rootViewController as? UINavigationController)?.topViewController {
-            if let vc = current as? ViewController {
+            if let _ = current as? ViewController {
                 coreDataManager.saveVC("mainVC")
             } else if let vc = current as? CalculationViewController {
                 let rate = vc.viewModel.rate

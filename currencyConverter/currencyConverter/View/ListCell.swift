@@ -18,7 +18,7 @@ final class ListCell: UICollectionViewCell {
     // 현재표시 아이템
     private var currentItem: Item?
     
-    // 줘야할것 해당 셀의 item
+    // 줘야할것 해당 셀의 item이랑 즐겨찾기 변경사항
     var onTapFavorite: ((Item, Bool) -> Void)?
     
     private let currencyLabel = UILabel().then {

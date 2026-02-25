@@ -51,7 +51,7 @@ class RateCalculatorView: UIView {
         $0.numberOfLines = 0
     }
     
-    // 사용자 입력 전달
+    // 사용자 입력 전달용
     var amountText: String { amountTextField.text ?? "" }
     
     override init(frame: CGRect) {
@@ -78,6 +78,7 @@ class RateCalculatorView: UIView {
         resultLabel.text = text
     }
     
+    // 버튼 동작 받기용
     func tapConvertButton(_ handler: @escaping () -> Void) {
         convertButton.addAction(UIAction { _ in
             handler()

@@ -44,7 +44,6 @@ final class CurrencyTableView: UIView {
     }
     
     func update(newItems: [Item]) {
-        
         favoriteSet = CoreDataManager.shared.fetchAllFavoriteCurrencies()
         var updatedItems: [Item] = []
         
@@ -97,7 +96,7 @@ final class CurrencyTableView: UIView {
         return UICollectionViewCompositionalLayout(section: section)
     }
     
-    // 셀에서 받은 정보로 즐겨찾기 바꿔주기
+    // 셀에서 받은 정보로 즐겨찾기 바꿔주고 갱신
     private func setFavorite(_ isFavorite: Bool, item: Item) {
         if isFavorite {
             CoreDataManager.shared.addFavorite(currency: item.currency)
@@ -136,7 +135,7 @@ extension CurrencyTableView: UICollectionViewDataSource {
         let item = items[indexPath.item]
         cell.setData(item: item)
         
-        // cell에서 즐겨찾기 상태 바뀔때마다 호출해서 셀에 해당 정보 받아옴
+        // cell에서 즐겨찾기 상태 바뀔때마다 호출돼서 셀에 해당 정보 받아옴
         cell.onTapFavorite = { [weak self] tappedItem, isFavorite in
             self?.setFavorite(isFavorite, item: tappedItem)
         }

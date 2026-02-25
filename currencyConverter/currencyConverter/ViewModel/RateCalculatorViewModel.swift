@@ -9,7 +9,7 @@ import Foundation
 class RateCalculatorViewModel {
     private let selectedItem: Item
     
-    var item: Item { selectedItem }
+    var item: Item { selectedItem } // 접근용 파라미터
     
     init(selectedItem: Item) {
         self.selectedItem = selectedItem

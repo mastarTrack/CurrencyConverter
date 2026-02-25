@@ -30,7 +30,7 @@ final class CustomButton: UIControl {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure() {
+    private func configure() {
         isAccessibilityElement = true
         accessibilityTraits = [.button]
         

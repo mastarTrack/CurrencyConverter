@@ -15,7 +15,7 @@ final class AppStateStore {
     private let context: NSManagedObjectContext
     init(context: NSManagedObjectContext) { self.context = context }
 
-    // 항상 AppState 유일해야함
+    // 항상 AppState는 유일해야함
     private func fetchOrCreateState() -> AppState {
         let req: NSFetchRequest<AppState> = AppState.fetchRequest()
         req.fetchLimit = 1

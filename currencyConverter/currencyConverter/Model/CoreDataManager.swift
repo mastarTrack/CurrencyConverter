@@ -42,12 +42,11 @@ class CoreDataManager {
 extension CoreDataManager {
     // 환율 정보 저장
     func saveCurrencyData(_ rate: [Rate]) {
-        guard let entity = NSEntityDescription.entity(forEntityName: CurrencyData.className, in: context) else { return }
-        
         if loadCurrencyData() != nil {
             updateCurrencyData(rate)
             return
         } else {
+            guard let entity = NSEntityDescription.entity(forEntityName: CurrencyData.className, in: context) else { return }
             rate.forEach {
                 let currencyData = NSManagedObject(entity: entity, insertInto: context)
                 currencyData.setValue($0.currencyCode, forKey: CurrencyData.Key.currencyCode)
@@ -66,12 +65,11 @@ extension CoreDataManager {
     
     // 업데이트 날짜 저장
     func saveUpdateDate(lastUpdate: Date, nextUpdate: Date) {
-        guard let entity = NSEntityDescription.entity(forEntityName: UpdateDate.className, in: context) else { return }
-        
         if loadUpdateDate() != nil {
             updateUpdateDate(lastUpdate: lastUpdate, nextUpdate: nextUpdate)
             return
         } else {
+            guard let entity = NSEntityDescription.entity(forEntityName: UpdateDate.className, in: context) else { return }
             let updateDate = NSManagedObject(entity: entity, insertInto: context) // 만듦과 동시에 코어데이터에 값이 없는 상태로 저장됨
             
             updateDate.setValue(lastUpdate, forKey: UpdateDate.Key.lastUpdate)
@@ -205,6 +203,7 @@ extension CoreDataManager {
     func updateUpdateDate(lastUpdate: Date, nextUpdate: Date) {
         do {
             let result = try context.fetch(UpdateDate.fetchRequest())
+            guard !result.isEmpty else { return }
             
             if let target = result.first {
                 target.setValue(lastUpdate, forKey: UpdateDate.Key.lastUpdate)

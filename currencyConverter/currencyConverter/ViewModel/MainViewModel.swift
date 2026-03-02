@@ -11,12 +11,12 @@ final class MainViewModel: ViewModelProtocol {
     var update: (([Rate]) -> Void)?
     var alert: ((AlertType) -> Void)?
     
-//    private let dataService = DataService()
-//    private let coreDataManager = CoreDataManager()
+    private let dataService = DataService()
+    private let coreDataManager = CoreDataManager()
     
     // 테스트용
-    private let dataService = TestDataService()
-    private let coreDataManager = TestCoreDataManager()
+//    private let dataService = TestDataService()
+//    private let coreDataManager = TestCoreDataManager()
     
     private var originData: [Rate]? // 원본 데이터
     private(set) var observedData: [Rate]? { // 컬렉션뷰에 표시중인 데이터

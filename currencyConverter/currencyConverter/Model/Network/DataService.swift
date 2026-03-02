@@ -10,7 +10,10 @@ import Foundation
 class DataService {
     
     private func fetchData<T: Decodable>(url: URL, completion: @escaping (Result<T, AFError>) -> Void) {
-        AF.request(url).responseDecodable(of: T.self) { response in
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .secondsSince1970
+        
+        AF.request(url).responseDecodable(of: T.self, decoder: decoder) { response in
             completion(response.result)
         }
     }

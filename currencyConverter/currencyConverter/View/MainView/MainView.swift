@@ -8,8 +8,8 @@ import UIKit
 import SnapKit
 
 final class MainView: UIView {
-    private let searchBar = UISearchBar()
-    private lazy var listView = UICollectionView(frame: .zero, collectionViewLayout: makeCompsitionalLayout())
+    private(set) var searchBar = UISearchBar()
+    private(set) lazy var listView = UICollectionView(frame: .zero, collectionViewLayout: makeCompsitionalLayout())
     private let emptyResultView = UIView()
     
     override init(frame: CGRect) {
@@ -27,16 +27,16 @@ final class MainView: UIView {
 //MARK: initial set
 extension MainView {
     private func setAttributes() {
-        backgroundColor = .white
+        backgroundColor = .background
         
         searchBar.placeholder = "통화 검색"
         searchBar.searchTextField.backgroundColor = .systemGray5
-        searchBar.backgroundColor = .white
+        searchBar.backgroundColor = .background
         searchBar.searchBarStyle = .minimal
         
         listView.showsVerticalScrollIndicator = false
         
-        emptyResultView.backgroundColor = .white
+        emptyResultView.backgroundColor = .background
         emptyResultView.isHidden = true
     }
     
@@ -70,17 +70,6 @@ extension MainView {
     }
 }
 
-//MARK: searchBar
-extension MainView {
-    func setSearchBarDelegate(_ delegate: UISearchBarDelegate) {
-        searchBar.delegate = delegate
-    }
-    
-    func setListViewDelegate(_ delegate: UICollectionViewDelegate) {
-        listView.delegate = delegate
-    }
-}
-
 //MARK: listView
 extension MainView {
     private func makeCompsitionalLayout() -> UICollectionViewCompositionalLayout {
@@ -90,10 +79,6 @@ extension MainView {
             return section
         }
     }
-    
-    func passListView() -> UICollectionView {
-        return listView
-    }
 }
 
 //MARK: noSearchResultView
@@ -102,7 +87,7 @@ extension MainView {
         let label = UILabel()
         label.text = "검색 결과 없음"
         label.font = .systemFont(ofSize: 16, weight: .medium)
-        label.textColor = .systemGray3
+        label.textColor = .secondaryText
         return label
     }
     

@@ -6,14 +6,19 @@
 //
 
 import UIKit
+import DebugSwift
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
+    private let debugSwift = DebugSwift()
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        #if DEBUG
+        debugSwift.setup()
+        // debugSwift.setup(disable: [.leaksDetector])
+        debugSwift.show()
+        #endif
         return true
     }
 
@@ -32,5 +37,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
 
+    
 }
-

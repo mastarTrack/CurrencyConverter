@@ -5,16 +5,29 @@
 //  Created by t2025-m0143 on 2/19/26.
 //
 
-struct Rate: Hashable {
+class Rate: Hashable {
     let currencyCode: String
     let value: Double
+    var bookMarked: Bool
+    var fluctuation: Double
     
     var country: String {
         get { mapCodeandCountry(currencyCode) }
     }
     
+    init(currencyCode: String, value: Double, bookMarked: Bool, fluctuation: Double = 0) {
+        self.currencyCode = currencyCode
+        self.value = value
+        self.bookMarked = bookMarked
+        self.fluctuation = fluctuation
+    }
+    
     func hash(into hasher: inout Hasher) {
         hasher.combine(currencyCode) // 통화 이름을 hash값으로 사용
+    }
+    
+    static func == (lhs: Rate, rhs: Rate) -> Bool {
+        return lhs.currencyCode == rhs.currencyCode
     }
 }
 

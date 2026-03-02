@@ -11,8 +11,8 @@ import SnapKit
 class CalculationView: UIView {
     private let currencyLabel = UILabel()
     private let countryLabel = UILabel()
-    private let amountTextField = UITextField()
-    private let convertButton = UIButton()
+    private(set) var amountTextField = UITextField()
+    private(set) var convertButton = UIButton()
     private let resultLabel = UILabel()
     
     override init(frame: CGRect) {
@@ -38,41 +38,24 @@ extension CalculationView {
     }
 }
 
-//MARK: set Actions
-extension CalculationView {
-    func setButtonAction(_ action: UIAction) {
-        convertButton.addAction(action, for: .touchUpInside)
-    }
-    
-    func setTextFieldAction(_ action: UIAction) {
-        amountTextField.addAction(action, for: .editingChanged)
-    }
-    
-    func resignTextField() {
-        amountTextField.resignFirstResponder()
-    }
-    
-    func passAmountText() -> String? {
-        return amountTextField.text
-    }
-}
-
 //MARK: initial set
 extension CalculationView {
     private func setAttributes() {
-        backgroundColor = .white
+        backgroundColor = .background
         
         currencyLabel.font = .systemFont(ofSize: 24, weight: .bold)
+        currencyLabel.textColor = .text
         
         countryLabel.font = .systemFont(ofSize: 16)
-        countryLabel.textColor = .gray
+        countryLabel.textColor = .secondaryText
         
         amountTextField.borderStyle = .roundedRect
         amountTextField.keyboardType = .decimalPad
         amountTextField.textAlignment = .center
         amountTextField.placeholder = "금액을 입력하세요"
+        amountTextField.textColor = .text
         
-        convertButton.backgroundColor = .systemBlue
+        convertButton.backgroundColor = .button
         convertButton.tintColor = .white
         convertButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         convertButton.layer.cornerRadius = 8
@@ -82,6 +65,7 @@ extension CalculationView {
         resultLabel.textAlignment = .center
         resultLabel.numberOfLines = 0
         resultLabel.text = "계산 결과가 여기에 표시됩니다"
+        resultLabel.textColor = .text
     }
     
     private func setLayout() {

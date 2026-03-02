@@ -12,10 +12,18 @@ final class ListViewCell: UICollectionViewListCell {
     private let countryLabel = UILabel()
     private let rateLabel = UILabel()
     
+    private(set) var starButton = UIButton()
+    private var starButtonSelected: (() -> Void)?
+    
+    private let iconLabel = UILabel()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setAttributes()
         setLayout()
+        setButtonAction()
+        
+//        accessories = [.customView(configuration: .init(customView: starButton, placement: .trailing(displayed: .always)))]
     }
     
     required init?(coder: NSCoder) {
@@ -24,29 +32,54 @@ final class ListViewCell: UICollectionViewListCell {
 }
 
 extension ListViewCell {
-    func configure(code: String, country: String, rate: String) {
-        currencyLabel.text = code
-        countryLabel.text = country
-        rateLabel.text = rate
+    func configure(_ rate: Rate, value: String, icon: String, action: @escaping (() -> Void)) {
+        currencyLabel.text = rate.currencyCode
+        countryLabel.text = rate.country
+        rateLabel.text = value
+        
+        starButton.isSelected = rate.bookMarked
+        starButtonSelected = action
+        
+        iconLabel.text = icon
+    }
+    
+    func setButtonAction() {
+        let select = UIAction { [weak self] _ in
+            self?.starButton.isSelected.toggle()
+            self?.starButtonSelected?()
+        }
+        
+        starButton.addAction(select, for: .touchUpInside)
     }
 }
 
 extension ListViewCell {
     private func setAttributes() {
         currencyLabel.font = .systemFont(ofSize: 16, weight: .medium)
+        currencyLabel.textColor = .text
         
         countryLabel.font = .systemFont(ofSize: 14)
-        countryLabel.textColor = .gray
+        countryLabel.textColor = .secondaryText
         
         rateLabel.font = .systemFont(ofSize: 16)
         rateLabel.textAlignment = .right
+        rateLabel.textColor = .text
+        
+        starButton.setImage(UIImage(systemName: "star"), for: .normal)
+        starButton.setImage(UIImage(systemName: "star.fill"), for: .selected)
+        starButton.tintColor = .favorite
+        
+        iconLabel.font = .systemFont(ofSize: 16)
     }
     
     private func setLayout() {
         let labelStack = setLabelStackView()
+        let iconWidth = UILabel().getTextWidth()
         
         contentView.addSubview(labelStack)
         contentView.addSubview(rateLabel)
+        contentView.addSubview(iconLabel)
+        contentView.addSubview(starButton)
         
         contentView.snp.makeConstraints{
             $0.top.horizontalEdges.equalToSuperview()
@@ -59,11 +92,24 @@ extension ListViewCell {
         }
         
         rateLabel.snp.makeConstraints {
-            $0.trailing.equalToSuperview().inset(16)
+            $0.trailing.equalTo(iconLabel.snp.leading).offset(-10)
             $0.centerY.equalToSuperview()
             $0.leading.greaterThanOrEqualTo(labelStack.snp.trailing).offset(16)
             $0.width.equalTo(120)
         }
+        
+        iconLabel.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.trailing.equalTo(starButton.snp.leading).inset(10)
+            $0.width.equalTo(iconWidth)
+        }
+        
+        starButton.snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(16)
+            $0.centerY.equalToSuperview()
+            $0.width.height.equalTo(50)
+        }
+
     }
     
     private func setLabelStackView() -> UIStackView {
@@ -72,5 +118,14 @@ extension ListViewCell {
         stack.spacing = 4
         return stack
     }
+}
 
+// 아이콘 너비 얻기
+extension UILabel {
+    func getTextWidth() -> CGFloat {
+        let text = "⬆️"
+        let font = UIFont.systemFont(ofSize: 16)
+        
+        return text.size(withAttributes: [NSAttributedString.Key.font: font]).width
+    }
 }

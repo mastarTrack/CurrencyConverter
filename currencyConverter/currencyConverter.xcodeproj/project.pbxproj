@@ -15,6 +15,7 @@
 		168A52CC2F46DB57009F839A /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 168A52CB2F46DB57009F839A /* SnapKit */; };
 		16BF3D412F4E901600F24E09 /* LastVC+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BF3D3F2F4E901600F24E09 /* LastVC+CoreDataClass.swift */; };
 		16BF3D422F4E901600F24E09 /* LastVC+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BF3D402F4E901600F24E09 /* LastVC+CoreDataProperties.swift */; };
+		16BF3D4B2F4F01B000F24E09 /* DebugSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 16BF3D4A2F4F01B000F24E09 /* DebugSwift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -55,6 +56,7 @@
 			files = (
 				168A52C92F46DB4A009F839A /* Alamofire in Frameworks */,
 				168A52CC2F46DB57009F839A /* SnapKit in Frameworks */,
+				16BF3D4B2F4F01B000F24E09 /* DebugSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -105,6 +107,7 @@
 			packageProductDependencies = (
 				168A52C82F46DB4A009F839A /* Alamofire */,
 				168A52CB2F46DB57009F839A /* SnapKit */,
+				16BF3D4A2F4F01B000F24E09 /* DebugSwift */,
 			);
 			productName = currencyConverter;
 			productReference = 1630A57B2F3AFD88007DF1DF /* currencyConverter.app */;
@@ -137,6 +140,7 @@
 			packageReferences = (
 				168A52C72F46DB4A009F839A /* XCRemoteSwiftPackageReference "Alamofire" */,
 				168A52CA2F46DB57009F839A /* XCRemoteSwiftPackageReference "SnapKit" */,
+				16BF3D492F4F01B000F24E09 /* XCRemoteSwiftPackageReference "DebugSwift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 1630A57C2F3AFD88007DF1DF /* Products */;
@@ -404,6 +408,14 @@
 				minimumVersion = 5.7.1;
 			};
 		};
+		16BF3D492F4F01B000F24E09 /* XCRemoteSwiftPackageReference "DebugSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/DebugSwift/DebugSwift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.11.2;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -416,6 +428,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 168A52CA2F46DB57009F839A /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
+		};
+		16BF3D4A2F4F01B000F24E09 /* DebugSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 16BF3D492F4F01B000F24E09 /* XCRemoteSwiftPackageReference "DebugSwift" */;
+			productName = DebugSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
